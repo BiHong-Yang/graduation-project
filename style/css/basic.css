@@ -6,51 +6,108 @@ body {
 
 html {
   box-sizing: border-box;
-  -webkit-box-sizing: border-box;
 }
 
 *,
 *:before,
 *:after {
   box-sizing: inherit;
-  -webkit-box-sizing: border-box;
 }
 
 .IDE {
+  background-color: aqua;
+  border: solid 1px;
+  display: flex;
   width: 100%;
   height: 100%;
-  float: left;
-  position: relative;
-  background-color: aqua;
+  overflow: hidden;
 }
 
 #tool-panel {
-  width: 50px;
-  height: 100%;
-  float: left;
-  position: relative;
   background-color: red;
+  border: solid 1px;
+  order: 0;
+  flex-direction: column;
+  flex-shrink: 0;
+  display: flex;
+  user-select: none;
+  align-items: stretch;
+  overflow: hidden;
+  width: 50px;
 }
 
 #logics-panel {
-  width: 100px;
-  height: 100%;
-  float: left;
-  position: relative;
   background-color: green;
+  border: solid 1px;
+  order: 1;
+  flex-direction: column;
+  flex-shrink: 0;
+  display: flex;
+  user-select: none;
+  align-items: stretch;
+  overflow: hidden;
+  width: 100px;
 }
 
 #templates-panel {
-  width: 150px;
-  height: 100%;
-  float: left;
-  position: relative;
   background-color: yellow;
+  border: solid 1px;
+  order: 2;
+  flex-direction: column;
+  flex-shrink: 0;
+  display: flex;
+  user-select: none;
+  align-items: stretch;
+  overflow: hidden;
+  width: 150px;
 }
 
-#main-panel {
-  background-color: #070606;
-  margin-right: 0px;
-  left: 0px;
-  height: 100%;
+#code-panel {
+  background-color: blue;
+  border: solid 1px;
+  order: 3;
+  flex-direction: column;
+  flex-shrink: 0;
+  display: flex;
+  user-select: none;
+  align-items: stretch;
+  overflow: hidden;
+  width: 300px;
+  flex-grow: 1;
+}
+
+#tool-logic {
+  background-color: purple;
+  border: solid 1px;
+  order: 0;
+}
+
+#tool-filesys {
+  background-color: purple;
+  border: solid 1px;
+  order: 1;
+}
+
+.logic-block {
+  background-color: aqua;
+  border: solid 1px;
+  height: 60px;
+}
+
+.templete-block {
+  background-color: orange;
+  border: solid 1px;
+  height: 80px;
+}
+
+#main-code-space {
+  background-color: gray;
+  border: solid 1px;
+  height: 50%;
+}
+
+#sub-code-space {
+  background-color: pink;
+  border: solid 1px;
+  height: 50%;
 }

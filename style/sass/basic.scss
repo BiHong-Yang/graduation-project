@@ -6,58 +6,88 @@ body {
 
 html {
     box-sizing: border-box;
-    -webkit-box-sizing: border-box;
 }
 
 *,
 *:before,
 *:after {
     box-sizing: inherit;
-    -webkit-box-sizing: border-box;
-}
-
-@mixin noborder {
-    margin: 0;
-    padding: 0;
-    border: 0;
-}
-
-@mixin locate($width:100%, $heigth:100%, $float:left, $position:relative) {
-    width: $width;
-    height: $heigth;
-    float: $float;
-    position: $position;
 }
 
 @mixin test($color) {
     background-color: $color;
+    border: solid 1px;
+}
+
+@mixin tools($order, $flex_direction: column, $flex_shrink:0, $display:flex, $user_select:none, $align_items:stretch, $overflow: hidden) {
+    order: $order;
+    flex-direction: $flex_direction;
+    flex-shrink: $flex_shrink;
+    display: $display;
+    user-select: $user_select;
+    align-items: $align_items;
+    overflow: $overflow;
 }
 
 .IDE {
-    @include locate();
     @include test(aqua);
+    display: flex;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
 }
 
 #tool-panel {
-    @include locate(50px);
-    @include test(red)
+    @include test(red);
+    @include tools(0);
+    width: 50px;
 }
 
 #logics-panel {
-    @include locate(100px);
-    @include test(green)
+    @include test(green);
+    @include tools(1);
+    width: 100px;
 }
 
 #templates-panel {
-    @include locate(150px);
-    @include test(yellow)
+    @include test(yellow);
+    @include tools(2);
+    width: 150px;
 }
 
-#main-panel {
-    @include test(rgb(7, 6, 6));
-    // position: relative;
-    // float: left;
-    margin-right: 0px;
-    left: 0px;
-    height: 100%;
+#code-panel {
+    @include test(blue);
+    @include tools(3);
+    width: 300px;
+    flex-grow: 1;
+}
+
+#tool-logic {
+    @include test(purple);
+    order: 0;
+}
+
+#tool-filesys {
+    @include test(purple);
+    order: 1;
+}
+
+.logic-block {
+    @include test(aqua);
+    height: 60px;
+}
+
+.templete-block {
+    @include test(orange);
+    height: 80px;
+}
+
+#main-code-space {
+    @include test(gray);
+    height: 50%;
+}
+
+#sub-code-space {
+    @include test(pink);
+    height: 50%;
 }
