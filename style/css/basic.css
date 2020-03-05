@@ -23,7 +23,7 @@ html {
   overflow: hidden;
 }
 
-#tool-panel {
+#tool_panel {
   background-color: red;
   border: solid 1px;
   order: 0;
@@ -36,7 +36,7 @@ html {
   width: 50px;
 }
 
-#logics-panel {
+#logics_panel {
   background-color: green;
   border: solid 1px;
   order: 1;
@@ -49,7 +49,7 @@ html {
   width: 100px;
 }
 
-#templates-panel {
+#templates_panel {
   background-color: yellow;
   border: solid 1px;
   order: 2;
@@ -62,52 +62,123 @@ html {
   width: 150px;
 }
 
-#code-panel {
+#code_panel {
   background-color: blue;
   border: solid 1px;
   order: 3;
   flex-direction: column;
   flex-shrink: 0;
   display: flex;
-  user-select: none;
+  user-select: auto;
   align-items: stretch;
   overflow: hidden;
-  width: 300px;
+  width: 10%;
   flex-grow: 1;
 }
 
-#tool-logic {
+#tool_logic {
   background-color: purple;
   border: solid 1px;
   order: 0;
 }
 
-#tool-filesys {
+#tool_filesys {
   background-color: purple;
   border: solid 1px;
   order: 1;
 }
 
-.logic-block {
+.logic_block {
   background-color: aqua;
   border: solid 1px;
   height: 60px;
 }
 
-.templete-block {
+.templete_block {
   background-color: orange;
   border: solid 1px;
   height: 80px;
 }
 
-#main-code-space {
-  background-color: gray;
-  border: solid 1px;
+#main_code {
+  display: flex;
   height: 50%;
+  order: 2;
 }
 
-#sub-code-space {
+#sub_code {
+  display: flex;
+  height: 50%;
+  order: 0;
+}
+
+#main_code_space {
+  background-color: gray;
+  border: solid 1px;
+  overflow-x: auto;
+  overflow-y: visible;
+  flex-direction: column;
+  width: 100%;
+}
+
+#sub_code_space {
   background-color: pink;
   border: solid 1px;
-  height: 50%;
+  overflow-x: auto;
+  overflow-y: visible;
+  flex-direction: column;
+  width: 100%;
+}
+
+.code_block {
+  background-color: red;
+  border: solid 1px;
+  margin: 2px;
+  height: 46px;
+  width: auto;
+  display: inline-block !important;
+  border-radius: 5px;
+}
+
+#main_row_number_bar {
+  background-color: greenyellow;
+  border: solid 1px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 30px;
+}
+
+#sub_row_number_bar {
+  background-color: greenyellow;
+  border: solid 1px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 30px;
+  overflow: auto;
+}
+
+.row_numbers {
+  height: 50px;
+  background-color: purple;
+  border: solid 1px;
+}
+
+#separator_of_code {
+  order: 1;
+  cursor: row-resize;
+  z-index: 999;
+  height: 5px;
+}
+
+#separator2 {
+  order: 5;
+  flex-direction: column;
+  flex-shrink: 0;
+  display: flex;
+  user-select: none;
+  align-items: stretch;
+  overflow: hidden;
+  width: 10px;
 }

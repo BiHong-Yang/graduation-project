@@ -14,11 +14,13 @@ html {
     box-sizing: inherit;
 }
 
+// 用于测试的附加属性，成品删掉
 @mixin test($color) {
     background-color: $color;
     border: solid 1px;
 }
 
+// 工具们都有的属性，写在一起
 @mixin tools($order, $flex_direction: column, $flex_shrink:0, $display:flex, $user_select:none, $align_items:stretch, $overflow: hidden) {
     order: $order;
     flex-direction: $flex_direction;
@@ -29,6 +31,7 @@ html {
     overflow: $overflow;
 }
 
+// 整个页面的样式
 .IDE {
     @include test(aqua);
     display: flex;
@@ -37,57 +40,136 @@ html {
     overflow: hidden;
 }
 
-#tool-panel {
+// 最左边工具条的样式
+#tool_panel {
     @include test(red);
     @include tools(0);
     width: 50px;
 }
 
-#logics-panel {
+// 工具条中逻辑功能的样式
+#logics_panel {
     @include test(green);
     @include tools(1);
     width: 100px;
 }
 
-#templates-panel {
+// 逻辑功能中的“样式”的样式
+#templates_panel {
     @include test(yellow);
     @include tools(2);
     width: 150px;
 }
 
-#code-panel {
+// 整个代码区的样式
+#code_panel {
     @include test(blue);
-    @include tools(3);
-    width: 300px;
+    @include tools(3, $user_select: auto);
+    width: 10%;
     flex-grow: 1;
 }
 
-#tool-logic {
+// 工具条中逻辑控制的按钮
+#tool_logic {
     @include test(purple);
     order: 0;
 }
 
-#tool-filesys {
+// 工具条中文件管理的按钮
+#tool_filesys {
     @include test(purple);
     order: 1;
 }
 
-.logic-block {
+// 逻辑控制功能中每个逻辑分类的按钮
+.logic_block {
     @include test(aqua);
     height: 60px;
 }
 
-.templete-block {
+// 逻辑分类中的具体样式的块
+.templete_block {
     @include test(orange);
     height: 80px;
 }
 
-#main-code-space {
-    @include test(gray);
-    height: 50%;
+// 代码空间的共有属性，写成函数
+@mixin code_space {
+    overflow-x: auto;
+    overflow-y: visible;
+    flex-direction: column;
 }
 
-#sub-code-space {
-    @include test(pink);
+// 主代码区：包括行号和代码空间
+#main_code {
+    display: flex;
     height: 50%;
+    order: 2;
+}
+
+// 副代码区：包括行号和代码空间
+#sub_code {
+    display: flex;
+    height: 50%;
+    order: 0;
+    // overflow: hidden;
+}
+
+// 主代码空间：用于展示总体代码
+#main_code_space {
+    @include test(gray);
+    @include code_space();
+    width: 100%;
+}
+
+// 副代码空间：用于增删代码
+#sub_code_space {
+    @include test(pink);
+    @include code_space();
+    width: 100%;
+}
+
+// 代码模块
+.code_block {
+    @include test(red);
+    margin: 2px;
+    height: 46px;
+    width: auto;
+    display: inline-block !important;
+    border-radius: 5px;
+}
+
+// 行号
+#main_row_number_bar {
+    @include test(greenyellow);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 30px;
+}
+
+#sub_row_number_bar {
+    @include test(greenyellow);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 30px;
+    overflow: auto;
+}
+
+.row_numbers {
+    height: 50px;
+    @include test(purple);
+}
+
+#separator_of_code {
+    order: 1;
+    cursor: row-resize;
+    z-index: 999;
+    height: 5px;
+}
+
+#separator2 {
+    @include tools(5);
+    width: 10px;
 }
