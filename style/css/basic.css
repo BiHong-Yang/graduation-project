@@ -102,21 +102,24 @@ html {
 
 #main_code {
   display: flex;
-  height: 50%;
-  order: 2;
+  height: 250px;
+  flex: 0 0 auto;
+  order: 3;
+  user-select: none;
 }
 
 #sub_code {
   display: flex;
-  height: 50%;
-  order: 0;
+  user-select: none;
+  height: 0px;
+  flex: 1 1 auto;
+  order: 1;
 }
 
-#main_code_space {
-  background-color: gray;
+#main_code_space, #sub_code_space {
+  background-color: yellow;
   border: solid 1px;
-  overflow-x: auto;
-  overflow-y: visible;
+  overflow-y: auto;
   flex-direction: column;
   width: 100%;
 }
@@ -124,10 +127,6 @@ html {
 #sub_code_space {
   background-color: pink;
   border: solid 1px;
-  overflow-x: auto;
-  overflow-y: visible;
-  flex-direction: column;
-  width: 100%;
 }
 
 .code_block {
@@ -136,40 +135,59 @@ html {
   margin: 2px;
   height: 46px;
   width: auto;
-  display: inline-block !important;
   border-radius: 5px;
+  overflow-y: hidden;
+  vertical-align: bottom;
+  display: inline-flex;
+  align-items: center;
 }
 
-#main_row_number_bar {
+#main_row_number_bar, #sub_row_number_bar {
   background-color: greenyellow;
   border: solid 1px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   width: 30px;
+  overflow: scroll;
+}
+
+#main_row_number_bar::-webkit-scrollbar, #sub_row_number_bar::-webkit-scrollbar {
+  display: none;
 }
 
 #sub_row_number_bar {
   background-color: greenyellow;
   border: solid 1px;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  width: 30px;
-  overflow: auto;
 }
 
 .row_numbers {
   height: 50px;
+  flex-shrink: 0;
   background-color: purple;
   border: solid 1px;
 }
 
 #separator_of_code {
-  order: 1;
+  order: 2;
   cursor: row-resize;
   z-index: 999;
   height: 5px;
+  width: 100%;
+  flex-shrink: 0;
+  user-select: none;
+  vertical-align: middle;
+}
+
+#separator_of_code_ghost {
+  background-color: green;
+  cursor: row-resize;
+  z-index: 100;
+  height: 5px;
+  width: 100%;
+  position: relative;
+  user-select: none;
+  visibility: hidden;
 }
 
 #separator2 {
@@ -181,4 +199,18 @@ html {
   align-items: stretch;
   overflow: hidden;
   width: 10px;
+}
+
+#location_of_sub_code_space {
+  order: 0;
+  height: 40px;
+  flex-shrink: 0;
+}
+
+.line_number_in_block {
+  background-color: darkgray;
+  border: solid 1px;
+  margin: 7px;
+  height: 30px;
+  width: 30px;
 }
