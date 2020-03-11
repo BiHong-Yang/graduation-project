@@ -1,38 +1,107 @@
 <template>
-  <div class="sub">
-    <div class="full">
-      <el-container direction=" vertical">
-        <div class="bread">
-          <el-breadcrumb separator-class="el-icon-arrow-right">
-            <el-breadcrumb-item :to="{ path: '/about' }">首页</el-breadcrumb-item>
-            <el-breadcrumb-item>活动管理</el-breadcrumb-item>
-            <el-breadcrumb-item>活动列表</el-breadcrumb-item>
-            <el-breadcrumb-item>活动详情</el-breadcrumb-item>
-          </el-breadcrumb>
-        </div>
-        <el-main></el-main>
-        <el-footer></el-footer>
+  <div id="codespace">
+    <div id="sub">
+      <el-container class="in">
+        <el-header height="30px">
+          <Location :location="clocation" @subtoggle="changefold"></Location>
+        </el-header>
+        <el-main v-show="unfold">
+          <div class="subcode">
+            <el-container>
+              <el-aside width="20px">
+                <Linenum></Linenum>
+              </el-aside>
+              <el-main></el-main>
+            </el-container>
+          </div>
+        </el-main>
+      </el-container>
+    </div>
+    <div id="main">
+      <el-container class="in">
+        <el-main>
+          <div class="maincode">
+            <el-container>
+              <el-aside width="20px">
+                <Linenum></Linenum>
+              </el-aside>
+              <el-main></el-main>
+            </el-container>
+          </div>
+        </el-main>
       </el-container>
     </div>
   </div>
 </template>
 
 <script>
-export default {};
+// import VueResizable from "vue-resizable";
+import $ from "jquery";
+import Location from "./Location";
+import Linenum from "./Linenum";
+
+export default {
+  data() {
+    return {
+      clocation: ["1", "2"],
+      unfold: false
+    };
+  },
+  methods: {
+    changefold: function(msg) {
+      this.unfold = msg;
+      if (msg) {
+        $("#sub").height("55%");
+      } else {
+        $("#sub").height("30px");
+      }
+    }
+  },
+  components: {
+    Location,
+    Linenum
+  }
+};
 </script>
 
 <style>
-.sub {
+#codespace {
   position: relative;
   top: 0;
   left: 0;
   width: 100%;
-  height: 50%;
-  background-color: aqua;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
+#sub {
+  flex: 0 0 auto;
+  transform: height 1s;
+}
+
+#main {
+  flex: 1 1 auto;
+  height: 45%;
+}
 .bread {
   margin: 10px;
+}
+
+.el-container {
+  height: 100%;
+}
+
+.in .el-header {
+  align-items: center;
+  line-height: 30px;
+  background-color: #f2f6fc;
+  padding: 0px;
+}
+
+.in .el-main {
+  height: 100%;
+  padding: 0px;
 }
 
 .full {
@@ -40,6 +109,16 @@ export default {};
   top: 0;
   left: 0;
   width: 100%;
+  height: 100%;
+}
+
+.subcode {
+  background-color: green;
+  height: 100%;
+}
+
+.maincode {
+  background-color: red;
   height: 100%;
 }
 </style>

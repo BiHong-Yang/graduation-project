@@ -40,6 +40,10 @@
   color: #333;
 }
 
+.el-menu-item{
+  user-select: none;
+}
+
 .full {
   position: relative;
   top: 0;
