@@ -7,9 +7,11 @@
         </el-header>
         <el-main v-show="unfold">
           <div class="subcode">
-            <el-container>
-              <el-aside width="20px">
-                <Linenum></Linenum>
+            <el-container class="in">
+              <el-aside width="40px">
+                <ul id="for-sub" class="infinite-list" v-infinite-scroll="load">
+                  <li v-for="(i, index) in count" :key="index" class="infinite-list-item">{{ i }}</li>
+                </ul>
               </el-aside>
               <el-main></el-main>
             </el-container>
@@ -17,13 +19,16 @@
         </el-main>
       </el-container>
     </div>
+
     <div id="main">
       <el-container class="in">
         <el-main>
           <div class="maincode">
             <el-container>
               <el-aside width="20px">
-                <Linenum></Linenum>
+                <ul id="for-main" class="infinite-list" v-infinite-scroll="load">
+                  <li v-for="(i, index) in count" :key="index" class="infinite-list-item">{{ i }}</li>
+                </ul>
               </el-aside>
               <el-main></el-main>
             </el-container>
@@ -35,16 +40,16 @@
 </template>
 
 <script>
-// import VueResizable from "vue-resizable";
 import $ from "jquery";
 import Location from "./Location";
-import Linenum from "./Linenum";
+// import Linenum from "./Linenum";
 
 export default {
   data() {
     return {
       clocation: ["1", "2"],
-      unfold: false
+      unfold: false,
+      count: 0
     };
   },
   methods: {
@@ -55,16 +60,19 @@ export default {
       } else {
         $("#sub").height("30px");
       }
+    },
+    load() {
+      this.count += 1;
     }
   },
   components: {
-    Location,
-    Linenum
+    Location
+    // Linenum
   }
 };
 </script>
 
-<style>
+<style lang='scss'>
 #codespace {
   position: relative;
   top: 0;
@@ -92,18 +100,21 @@ export default {
   height: 100%;
 }
 
-.in .el-header {
-  align-items: center;
-  line-height: 30px;
-  background-color: #f2f6fc;
-  padding: 0px;
+.in {
+  .el-header {
+    align-items: center;
+    line-height: 30px;
+    background-color: #f2f6fc;
+    padding: 0px;
+  }
+  .el-aside {
+    height: 100%;
+  }
+  .el-main {
+    height: 100%;
+    padding: 0px;
+  }
 }
-
-.in .el-main {
-  height: 100%;
-  padding: 0px;
-}
-
 .full {
   position: absolute;
   top: 0;
@@ -118,7 +129,24 @@ export default {
 }
 
 .maincode {
-  background-color: red;
+  /* background-color: red; */
   height: 100%;
+}
+
+.infinite-list {
+  height: 100%;
+  overflow-y: scroll;
+  margin: 0px;
+  padding: 0px;
+  text-align: right;
+  li {
+    border-bottom: 1px black solid;
+  }
+  padding: 0px;
+  list-style: none;
+  margin: 0px;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 </style>
