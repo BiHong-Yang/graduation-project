@@ -1,55 +1,46 @@
 <template>
   <div id="codespace">
-    <div id="sub">
-      <el-container class="in">
-        <el-header height="30px">
-          <Location :location="clocation" @subtoggle="changefold"></Location>
-        </el-header>
-        <el-main v-show="unfold">
-          <div class="subcode">
-            <el-container class="in">
-              <el-aside width="40px">
-                <ul id="for-sub" class="infinite-list" v-infinite-scroll="load">
-                  <li v-for="(i, index) in count" :key="index" class="infinite-list-item">{{ i }}</li>
-                </ul>
-              </el-aside>
-              <el-main></el-main>
-            </el-container>
-          </div>
-        </el-main>
-      </el-container>
+    <div class="header">
+      <Location :location="clocation"></Location>
+    </div>
+    <div id="sub" v-show="toggle">
+      <div class="subcode"></div>
     </div>
 
     <div id="main">
-      <el-container class="in">
-        <el-main>
-          <div class="maincode">
-            <el-container>
-              <el-aside width="20px">
-                <ul id="for-main" class="infinite-list" v-infinite-scroll="load">
-                  <li v-for="(i, index) in count" :key="index" class="infinite-list-item">{{ i }}</li>
-                </ul>
-              </el-aside>
-              <el-main></el-main>
-            </el-container>
-          </div>
-        </el-main>
-      </el-container>
+      <div class="maincode">
+        <draggable v-model="myArray">
+          <transition-group>
+            <div v-for="element in myArray" :key="element.id">{{element.name}}</div>
+          </transition-group>
+        </draggable>
+        <button @click="showmyArray">showmyArray</button>
+        <draggable v-model="myArray">
+          <transition-group></transition-group>
+        </draggable>
+      </div>
     </div>
   </div>
 </template>
 
-<script>
+<script >
+import draggable from "vuedraggable";
 import $ from "jquery";
 import Location from "./Location";
-// import Linenum from "./Linenum";
+import { mapState } from "vuex";
 
 export default {
   data() {
     return {
       clocation: ["1", "2"],
-      unfold: false,
-      count: 0
+      count: 0,
+      myArray: [
+        { name: "abc", id: 1 },
+        { name: "qwe", id: 2 },
+        { name: "asd", id: 3 },
+        { name: "zxc", id: 4 },
+        { name: "yui", id: 5 }
+      ]
     };
   },
   methods: {
@@ -61,18 +52,26 @@ export default {
         $("#sub").height("30px");
       }
     },
-    load() {
+    load: function() {
       this.count += 1;
+    },
+    showmyArray: function() {
+      console.log(this.myArray);
     }
   },
   components: {
-    Location
-    // Linenum
+    Location,
+    draggable
+  },
+  computed: {
+    ...mapState({
+      toggle: status => status.logic.SubcodeToggle
+    })
   }
 };
 </script>
 
-<style lang='scss'>
+<style lang='scss' scoped>
 #codespace {
   position: relative;
   top: 0;
@@ -86,41 +85,20 @@ export default {
 #sub {
   flex: 0 0 auto;
   transform: height 1s;
+  height: 55%;
 }
 
 #main {
   flex: 1 1 auto;
   height: 45%;
 }
-.bread {
-  margin: 10px;
-}
 
-.el-container {
-  height: 100%;
-}
-
-.in {
-  .el-header {
-    align-items: center;
-    line-height: 30px;
-    background-color: #f2f6fc;
-    padding: 0px;
-  }
-  .el-aside {
-    height: 100%;
-  }
-  .el-main {
-    height: 100%;
-    padding: 0px;
-  }
-}
-.full {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+.header {
+  background-color: #f2f6fc;
+  display: inline-flex;
+  align-items: center;
+  line-height: 30px;
+  padding: 0px;
 }
 
 .subcode {

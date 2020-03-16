@@ -5,11 +5,9 @@ import store from "./store";
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
-// import 'jquery'
 
 Vue.use(ElementUI)
-
-// Vue.use($)
+Vue.config.devtools = true
 
 
 Vue.config.productionTip = false;
