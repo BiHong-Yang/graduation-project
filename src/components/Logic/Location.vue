@@ -22,7 +22,7 @@ export default {
   props: ["location"],
   data() {
     return {
-      toggle: this.$store.logicSubcodeToggle
+      toggle: this.$store.state.logic.SubcodeToggle
     };
   },
   methods: {

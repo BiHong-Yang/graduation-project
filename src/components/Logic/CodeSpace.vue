@@ -9,59 +9,34 @@
 
     <div id="main">
       <div class="maincode">
-        <draggable v-model="myArray">
-          <transition-group>
-            <div v-for="element in myArray" :key="element.id">{{element.name}}</div>
-          </transition-group>
-        </draggable>
-        <button @click="showmyArray">showmyArray</button>
-        <draggable v-model="myArray">
-          <transition-group></transition-group>
-        </draggable>
+        <NestedWithVmodel></NestedWithVmodel>
       </div>
     </div>
   </div>
 </template>
 
 <script >
-import draggable from "vuedraggable";
-import $ from "jquery";
+// import $ from "jquery";
 import Location from "./Location";
 import { mapState } from "vuex";
+import NestedWithVmodel from "./nested-with-vmodel";
 
 export default {
   data() {
     return {
       clocation: ["1", "2"],
       count: 0,
-      myArray: [
-        { name: "abc", id: 1 },
-        { name: "qwe", id: 2 },
-        { name: "asd", id: 3 },
-        { name: "zxc", id: 4 },
-        { name: "yui", id: 5 }
-      ]
+      myArray: []
     };
   },
   methods: {
-    changefold: function(msg) {
-      this.unfold = msg;
-      if (msg) {
-        $("#sub").height("55%");
-      } else {
-        $("#sub").height("30px");
-      }
-    },
     load: function() {
       this.count += 1;
-    },
-    showmyArray: function() {
-      console.log(this.myArray);
     }
   },
   components: {
     Location,
-    draggable
+    NestedWithVmodel
   },
   computed: {
     ...mapState({
@@ -73,24 +48,24 @@ export default {
 
 <style lang='scss' scoped>
 #codespace {
-  position: relative;
-  top: 0;
-  left: 0;
+  top: 0px;
+  left: 0px;
+  bottom: 0px;
+  right: 0px;
   width: 100%;
   height: 100%;
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
 }
 
 #sub {
   flex: 0 0 auto;
-  transform: height 1s;
-  height: 55%;
+  height: 50%;
 }
 
 #main {
   flex: 1 1 auto;
-  height: 45%;
+  height: 0px;
 }
 
 .header {
@@ -99,16 +74,19 @@ export default {
   align-items: center;
   line-height: 30px;
   padding: 0px;
+  flex: 0 0 auto;
 }
 
 .subcode {
   background-color: green;
   height: 100%;
+  overflow: auto;
 }
 
 .maincode {
   /* background-color: red; */
   height: 100%;
+  overflow: auto;
 }
 
 .infinite-list {

@@ -29,7 +29,7 @@
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .el-header {
   background-color: #b3c0d1;
   color: #333;
@@ -44,6 +44,12 @@
   user-select: none;
 }
 
+.el-main {
+  height: 100%;
+  // overflow: hidden;
+  padding: 0px;
+  // border: 2px solid lightgray;
+}
 .full {
   position: relative;
   top: 0;
