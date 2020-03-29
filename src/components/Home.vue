@@ -16,6 +16,7 @@
             <span>公链上链</span>
           </el-menu-item>
         </el-menu>
+        <TrashBin></TrashBin>
       </el-aside>
 
       <el-aside width="400px" style="background-color: rgb(238, 241, 246)" v-show="showwitch==1">
@@ -62,7 +63,7 @@
 <script>
 import Logic from "./Logic/Logic.vue";
 import CodeSpace from "./Logic/CodeSpace.vue";
-// import Menu from "./Menu.vue";
+import TrashBin from "./Logic/TrashBin";
 
 export default {
   data() {
@@ -72,8 +73,8 @@ export default {
   },
   components: {
     Logic,
-    CodeSpace
-    // Menu
+    CodeSpace,
+    TrashBin
   },
   methods: {}
 };

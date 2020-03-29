@@ -6,16 +6,22 @@
 }
 
 .item {
-  padding: 1rem;
+  padding: 0.5rem;
+  flex: 0 0 auto;
   border: solid black 1px;
   background-color: #fefefe;
   display: inline-flex;
   align-self: start;
   box-sizing: border-box;
+  align-items: center;
+
+  border-radius: 5px;
 }
 .item-sub {
   margin: 0 0 1rem 1rem;
   border: 1px solid black;
+  display: inline-flex;
+  flex-direction: column;
   min-height: 10rem;
   box-sizing: border-box;
   padding: 0.5rem;
@@ -30,6 +36,19 @@
 .hight-light {
   background-color: #d2e8ff;
   //  #dcdfe6;
+}
+div {
+  &.name {
+    flex: 0 0 auto;
+    font-family: "微软雅黑";
+    font-weight: 900;
+    font-size: 140%;
+    color: #e6a23c;
+    // padding: 0 1em;
+    user-select: none;
+    display: inline-flex;
+    padding-right: 0.5em;
+  }
 }
 
 .line-num {
@@ -60,12 +79,14 @@
         <div
           class="line-num"
           @click="el.show=!el.show"
-          :class="{'hight-light':el.elements.length>0}"
+          :class="{'hight-light':(el.elements.length>0)}"
         >
-          <span>{{ index + 1 }}</span>
+          <div>
+            <span>{{ index + 1 }}</span>
+          </div>
         </div>
-        {{ el.name }}
-        ---
+        <div class="name">{{el.name}}</div>
+        <Context :contexts="el.contexts" :type="el.type"></Context>
       </div>
       <nested class="item-sub" :list="el.elements" v-show="el.show" />
     </div>
@@ -74,6 +95,7 @@
 
 <script>
 import draggable from "vuedraggable";
+import Context from "../Context";
 export default {
   name: "nested",
   methods: {
@@ -83,7 +105,8 @@ export default {
     ChangeShow() {}
   },
   components: {
-    draggable
+    draggable,
+    Context
   },
   computed: {
     dragOptions() {

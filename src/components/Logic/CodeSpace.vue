@@ -56,6 +56,8 @@ export default {
   height: 100%;
   display: inline-flex;
   flex-direction: column;
+  align-items: stretch;
+  overflow: hidden;
 }
 
 #sub {
@@ -65,6 +67,8 @@ export default {
 
 #main {
   flex: 1 1 auto;
+  display: inline-block;
+  overflow: hidden;
   height: 0px;
 }
 
@@ -86,6 +90,7 @@ export default {
 .maincode {
   /* background-color: red; */
   height: 100%;
+  width: 100%;
   overflow: auto;
 }
 

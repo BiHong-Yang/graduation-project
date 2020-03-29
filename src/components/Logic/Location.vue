@@ -34,7 +34,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang='scss' scoped>
 .num {
   min-width: 30px;
   font-family: "微软雅黑";

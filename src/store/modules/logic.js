@@ -1,5 +1,6 @@
 const state = {
     SubcodeToggle: false,
+    globalId: 10,
     elements: [{
             id: 1,
             name: "Shrek",
@@ -30,6 +31,104 @@ const state = {
             elements: [],
             show: true,
         }
+    ],
+    transformer: [{
+            name: '创建变量',
+            group: { name: 'logic', pull: 'clone', put: false, revertClone: true },
+            elements: [{
+                    type: 'uint',
+                    name: '自然数',
+                    elements: [],
+
+                    contexts: {
+                        name: {
+                            name: '名字',
+                            value: '',
+                            show: true
+                        },
+                        categories: {
+                            name: '上限',
+                            value: 'uint',
+                            show: false,
+                        },
+                        value: {
+                            name: '初值',
+                            value: 0,
+                            show: true
+                        },
+                    },
+
+                },
+
+                {
+                    type: 'int',
+                    name: '整数',
+                    elements: [],
+
+                    contexts: {
+                        name: {
+                            name: '名字',
+                            value: '',
+                            show: true
+                        },
+                        categories: {
+                            name: '上限',
+                            value: 'int',
+                            show: false,
+                        },
+                        value: {
+                            name: '初值',
+                            value: 0,
+                            show: true
+                        },
+                    },
+
+                },
+
+                {
+                    type: 'bool',
+                    name: '真假值',
+                    elements: [],
+
+                    contexts: {
+                        name: {
+                            name: '名字',
+                            value: '',
+                            show: true
+                        },
+                        value: {
+                            name: '初值',
+                            value: false,
+                            show: true
+                        },
+                    },
+
+                },
+
+                {
+                    type: 'address',
+                    name: '地址',
+                    elements: [],
+
+                    contexts: {
+                        name: {
+                            name: '名字',
+                            value: '',
+                            show: true
+                        },
+                        value: {
+                            name: '初值',
+                            value: 0x0,
+                            elements: [],
+                            useEle: false,
+                            show: true
+                        },
+                    },
+
+                },
+            ]
+        },
+
     ]
 }
 
@@ -44,6 +143,9 @@ const mutations = {
     updateElements: (state, payload) => {
         state.elements = payload;
     },
+    incGlobalId: (state) => {
+        state.globalId++;
+    },
 }
 
 const actions = {
@@ -53,6 +155,9 @@ const actions = {
     },
     updateElements: ({ commit }, payload) => {
         commit("updateElements", payload);
+    },
+    incGlobalId: ({ commit }) => {
+        commit("incGlobalId");
     },
 }
 

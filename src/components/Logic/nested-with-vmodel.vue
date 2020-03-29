@@ -1,5 +1,5 @@
 <template>
-  <div class="justify-content-between row">
+  <div class="justify-content-between row nested-with-vmodel">
     <nested class="col-8 nested" v-model="elements" />
     <raw-displayer class="col-4" :title="'Vuex Store'" :value="elements" />
   </div>
@@ -41,8 +41,13 @@ export default {
   padding: 0 0 10rem;
   border: 1px solid black;
   min-height: 100%;
+  min-width: 80%;
+  display: inline-block;
 }
-.row {
-  height: 100%;
+
+.nested-with-vmodel {
+  min-height: 100%;
+  min-width: 100%;
+  display: inline-flex;
 }
 </style>

@@ -19,3 +19,5 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw?
+src/mytest/test.py
+src/mytest/test.vue

@@ -24,7 +24,7 @@ export default {
   }
 };
 </script>
-<style scoped>
+<style lang='scss' scoped>
 pre {
   text-align: start;
 }

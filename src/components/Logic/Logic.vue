@@ -2,22 +2,18 @@
   <el-container>
     <el-aside width="40%">
       <el-menu :default-openeds="['1']">
-        <el-menu-item index="1">
-          <span>逻辑生成</span>
-        </el-menu-item>
-        <el-menu-item index="2">
-          <span>文件管理</span>
-        </el-menu-item>
-        <el-menu-item index="3">
-          <span>逻辑调试</span>
-        </el-menu-item>
-        <el-menu-item index="4">
-          <span>公链上链</span>
+        <el-menu-item
+          v-for="(item, id) in logicMenu"
+          :key="id"
+          @click="showwitch=id"
+          :index="id.toString()"
+        >
+          <span>{{item.name}}</span>
         </el-menu-item>
       </el-menu>
     </el-aside>
 
-    <el-aside width="60%">
+    <!-- <el-aside width="60%">
       <div class="col-3">
         <draggable
           class="dragArea list-group"
@@ -26,11 +22,32 @@
           @change="log"
           tag="el-menu"
           :clone="CloneItem"
+          :move="onMove"
         >
           <el-menu-item
             class="list-group-item"
             v-for="element in list1"
-            :key="element.name"
+            :key="element.id"
+          >{{ element.name }}</el-menu-item>
+        </draggable>
+      </div>
+    </el-aside>-->
+
+    <el-aside width="60%">
+      <div v-for="(item, id) in logicMenu" :key="id" v-show="showwitch==id">
+        <draggable
+          class="dragArea list-group"
+          :list="item.elements"
+          :group="item.group"
+          @change="log"
+          tag="el-menu"
+          :clone="CloneItem"
+          :sort="false"
+        >
+          <el-menu-item
+            class="list-group-item"
+            v-for="element in item.elements"
+            :key="element.type"
           >{{ element.name }}</el-menu-item>
         </draggable>
       </div>
@@ -50,7 +67,7 @@ export default {
   },
   data() {
     return {
-      globalId: 10,
+      showwitch: 1,
       list1: [
         {
           id: 1,
@@ -90,13 +107,19 @@ export default {
       window.console.log(evt);
     },
     CloneItem: function(item) {
-      this.globalId++;
-      return {
-        id: this.globalId,
-        name: item.name,
-        elements: [],
-        show: true
-      };
+      this.$store.dispatch("logic/incGlobalId", 1);
+      let temp = Object.assign({}, item);
+      for (let x in temp.context) {
+        delete x.name;
+      }
+      console.log(temp);
+      temp.id = this.$store.state.logic.globalId;
+      return JSON.parse(JSON.stringify(temp));
+    }
+  },
+  computed: {
+    logicMenu() {
+      return this.$store.state.logic.transformer;
     }
   }
 };
@@ -109,5 +132,6 @@ span {
 
 .list-group-item {
   border: 1px solid rgb(238, 241, 246);
+  user-select: none;
 }
 </style>
