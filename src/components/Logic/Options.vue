@@ -42,6 +42,9 @@ export default {
   display: flex;
   align-items: center;
 }
+.el-icon-circle-plus:hover {
+  cursor: pointer;
+}
 
 .highlight {
   color: #409eff !important;

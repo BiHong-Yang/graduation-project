@@ -46,18 +46,18 @@ const state = {
                             value: '',
                             show: true
                         },
-                        categories: {
-                            name: '上限',
-                            value: 'uint',
-                            show: false,
-                        },
+
                         value: {
                             name: '初值',
                             value: 0,
                             show: true
                         },
+                        categories: {
+                            name: '上限',
+                            value: 'uint',
+                            show: false,
+                        },
                     },
-
                 },
 
                 {
@@ -71,15 +71,16 @@ const state = {
                             value: '',
                             show: true
                         },
-                        categories: {
-                            name: '上限',
-                            value: 'int',
-                            show: false,
-                        },
+
                         value: {
                             name: '初值',
                             value: 0,
                             show: true
+                        },
+                        categories: {
+                            name: '上限',
+                            value: 'int',
+                            show: false,
                         },
                     },
 

@@ -3,6 +3,7 @@
   min-width: calc(100% - 1rem);
   margin: 0;
   box-sizing: border-box;
+  display: inline-flex;
 }
 
 .item {
@@ -14,8 +15,9 @@
   align-self: start;
   box-sizing: border-box;
   align-items: center;
-
+  // height: 4rem;
   border-radius: 5px;
+  // overflow: visible;
 }
 .item-sub {
   margin: 0 0 1rem 1rem;
