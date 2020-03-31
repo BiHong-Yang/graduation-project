@@ -2,7 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 
 import logic from './modules/logic';
-// import nested from './modules/nested'
+import control from './modules/control'
 Vue.use(Vuex);
 
 const state = {
@@ -19,7 +19,7 @@ const actions = {
 
 const modules = {
     logic,
-    // nested
+    control
 }
 export default new Vuex.Store({
     // strict: true,

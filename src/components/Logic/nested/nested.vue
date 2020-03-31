@@ -50,6 +50,9 @@ div {
     user-select: none;
     display: inline-flex;
     padding-right: 0.5em;
+    &:hover {
+      cursor: pointer;
+    }
   }
 }
 
@@ -75,6 +78,7 @@ div {
     :list="list"
     :value="value"
     @input="emitter"
+    handle=".name"
   >
     <div class="item-group" :key="index" v-for="(el,index) in realValue">
       <div class="item">
@@ -83,11 +87,17 @@ div {
           @click="el.show=!el.show"
           :class="{'hight-light':(el.elements.length>0)}"
         >
-          <div>
-            <span>{{ index + 1 }}</span>
-          </div>
+          <el-tooltip :disabled="useHint" effect="dark" content="单击展开收起内容" placement="top">
+            <div>
+              <span>{{ index + 1 }}</span>
+            </div>
+          </el-tooltip>
         </div>
-        <div class="name">{{el.name}}</div>
+
+        <el-tooltip :disabled="useHint" effect="dark" content="按住拖动" placement="top">
+          <div class="name">{{el.name}}</div>
+        </el-tooltip>
+
         <Context :contexts="el.contexts" :type="el.type"></Context>
       </div>
       <nested class="item-sub" :list="el.elements" v-show="el.show" />
@@ -114,7 +124,7 @@ export default {
     dragOptions() {
       return {
         animation: 0,
-        group: "logic",
+        group: this.group,
         disabled: false,
         ghostClass: "ghost"
       };
@@ -123,6 +133,9 @@ export default {
     // this.list  when input != v-model
     realValue() {
       return this.value ? this.value : this.list;
+    },
+    useHint() {
+      return !this.$store.state.control.hint;
     }
   },
   props: {
@@ -135,6 +148,11 @@ export default {
       required: false,
       type: Array,
       default: null
+    },
+    group: {
+      required: false,
+      type: String,
+      default: "logic"
     }
   }
 };

@@ -1,7 +1,13 @@
 <template>
   <div class="options">
     <el-dropdown trigger="click" @command="handleCommand">
-      <el-tooltip class="item" effect="dark" content="添加属性" placement="top-start">
+      <el-tooltip
+        class="item"
+        effect="dark"
+        content="添加属性"
+        placement="top-start"
+        :disabled="useHint"
+      >
         <span class="el-dropdown-link">
           <i class="el-icon-circle-plus"></i>
         </span>
@@ -27,6 +33,11 @@ export default {
       console.log(this.contexts[key].show);
       this.contexts[key].show = !this.contexts[key].show;
       console.log(this.contexts[key].show);
+    }
+  },
+  computed: {
+    useHint() {
+      return !this.$store.state.control.hint;
     }
   }
 };

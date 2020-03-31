@@ -11,6 +11,7 @@
         </div>
       </div>
     </div>
+    <button class="togglebox" @click="changeHint"></button>
     <div class="togglebox">
       <el-switch @change="subtoggle" v-model="toggle" active-text="副代码区开关"></el-switch>
     </div>
@@ -28,6 +29,9 @@ export default {
   methods: {
     subtoggle: function() {
       this.$store.dispatch("logic/ChangeToggle", this.toggle);
+    },
+    changeHint: function() {
+      this.$store.state.control.hint = !this.$store.state.control.hint;
     }
   },
   computed: {}
