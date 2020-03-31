@@ -107,6 +107,26 @@ const state = {
                 },
 
                 {
+                    type: 'array',
+                    name: '数组',
+                    elements: [],
+
+                    contexts: {
+                        name: {
+                            name: '名字',
+                            value: '',
+                            show: true
+                        },
+                        value: {
+                            name: '初值',
+                            value: '',
+                            show: true
+                        },
+                    },
+
+                },
+
+                {
                     type: 'address',
                     name: '地址',
                     elements: [],
@@ -127,6 +147,9 @@ const state = {
                     },
 
                 },
+
+
+
             ]
         },
 

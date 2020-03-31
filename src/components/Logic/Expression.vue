@@ -31,12 +31,9 @@
 </template>
 
 <script>
-import Nested from "./nested/nested.vue";
 export default {
   props: ["item", "placeholder"],
-  components: {
-    Nested
-  }
+  components: {}
 };
 </script>
 
@@ -75,13 +72,11 @@ export default {
     width: 100%;
     box-sizing: border-box;
     padding: 0.5rem;
-    height: 5rem;
+    min-height: 5rem;
   }
 }
 .nested {
   margin: 0;
-  border: 1px solid black;
-  min-width: 100%;
   height: 100%;
   border: 1px solid #303133;
   border-radius: 3px;

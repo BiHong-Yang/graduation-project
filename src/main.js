@@ -4,7 +4,10 @@ import router from "./router";
 import store from "./store";
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import Nested from "./components/Logic/nested/nested.vue";
 
+
+Vue.component('nested', Nested)
 
 Vue.use(ElementUI)
 Vue.config.devtools = true
