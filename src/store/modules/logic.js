@@ -1,6 +1,29 @@
 const state = {
+
+    // 副代码区是否显示
     SubcodeToggle: false,
+
+    // 用于保证元素id不冲突
     globalId: 10,
+
+    // 空类型
+    NoneType: {
+        type: 'none',
+        name: '请选择类型',
+        contexts: {}
+    },
+
+    // ParamTypes 的反向表，不用每次find
+    revMapForParamTypes: {
+        none: 0,
+        uint: 1,
+        int: 2,
+        bool: 3,
+        address: 4,
+        byteArray: 5,
+    },
+
+    // 测试用数据
     elements: [{
             id: 1,
             name: "Shrek",
@@ -32,10 +55,21 @@ const state = {
             show: true,
         }
     ],
-    transformer: [{
+
+
+    // 待转换的逻辑
+    transformer: [
+
+        // 创建变量
+        {
             name: '创建变量',
             group: { name: 'logic', pull: 'clone', put: false, revertClone: true },
-            elements: [{
+            elements: [
+
+
+                // uint类型
+                {
+
                     type: 'uint',
                     name: '自然数',
                     elements: [],
@@ -60,6 +94,7 @@ const state = {
                     },
                 },
 
+                // int类型
                 {
                     type: 'int',
                     name: '整数',
@@ -86,6 +121,7 @@ const state = {
 
                 },
 
+                // bool类型
                 {
                     type: 'bool',
                     name: '真假值',
@@ -106,26 +142,8 @@ const state = {
 
                 },
 
-                {
-                    type: 'array',
-                    name: '数组',
-                    elements: [],
 
-                    contexts: {
-                        name: {
-                            name: '名字',
-                            value: '',
-                            show: true
-                        },
-                        value: {
-                            name: '初值',
-                            value: '',
-                            show: true
-                        },
-                    },
-
-                },
-
+                // 地址类型
                 {
                     type: 'address',
                     name: '地址',
@@ -148,15 +166,86 @@ const state = {
 
                 },
 
+                // 字符数组类型，包括定长变长
+                {
+                    type: 'byteArray',
+                    name: '字符数组',
+                    elements: [],
+
+                    contexts: {
+                        name: {
+                            name: '名字',
+                            value: '',
+                            show: true
+                        },
+                        value: {
+                            name: '初值',
+                            value: '',
+                            show: true
+                        },
+                        categories: {
+                            name: '上限',
+                            value: 'byte32',
+                            show: false,
+                        },
+                    },
+
+                },
+
 
 
             ]
         },
 
+        // 创建函数与合约相关的内容
+        {
+            name: '创建函数与合约',
+            group: { name: 'logic', pull: 'clone', put: false, revertClone: true },
+            elements: [
+
+                // 创建函数
+                {
+                    type: 'function',
+                    name: '创建函数',
+                    elements: [],
+
+                    contexts: {
+
+                        name: {
+                            name: '名字',
+                            value: '',
+                            show: true
+                        },
+
+                        param: {
+                            name: '参数',
+                            value: [],
+                            show: true
+                        },
+
+                        // 参数样式：
+                        // {
+                        //     类型：
+                        //     名字：
+                        //     默认值：（可选）
+                        // }
+
+                    },
+                }
+
+
+            ]
+
+        }
+
     ]
 }
 
 const getters = {
+    // 可用作参数的类型
+    ParamTypes: state => {
+        return state.NoneType.concat(state.transformer[0].elements);
+    }
 
 }
 

@@ -4,12 +4,12 @@
       <el-tooltip
         class="item"
         effect="dark"
-        content="添加属性"
+        content="更多属性"
         placement="top-start"
         :disabled="useHint"
       >
-        <span class="el-dropdown-link">
-          <i class="el-icon-circle-plus"></i>
+        <span class="el-dropdown-link l-icon">
+          <i class="el-icon-more"></i>
         </span>
       </el-tooltip>
 
@@ -44,17 +44,9 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-.el-dropdown-link {
-  align-items: center;
-  font-size: 150%;
-}
-
 .options {
   display: flex;
   align-items: center;
-}
-.el-icon-circle-plus:hover {
-  cursor: pointer;
 }
 
 .highlight {
