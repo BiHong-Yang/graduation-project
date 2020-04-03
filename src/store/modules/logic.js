@@ -10,6 +10,7 @@ const state = {
     NoneType: {
         type: 'none',
         name: '请选择类型',
+        elements: [],
         contexts: {}
     },
 
@@ -229,7 +230,11 @@ const state = {
                         //     名字：
                         //     默认值：（可选）
                         // }
-
+                        returns: {
+                            name: '返回值',
+                            value: [],
+                            show: true
+                        }
                     },
                 }
 
@@ -244,7 +249,7 @@ const state = {
 const getters = {
     // 可用作参数的类型
     ParamTypes: state => {
-        return state.NoneType.concat(state.transformer[0].elements);
+        return [state.NoneType].concat(state.transformer[0].elements);
     }
 
 }

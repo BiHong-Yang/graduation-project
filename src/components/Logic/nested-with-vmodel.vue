@@ -1,7 +1,12 @@
 <template>
   <div class="justify-content-between row nested-with-vmodel">
     <nested class="col-8 nested" v-model="elements" />
-    <raw-displayer class="col-4" :title="'Vuex Store'" :value="elements" />
+    <div>
+      <raw-displayer class="col-4" :title="'Vuex Store'" :value="elements" />
+    </div>
+    <div>
+      <raw-displayer class="col-4" :title="'transformer'" :value="transformer" />
+    </div>
   </div>
 </template>
 
@@ -29,6 +34,9 @@ export default {
       set(value) {
         this.$store.dispatch("logic/updateElements", value);
       }
+    },
+    transformer() {
+      return this.$store.state.logic.transformer;
     }
   },
   methods: {}

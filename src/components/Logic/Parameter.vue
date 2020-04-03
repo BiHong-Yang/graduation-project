@@ -10,7 +10,7 @@
         placement="top-start"
         :disabled="useHint"
       >
-        <span class="l-icon--small u-align-self-fstart" @click="deleteItem(item)">
+        <span class="l-icon--small u-align-self-fstart" @click="deleteItem(index)">
           <i class="el-icon-close"></i>
         </span>
       </el-tooltip>
@@ -19,16 +19,33 @@
 
       <el-select
         v-model="item.type"
-        :placeholder="ParamTypes[RevMap[item.type]].name "
-        @change="ChangeType"
+        :placeholder="placeHolder(item) "
+        @change="ChangeType(index)"
+        popper-class="select-lalal"
       >
         <!-- 从这里开始，弄选择更改 -->
+
         <!-- 从这里开始，弄选择更改 -->
-        <!-- 从这里开始，弄选择更改 -->
-        <!-- 从这里开始，弄选择更改 -->
-        <el-option v-for="(types, id) in ParamTypes" :key="id" :label="typs.name" :value="types"></el-option>
+        <el-option
+          v-for="(types, id) in ParamTypes"
+          :key="types.name+id"
+          :label="types.name"
+          :value="types.type"
+          class="c-Parameter-name"
+        ></el-option>
       </el-select>
-      <Context :contexts="el.contexts" :type="el.type"></Context>
+
+      <Context
+        v-for="(it, key) in itemFilter(item.contexts)"
+        :key="key"
+        :contexts="itemFilter(item.contexts)"
+        :item="it"
+        :keyWord="key"
+        :type="item.type"
+        :mode="'soloMode'"
+      ></Context>
+
+      <!-- <Context :contexts="item.contexts" :type="item.type" :mode="'soloMode'"></Context> -->
     </div>
 
     <!-- 添加参数 -->
@@ -50,6 +67,7 @@
 // }
 
 <script>
+import { mapGetters, mapState } from "vuex";
 export default {
   props: {
     place: {
@@ -58,33 +76,71 @@ export default {
       default: "createFunc"
     },
     params: {
-      required: true,
-      type: Array
+      required: false,
+      type: Array,
+      default: () => {
+        return [];
+      }
+    }
+  },
+  computed: {
+    ...mapGetters({
+      ParamTypes: "logic/ParamTypes"
+    }),
+    ...mapState({
+      RevMap: status => status.logic.revMapForParamTypes
+    }),
+    useHint() {
+      return !this.$store.state.control.hint;
     }
   },
   methods: {
-    deleteItem: function(item) {
-      delete item;
+    deleteItem: function(index) {
+      this.params.splice(index, 1);
     },
     addParam: function() {
-      this.params = this.params.concat(this.$store.state.logic.NoneType);
+      this.params.push(
+        JSON.parse(JSON.stringify(this.$store.state.logic.NoneType))
+      );
     },
-    ChangeType: function(type) {}
-  },
-  computed: {
-    ParamTypes() {
-      return this.$store.getters.logic.ParamTypes;
+    ChangeType: function(index) {
+      console.log("in Change function:", index);
+      this.params.splice(
+        index,
+        1,
+        JSON.parse(
+          JSON.stringify(this.ParamTypes[this.RevMap[this.params[index].type]])
+        )
+      );
     },
-    RevMap() {
-      return this.$store.state.logic.revMapForParamTypes;
+    placeHolder: function(item) {
+      return JSON.parse(
+        JSON.stringify(this.ParamTypes[this.RevMap[item.type]].name)
+      );
+    },
+    itemFilter: function(contexts) {
+      let temp = {};
+      for (let x in contexts) {
+        console.log(x);
+        if (contexts[x].show == true) {
+          temp[x] = contexts[x];
+        }
+      }
+      return temp;
     }
+  },
+  mounted: function() {
+    console.log("monuted:", this.params);
+  },
+  beforeUpdate: function() {
+    console.log("beforeUpdate:", this.params);
   }
 };
 </script>
 
-<style>
+<style  lang="scss">
 .c-Parameter {
-  display: flex;
+  display: inline-flex;
   flex-wrap: wrap;
 }
 </style>

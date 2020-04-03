@@ -69,6 +69,11 @@ div {
     cursor: pointer;
   }
 }
+
+.c-context__container {
+  display: flex;
+  flex-wrap: wrap;
+}
 </style>
 <template>
   <draggable
@@ -98,7 +103,17 @@ div {
           <div class="name">{{el.name}}</div>
         </el-tooltip>
 
-        <Context :contexts="el.contexts" :type="el.type"></Context>
+        <div class="c-context__container">
+          <Context
+            v-for="(item, key) in el.contexts"
+            :key="key"
+            :contexts="el.contexts"
+            :item="item"
+            :keyWord="key"
+            :type="el.type"
+          ></Context>
+          <Options :contexts="el.contexts"></Options>
+        </div>
       </div>
       <nested class="item-sub" :list="el.elements" v-show="el.show" />
     </div>
@@ -106,8 +121,8 @@ div {
 </template>
 
 <script>
+import Options from "../Options";
 import draggable from "vuedraggable";
-import Context from "../Context";
 export default {
   name: "nested",
   methods: {
@@ -118,7 +133,7 @@ export default {
   },
   components: {
     draggable,
-    Context
+    Options
   },
   computed: {
     dragOptions() {

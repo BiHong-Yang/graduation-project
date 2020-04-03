@@ -21,3 +21,4 @@ yarn-error.log*
 *.sw?
 src/mytest/test.py
 src/mytest/test.vue
+src/mytest/add.py
