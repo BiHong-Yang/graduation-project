@@ -22,6 +22,7 @@ const state = {
         bool: 3,
         address: 4,
         byteArray: 5,
+        mapping: 6
     },
 
     // 测试用数据
@@ -79,18 +80,20 @@ const state = {
                         name: {
                             name: '名字',
                             value: '',
-                            show: true
+                            show: true,
+                            use: true
                         },
 
                         value: {
                             name: '初值',
-                            value: 0,
+                            value: null,
                             show: true
                         },
                         categories: {
                             name: '上限',
                             value: 'uint',
                             show: false,
+                            use: true
                         },
                     },
                 },
@@ -105,18 +108,20 @@ const state = {
                         name: {
                             name: '名字',
                             value: '',
-                            show: true
+                            show: true,
+                            use: true
                         },
 
                         value: {
                             name: '初值',
-                            value: 0,
+                            value: null,
                             show: true
                         },
                         categories: {
                             name: '上限',
                             value: 'int',
                             show: false,
+                            use: true
                         },
                     },
 
@@ -132,7 +137,8 @@ const state = {
                         name: {
                             name: '名字',
                             value: '',
-                            show: true
+                            show: true,
+                            use: true
                         },
                         value: {
                             name: '初值',
@@ -154,7 +160,8 @@ const state = {
                         name: {
                             name: '名字',
                             value: '',
-                            show: true
+                            show: true,
+                            use: true
                         },
                         value: {
                             name: '初值',
@@ -177,7 +184,8 @@ const state = {
                         name: {
                             name: '名字',
                             value: '',
-                            show: true
+                            show: true,
+                            use: true
                         },
                         value: {
                             name: '初值',
@@ -188,11 +196,53 @@ const state = {
                             name: '上限',
                             value: 'byte32',
                             show: false,
+                            use: true
                         },
                     },
 
                 },
 
+                // 映射类型
+
+                {
+                    type: 'mapping',
+                    name: '映射',
+                    elements: [],
+
+                    contexts: {
+                        name: {
+                            name: '名字',
+                            value: '',
+                            show: true,
+                            use: true
+                        },
+                        from: {
+                            name: '映射自',
+                            value: {
+                                type: 'none',
+                                name: '请选择类型',
+                                elements: [],
+                                contexts: {}
+                            },
+                            elements: [],
+                            show: true,
+                            use: true
+                        },
+                        to: {
+                            name: '映射到',
+                            value: {
+                                type: 'none',
+                                name: '请选择类型',
+                                elements: [],
+                                contexts: {}
+                            },
+                            elements: [],
+                            show: true,
+                            use: true
+                        },
+                    },
+
+                },
 
 
             ]
@@ -227,8 +277,10 @@ const state = {
                         // 参数样式：
                         // {
                         //     类型：
-                        //     名字：
-                        //     默认值：（可选）
+                        //     内容：{
+                        // 
+                        //      }
+                        //     
                         // }
                         returns: {
                             name: '返回值',
@@ -236,7 +288,46 @@ const state = {
                             show: true
                         }
                     },
+
+                    show: true
+                },
+
+                // 创建装饰器
+                {
+                    type: 'modifier',
+                    name: '创建装饰器',
+                    // 函数位置
+                    elements: [{
+                        type: 'modifier__inner',
+                        name: '函数位置',
+                        elements: [],
+                    }],
+
+                    contexts: {
+
+                        name: {
+                            name: '名字',
+                            value: '',
+                            show: true
+                        },
+
+                        param: {
+                            name: '参数',
+                            value: [],
+                            show: true
+                        },
+
+                        // 参数样式：
+                        // {
+                        //     类型：
+                        //     名字：
+                        //     默认值：（可选）
+                        // }
+                    },
+
+                    show: true
                 }
+
 
 
             ]

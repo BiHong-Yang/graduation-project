@@ -25,7 +25,7 @@
 
       <!-- 名字 -->
       <div v-else-if="keyWord=='name'" class="l-contexts-item">
-        <el-input v-model=" item.value " placeholder="请输入一串英文字符"></el-input>
+        <el-input v-model=" item.value " placeholder="名字：请输入一串英文字符"></el-input>
       </div>
     </template>
 
@@ -38,7 +38,7 @@
             v-for="id in 32"
             :key="id"
             :label="`最大2的 ±${8*(33 - id)-1} 次方`"
-            :value="`int${8*(33 - id)-1}`"
+            :value="`int${8*(33 - id)}`"
           ></el-option>
         </el-select>
       </div>
@@ -50,7 +50,7 @@
 
       <!-- 名字 -->
       <div v-else-if="keyWord=='name'" class="l-contexts-item">
-        <el-input v-model="item.value" placeholder="请输入一串英文字符"></el-input>
+        <el-input v-model="item.value" placeholder="名字：请输入一串英文字符"></el-input>
       </div>
     </template>
 
@@ -66,7 +66,7 @@
 
       <!-- 名字 -->
       <div v-else-if="keyWord=='name'" class="l-contexts-item">
-        <el-input v-model="item.value" placeholder="请输入一串英文字符"></el-input>
+        <el-input v-model="item.value" placeholder="名字：请输入一串英文字符"></el-input>
       </div>
     </template>
 
@@ -75,7 +75,7 @@
       <Expression v-if="keyWord=='value'" :item="item" :placeholder="'请输入一个地址'"></Expression>
 
       <div v-else-if="keyWord=='name'" class="l-contexts-item">
-        <el-input v-model="item.value" placeholder="请输入一串英文字符"></el-input>
+        <el-input v-model="item.value" placeholder="名字：请输入一串英文字符"></el-input>
       </div>
     </template>
 
@@ -102,7 +102,25 @@
 
       <!-- 名字 -->
       <div v-else-if="keyWord=='name'" class="l-contexts-item">
-        <el-input v-model="item.value" placeholder="请输入一串英文字符"></el-input>
+        <el-input v-model="item.value" placeholder="名字：请输入一串英文字符"></el-input>
+      </div>
+    </template>
+
+    <!-- 映射类型 -->
+
+    <template v-else-if="type=='mapping'">
+      <!-- 初值 -->
+      <div v-if="keyWord=='from'" class="l-contexts-item">
+        <SelectType :item="item.value" :typeExcept="{mapping:'mapping'}"></SelectType>
+      </div>
+
+      <div v-else-if="keyWord=='to'" class="l-contexts-item">
+        <SelectType :item="item.value"></SelectType>
+      </div>
+
+      <!-- 名字 -->
+      <div v-else-if="keyWord=='name'" class="l-contexts-item">
+        <el-input v-model="item.value" placeholder="名字：请输入一串英文字符"></el-input>
       </div>
     </template>
 
@@ -112,7 +130,7 @@
     <template v-else-if="type=='function'">
       <!-- 名字 -->
       <div v-if="keyWord=='name'" class="l-contexts-item">
-        <el-input v-model="item.value" placeholder="请输入一串英文字符"></el-input>
+        <el-input v-model="item.value" placeholder="名字：请输入一串英文字符"></el-input>
       </div>
 
       <div v-else-if="keyWord=='param'" class="l-contexts-item">
@@ -123,11 +141,34 @@
         <Parameter :params="item.value"></Parameter>
       </div>
     </template>
+
+    <!-- 创建装饰器 -->
+
+    <template v-else-if="type=='modifier'">
+      <div>
+        <div v-if="keyWord=='name'" class="l-contexts-item">
+          <el-input v-model="item.value" placeholder="名字：请输入一串英文字符"></el-input>
+        </div>
+
+        <div v-else-if="keyWord=='param'" class="l-contexts-item">
+          <Parameter :params="item.value"></Parameter>
+        </div>
+
+        <div v-else-if="keyWord=='returns'" class="l-contexts-item">
+          <Parameter :params="item.value"></Parameter>
+        </div>
+      </div>
+    </template>
+
+    <template>
+      <div></div>
+    </template>
   </div>
 </template>
 
 <script>
 // import nested from "./nested/nested";
+import SelectType from "./SelectType";
 import Expression from "./Expression";
 import Parameter from "./Parameter";
 export default {
@@ -175,7 +216,8 @@ export default {
   components: {
     // nested,
     Expression,
-    Parameter
+    Parameter,
+    SelectType
   }
 };
 </script>
