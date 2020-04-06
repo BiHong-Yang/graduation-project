@@ -1,7 +1,7 @@
 <template>
   <div class="justify-content-between row nested-with-vmodel">
     <div class="nested">
-      <nested v-model="elements" />
+      <nested :list="elements" />
     </div>
     <div>
       <raw-displayer :title="'Vuex Store'" :value="elements" />

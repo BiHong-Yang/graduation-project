@@ -1,6 +1,6 @@
 <template>
   <div v-if="place=='createFunc'" class="c-Parameter">
-    <div v-for="(item, index) in params" :key="index">
+    <div v-for="(item, index) in params" :key="index" class="c-Parameter__item l-Parameter__item">
       <!-- 删除参数 -->
 
       <el-tooltip
@@ -17,12 +17,7 @@
 
       <!-- 显示参数 -->
 
-      <el-select
-        v-model="item.type"
-        :placeholder="placeHolder(item) "
-        @change="ChangeType(index)"
-        popper-class="select-lalal"
-      >
+      <el-select v-model="item.type" :placeholder="placeHolder(item) " @change="ChangeType(index)">
         <!-- 从这里开始，弄选择更改 -->
 
         <!-- 从这里开始，弄选择更改 -->
@@ -43,6 +38,7 @@
         :keyWord="key"
         :type="item.type"
         :mode="'soloMode'"
+        class="l-item__contexts"
       ></Context>
 
       <!-- <Context :contexts="item.contexts" :type="item.type" :mode="'soloMode'"></Context> -->
@@ -141,9 +137,21 @@ export default {
 <style  lang="scss">
 .c-Parameter {
   display: flex;
-  flex-wrap: wrap;
+  // flex-wrap: wrap;
   border: 1px solid #dcdfe6;
   border-radius: 3px;
-  padding: 3px 0.5rem;
+  padding: 3px 0;
+  align-items: flex-start;
+  user-select: none;
+  .c-Parameter__item {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #dcdfe6;
+    border-radius: 3px;
+    padding: 2px;
+  }
+  .l-Parameter__item {
+    margin-left: 2px;
+  }
 }
 </style>

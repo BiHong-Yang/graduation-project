@@ -66,6 +66,7 @@ div {
   color: #4089ff;
   border-radius: 5px;
   align-items: center;
+  user-select: none;
   &:hover {
     background-color: #97cdff;
     cursor: pointer;
@@ -86,6 +87,9 @@ div {
     :value="value"
     @input="emitter"
     handle=".name"
+    @start="nestedStart"
+    @end="nestedEnd"
+    :move="nestedMove"
   >
     <div class="c-nested__item-group" :key="index" v-for="(el,index) in realValue">
       <div class="c-nested__item">
@@ -131,7 +135,25 @@ export default {
     emitter(value) {
       this.$emit("input", value);
     },
-    ChangeShow() {}
+    ChangeShow() {},
+    nestedStart: function(evt) {
+      console.log("start");
+      console.log(evt.oldIndex);
+      console.log(this.list);
+      console.log(this.list[evt.oldIndex]);
+      this.$store.dispatch("logic/nestedStart", this.list[evt.oldIndex]);
+    },
+    nestedEnd: function(evt) {
+      console.log("end");
+      this.$store.dispatch("logic/nestedEnd", {
+        item: this.list[evt.newIndex],
+        index: evt.newIndex
+      });
+    },
+    nestedMove: function(evt) {
+      console.log("move");
+      this.$store.dispatch("logic/nestedMove", evt.relatedContext.list);
+    }
   },
   components: {
     draggable,

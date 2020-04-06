@@ -1,5 +1,11 @@
 const state = {
 
+    // 记录移动时的show情况
+    ShowsOnMove: [],
+
+    // 记录目标list
+    MovedList: [],
+
     // 副代码区是否显示
     SubcodeToggle: false,
 
@@ -54,7 +60,6 @@ const state = {
             id: 3,
             name: "Donkey",
             elements: [],
-            show: true,
         }
     ],
 
@@ -355,11 +360,45 @@ const mutations = {
     incGlobalId: (state) => {
         state.globalId++;
     },
+    nestedStart: (state, item) => {
+
+        if (item.show != undefined) {
+            state.ShowsOnMove.push(item.show);
+            item.show = false;
+        }
+
+        for (let x in item.contexts) {
+            console.log(x);
+        }
+
+    },
+    nestedEnd: (state, { item, index }) => {
+
+        if (state.MovedList.length == 0) {
+            if (item.show != undefined) {
+                item.show = state.ShowsOnMove.shift();
+            }
+            for (let x in item.contexts) {
+                console.log(x);
+            }
+        } else {
+            if (item.show != undefined) {
+                state.MovedList[index].show = state.ShowsOnMove.shift();
+            }
+            for (let x in state.MovedList.contexts) {
+                console.log(x);
+            }
+            state.MovedList = [];
+        }
+
+    },
+    nestedMove: (state, element) => {
+        state.MovedList = element;
+    },
 }
 
 const actions = {
     ChangeToggle(context, value) {
-        console.log('here');
         context.commit('ChangeToggle', value)
     },
     updateElements: ({ commit }, payload) => {
@@ -368,6 +407,16 @@ const actions = {
     incGlobalId: ({ commit }) => {
         commit("incGlobalId");
     },
+    nestedStart: ({ commit }, item) => {
+        commit("nestedStart", item);
+    },
+    nestedEnd: ({ commit }, payload) => {
+        commit("nestedEnd", payload);
+    },
+    nestedMove: ({ commit }, element) => {
+        commit("nestedMove", element);
+    },
+
 }
 
 export default {

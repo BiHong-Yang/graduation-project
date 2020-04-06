@@ -2,12 +2,7 @@
   <div class="c-SelectType">
     <!-- 显示参数 -->
 
-    <el-select
-      v-model="item.type"
-      :placeholder="placeHolder()"
-      @change="ChangeType"
-      popper-class="select-lalal"
-    >
+    <el-select v-model="item.type" :placeholder="placeHolder()" @change="ChangeType">
       <!-- 从这里开始，弄选择更改 -->
 
       <!-- 从这里开始，弄选择更改 -->
@@ -16,7 +11,7 @@
         :key="types.name+id"
         :label="types.name"
         :value="types.type"
-        class="c-Parameter-name"
+        class="c-SelectType-name"
       ></el-option>
     </el-select>
 
@@ -118,3 +113,29 @@ export default {
   }
 };
 </script>
+<style lang="scss" scoped>
+// .c-SelectType {
+//   border: 1px solid #dcdfe6;
+//   border-radius: 3px;
+//   padding: 2px;
+// }
+.c-SelectType {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #dcdfe6;
+  border-radius: 3px;
+  padding: 3px;
+  align-items: stretch;
+  user-select: none;
+  .c-SelectType__item {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #dcdfe6;
+    border-radius: 3px;
+    padding: 2px;
+  }
+  .l-SelectType__item {
+    margin-left: 2px;
+  }
+}
+</style>
