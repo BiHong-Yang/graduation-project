@@ -1,11 +1,13 @@
 <template>
   <div class="justify-content-between row nested-with-vmodel">
-    <nested class="col-8 nested" v-model="elements" />
-    <div>
-      <raw-displayer class="col-4" :title="'Vuex Store'" :value="elements" />
+    <div class="nested">
+      <nested v-model="elements" />
     </div>
     <div>
-      <raw-displayer class="col-4" :title="'transformer'" :value="transformer" />
+      <raw-displayer :title="'Vuex Store'" :value="elements" />
+    </div>
+    <div>
+      <raw-displayer :title="'transformer'" :value="transformer" />
     </div>
   </div>
 </template>
@@ -51,6 +53,7 @@ export default {
   min-height: 100%;
   min-width: 80%;
   display: inline-block;
+  flex: 0 0 auto;
 }
 
 .nested-with-vmodel {

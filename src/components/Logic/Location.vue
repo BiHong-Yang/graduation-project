@@ -11,7 +11,7 @@
         </div>
       </div>
     </div>
-    <button class="togglebox" @click="changeHint"></button>
+    <button class="togglebox" @click="changeHint">关闭tips</button>
     <div class="togglebox">
       <el-switch @change="subtoggle" v-model="toggle" active-text="副代码区开关"></el-switch>
     </div>

@@ -140,7 +140,10 @@ export default {
 
 <style  lang="scss">
 .c-Parameter {
-  display: inline-flex;
+  display: flex;
   flex-wrap: wrap;
+  border: 1px solid #dcdfe6;
+  border-radius: 3px;
+  padding: 3px 0.5rem;
 }
 </style>

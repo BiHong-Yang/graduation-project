@@ -8,9 +8,7 @@
     </div>
 
     <div id="main">
-      <div class="maincode">
-        <NestedWithVmodel></NestedWithVmodel>
-      </div>
+      <NestedWithVmodel></NestedWithVmodel>
     </div>
   </div>
 </template>
@@ -68,7 +66,7 @@ export default {
 #main {
   flex: 1 1 auto;
   display: inline-block;
-  overflow: hidden;
+  overflow: auto;
   height: 0px;
 }
 
@@ -84,13 +82,6 @@ export default {
 .subcode {
   background-color: green;
   height: 100%;
-  overflow: auto;
-}
-
-.maincode {
-  /* background-color: red; */
-  height: 100%;
-  width: 100%;
   overflow: auto;
 }
 

@@ -1,17 +1,19 @@
 <style lang='scss' scoped>
-.item-container {
+.c-nested {
   min-width: calc(100% - 1rem);
   margin: 0;
   box-sizing: border-box;
-  display: inline-flex;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }
 
-.item {
+.c-nested__item {
   padding: 0.5rem;
   flex: 0 0 auto;
   border: solid black 1px;
   background-color: #fefefe;
-  display: inline-flex;
+  display: flex;
   align-self: start;
   box-sizing: border-box;
   align-items: center;
@@ -19,16 +21,16 @@
   border-radius: 5px;
   // overflow: visible;
 }
-.item-sub {
+.c-nested__item-sub {
   margin: 0 0 1rem 1rem;
   border: 1px solid black;
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
   min-height: 10rem;
   box-sizing: border-box;
   padding: 0.5rem;
 }
-.item-group {
+.c-nested__item-group {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -79,14 +81,14 @@ div {
   <draggable
     v-bind="dragOptions"
     tag="div"
-    class="item-container"
+    class="c-nested"
     :list="list"
     :value="value"
     @input="emitter"
     handle=".name"
   >
-    <div class="item-group" :key="index" v-for="(el,index) in realValue">
-      <div class="item">
+    <div class="c-nested__item-group" :key="index" v-for="(el,index) in realValue">
+      <div class="c-nested__item">
         <div
           class="line-num"
           @click="el.show=!el.show"
@@ -115,7 +117,7 @@ div {
           <Options :contexts="el.contexts"></Options>
         </div>
       </div>
-      <nested class="item-sub" :list="el.elements" v-show="el.show" />
+      <nested class="c-nested__item-sub" :list="el.elements" v-show="el.show" />
     </div>
   </draggable>
 </template>
