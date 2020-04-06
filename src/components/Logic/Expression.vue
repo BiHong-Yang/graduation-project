@@ -69,16 +69,13 @@ export default {
   }
 
   .c-expression__body {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 0.5rem;
-    min-height: 5rem;
+    padding: 0.1rem;
   }
 }
 .nested {
   margin: 0;
-  height: 100%;
-  border: 1px solid #303133;
+  min-height: 5rem;
+  border: 1px solid #c0c4cc;
   border-radius: 3px;
   box-sizing: border-box;
   display: inline-block;

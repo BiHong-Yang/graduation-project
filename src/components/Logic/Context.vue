@@ -2,7 +2,10 @@
   <!-- 值设定部分 -->
   <div class="c-contexts">
     <!-- uint类型 -->
-    <div class="l-contexts-item l-contexts__name" v-if="mode=='groupMode'">
+    <div
+      class="l-contexts-item l-contexts__name"
+      :class="{ 'l-contexts__name--sub'  : (mode=='soloMode')}"
+    >
       <span>{{item.name}}</span>
     </div>
     <template v-if="type=='uint'">
@@ -25,7 +28,7 @@
 
       <!-- 名字 -->
       <div v-else-if="keyWord=='name'" class="l-contexts-item">
-        <el-input v-model=" item.value " placeholder="名字：请输入一串英文字符"></el-input>
+        <el-input v-model=" item.value " placeholder="请输入一串英文字符"></el-input>
       </div>
     </template>
 
@@ -50,7 +53,7 @@
 
       <!-- 名字 -->
       <div v-else-if="keyWord=='name'" class="l-contexts-item">
-        <el-input v-model="item.value" placeholder="名字：请输入一串英文字符"></el-input>
+        <el-input v-model="item.value" placeholder="请输入一串英文字符"></el-input>
       </div>
     </template>
 
@@ -66,7 +69,7 @@
 
       <!-- 名字 -->
       <div v-else-if="keyWord=='name'" class="l-contexts-item">
-        <el-input v-model="item.value" placeholder="名字：请输入一串英文字符"></el-input>
+        <el-input v-model="item.value" placeholder="请输入一串英文字符"></el-input>
       </div>
     </template>
 
@@ -75,7 +78,7 @@
       <Expression v-if="keyWord=='value'" :item="item" :placeholder="'请输入一个地址'"></Expression>
 
       <div v-else-if="keyWord=='name'" class="l-contexts-item">
-        <el-input v-model="item.value" placeholder="名字：请输入一串英文字符"></el-input>
+        <el-input v-model="item.value" placeholder="请输入一串英文字符"></el-input>
       </div>
     </template>
 
@@ -102,7 +105,7 @@
 
       <!-- 名字 -->
       <div v-else-if="keyWord=='name'" class="l-contexts-item">
-        <el-input v-model="item.value" placeholder="名字：请输入一串英文字符"></el-input>
+        <el-input v-model="item.value" placeholder="请输入一串英文字符"></el-input>
       </div>
     </template>
 
@@ -120,7 +123,7 @@
 
       <!-- 名字 -->
       <div v-else-if="keyWord=='name'" class="l-contexts-item">
-        <el-input v-model="item.value" placeholder="名字：请输入一串英文字符"></el-input>
+        <el-input v-model="item.value" placeholder="请输入一串英文字符"></el-input>
       </div>
     </template>
 
@@ -130,7 +133,7 @@
     <template v-else-if="type=='function'">
       <!-- 名字 -->
       <div v-if="keyWord=='name'" class="l-contexts-item">
-        <el-input v-model="item.value" placeholder="名字：请输入一串英文字符"></el-input>
+        <el-input v-model="item.value" placeholder="请输入一串英文字符"></el-input>
       </div>
 
       <div v-else-if="keyWord=='param'" class="l-contexts-item">
@@ -147,7 +150,7 @@
     <template v-else-if="type=='modifier'">
       <div>
         <div v-if="keyWord=='name'" class="l-contexts-item">
-          <el-input v-model="item.value" placeholder="名字：请输入一串英文字符"></el-input>
+          <el-input v-model="item.value" placeholder="请输入一串英文字符"></el-input>
         </div>
 
         <div v-else-if="keyWord=='param'" class="l-contexts-item">
@@ -237,6 +240,10 @@ export default {
   }
   .l-contexts__name {
     word-wrap: none;
+  }
+  .l-contexts__name--sub {
+    color: #c0c4cc !important;
+    font-size: 70%;
   }
 }
 </style>
