@@ -1,22 +1,33 @@
 <template>
   <div class="c-expression">
-    <div v-show="!item.useEle" class="c-expression__header" @click="item.useEle=!item.useEle">
+    <div
+      v-show="!item.useEle"
+      class="c-expression__header"
+      @click="item.useEle = !item.useEle"
+    >
       <div @click.stop>
         <el-input
-          v-show="(!item.useEle) && (item.elements.length==0)"
+          v-show="!item.useEle && item.elements.length == 0"
           v-model="item.value"
           :placeholder="placeholder"
         ></el-input>
       </div>
 
-      <div class="l-header__item" v-show="(!item.useEle) && (item.elements.length>0)">
+      <div
+        class="l-header__item"
+        v-show="!item.useEle && item.elements.length > 0"
+      >
         <span>已存在表达式，单击查看</span>
       </div>
 
       <div class="el-icon-arrow-right l-header__button"></div>
     </div>
 
-    <div v-show="item.useEle" class="c-expression__header" @click="item.useEle=!item.useEle">
+    <div
+      v-show="item.useEle"
+      class="c-expression__header"
+      @click="item.useEle = !item.useEle"
+    >
       <div class="l-header__item">
         <span v-show="item.useEle">请在下框中填入表达式</span>
       </div>

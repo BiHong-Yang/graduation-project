@@ -1,6 +1,10 @@
 <template>
-  <div v-if="place=='createFunc'" class="c-Parameter">
-    <div v-for="(item, index) in params" :key="index" class="c-Parameter__item l-Parameter__item">
+  <div v-if="place == 'createFunc'" class="c-Parameter">
+    <div
+      v-for="(item, index) in params"
+      :key="index"
+      class="c-Parameter__item l-Parameter__item"
+    >
       <!-- 删除参数 -->
 
       <el-tooltip
@@ -10,20 +14,27 @@
         placement="top-start"
         :disabled="useHint"
       >
-        <span class="l-icon--small u-align-self-fstart" @click="deleteItem(index)">
+        <span
+          class="l-icon--small u-align-self-fstart"
+          @click="deleteItem(index)"
+        >
           <i class="el-icon-close"></i>
         </span>
       </el-tooltip>
 
       <!-- 显示参数 -->
 
-      <el-select v-model="item.type" :placeholder="placeHolder(item) " @change="ChangeType(index)">
+      <el-select
+        v-model="item.type"
+        :placeholder="placeHolder(item)"
+        @change="ChangeType(index)"
+      >
         <!-- 从这里开始，弄选择更改 -->
 
         <!-- 从这里开始，弄选择更改 -->
         <el-option
           v-for="(types, id) in ParamTypes"
-          :key="types.name+id"
+          :key="types.name + id"
           :label="types.name"
           :value="types.type"
           class="c-Parameter-name"
@@ -46,7 +57,13 @@
 
     <!-- 添加参数 -->
 
-    <el-tooltip class="item" effect="dark" content="添加参数" placement="top-start" :disabled="useHint">
+    <el-tooltip
+      class="item"
+      effect="dark"
+      content="添加参数"
+      placement="top-start"
+      :disabled="useHint"
+    >
       <span class="l-icon" @click="addParam">
         <i class="el-icon-circle-plus"></i>
       </span>
@@ -54,15 +71,14 @@
   </div>
 </template>
 
+<script>
 // 参数样式：
 // {
-//     类型：
-//     内容：{
-// 
+//   类型：
+//   内容：{
+//
 //      }
 // }
-
-<script>
 import { mapGetters, mapState } from "vuex";
 export default {
   props: {
@@ -124,17 +140,17 @@ export default {
       }
       return temp;
     }
-  },
-  mounted: function() {
-    console.log("monuted:", this.params);
-  },
-  beforeUpdate: function() {
-    console.log("beforeUpdate:", this.params);
   }
+  // mounted: function() {
+  //   console.log("monuted:", this.params);
+  // },
+  // beforeUpdate: function() {
+  //   console.log("beforeUpdate:", this.params);
+  // }
 };
 </script>
 
-<style  lang="scss">
+<style lang="scss">
 .c-Parameter {
   display: flex;
   // flex-wrap: wrap;

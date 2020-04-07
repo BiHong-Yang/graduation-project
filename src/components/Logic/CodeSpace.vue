@@ -13,7 +13,7 @@
   </div>
 </template>
 
-<script >
+<script>
 // import $ from "jquery";
 import Location from "./Location";
 import { mapState } from "vuex";
@@ -44,7 +44,7 @@ export default {
 };
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 #codespace {
   top: 0px;
   left: 0px;

@@ -2,13 +2,17 @@
   <div class="c-SelectType">
     <!-- 显示参数 -->
 
-    <el-select v-model="item.type" :placeholder="placeHolder()" @change="ChangeType">
+    <el-select
+      v-model="item.type"
+      :placeholder="placeHolder()"
+      @change="ChangeType"
+    >
       <!-- 从这里开始，弄选择更改 -->
 
       <!-- 从这里开始，弄选择更改 -->
       <el-option
         v-for="(types, id) in typeFilter()"
-        :key="types.name+id"
+        :key="types.name + id"
         :label="types.name"
         :value="types.type"
         class="c-SelectType-name"
@@ -27,13 +31,7 @@
   </div>
 </template>
 
-// 参数样式：
-// {
-//     类型：
-//     内容：{
-// 
-//      }
-// }
+// 参数样式： // { // 类型： // 内容：{ // // } // }
 
 <script>
 import { mapGetters, mapState } from "vuex";

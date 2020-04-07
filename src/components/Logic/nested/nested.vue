@@ -1,4 +1,4 @@
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .c-nested {
   min-width: calc(100% - 1rem);
   margin: 0;
@@ -91,22 +91,36 @@ div {
     @end="nestedEnd"
     :move="nestedMove"
   >
-    <div class="c-nested__item-group" :key="index" v-for="(el,index) in realValue">
+    <div
+      class="c-nested__item-group"
+      :key="index"
+      v-for="(el, index) in realValue"
+    >
       <div class="c-nested__item">
         <div
           class="line-num"
-          @click="el.show=!el.show"
-          :class="{'hight-light':(el.elements.length>0)}"
+          @click="el.show = !el.show"
+          :class="{ 'hight-light': el.elements.length > 0 }"
         >
-          <el-tooltip :disabled="useHint" effect="dark" content="单击展开收起内容" placement="top">
+          <el-tooltip
+            :disabled="useHint"
+            effect="dark"
+            content="单击展开收起内容"
+            placement="top"
+          >
             <div>
               <span>{{ index + 1 }}</span>
             </div>
           </el-tooltip>
         </div>
 
-        <el-tooltip :disabled="useHint" effect="dark" content="按住拖动" placement="top">
-          <div class="name">{{el.name}}</div>
+        <el-tooltip
+          :disabled="useHint"
+          effect="dark"
+          content="按住拖动"
+          placement="top"
+        >
+          <div class="name">{{ el.name }}</div>
         </el-tooltip>
 
         <div class="c-context__container">
@@ -117,6 +131,7 @@ div {
             :item="item"
             :keyWord="key"
             :type="el.type"
+            v-show="item.show"
           ></Context>
           <Options :contexts="el.contexts"></Options>
         </div>
@@ -137,21 +152,15 @@ export default {
     },
     ChangeShow() {},
     nestedStart: function(evt) {
-      console.log("start");
-      console.log(evt.oldIndex);
-      console.log(this.list);
-      console.log(this.list[evt.oldIndex]);
       this.$store.dispatch("logic/nestedStart", this.list[evt.oldIndex]);
     },
     nestedEnd: function(evt) {
-      console.log("end");
       this.$store.dispatch("logic/nestedEnd", {
         item: this.list[evt.newIndex],
         index: evt.newIndex
       });
     },
     nestedMove: function(evt) {
-      console.log("move");
       this.$store.dispatch("logic/nestedMove", evt.relatedContext.list);
     }
   },
@@ -196,4 +205,3 @@ export default {
   }
 };
 </script>
-

@@ -2,7 +2,7 @@
   <div>
     <draggable
       class="dragArea list-group el-icon-delete"
-      :group="{ name: 'logic',put: true }"
+      :group="{ name: 'logic', put: true }"
       tag="div"
     ></draggable>
   </div>
@@ -20,7 +20,7 @@ export default {
 };
 </script>
 
-<style  lang='scss' scoped>
+<style lang="scss" scoped>
 .dragArea {
   background-color: gray;
   height: 100px;

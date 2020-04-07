@@ -30,9 +30,9 @@ export default {
   props: ["contexts"],
   methods: {
     handleCommand: function(key) {
-      console.log(this.contexts[key].show);
+      // console.log(this.contexts[key].show);
       this.contexts[key].show = !this.contexts[key].show;
-      console.log(this.contexts[key].show);
+      // console.log(this.contexts[key].show);
     }
   },
   computed: {
