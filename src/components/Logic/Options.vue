@@ -15,11 +15,12 @@
 
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item
-          v-for="(item, key) in contexts"
+          v-for="(item, key) in contents"
           :key="key"
-          v-bind:class="{'highlight':!item.show}"
+          v-bind:class="{ highlight: !item.show }"
           :command="key"
-        >{{item.name}}</el-dropdown-item>
+          >{{ item.name }}</el-dropdown-item
+        >
       </el-dropdown-menu>
     </el-dropdown>
   </div>
@@ -27,12 +28,12 @@
 
 <script>
 export default {
-  props: ["contexts"],
+  props: ["contents"],
   methods: {
-    handleCommand: function(key) {
-      // console.log(this.contexts[key].show);
-      this.contexts[key].show = !this.contexts[key].show;
-      // console.log(this.contexts[key].show);
+    handleCommand: function (key) {
+      // console.log(this.contents[key].show);
+      this.contents[key].show = !this.contents[key].show;
+      // console.log(this.contents[key].show);
     }
   },
   computed: {
@@ -43,7 +44,7 @@ export default {
 };
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .options {
   display: flex;
   align-items: center;

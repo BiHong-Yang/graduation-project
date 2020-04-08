@@ -73,7 +73,7 @@ div {
   }
 }
 
-.c-context__container {
+.c-content__container {
   display: flex;
   flex-wrap: wrap;
 }
@@ -123,17 +123,17 @@ div {
           <div class="name">{{ el.name }}</div>
         </el-tooltip>
 
-        <div class="c-context__container">
-          <Context
-            v-for="(item, key) in el.contexts"
+        <div class="c-content__container">
+          <Content
+            v-for="(item, key) in el.contents"
             :key="key"
-            :contexts="el.contexts"
+            :contents="el.contents"
             :item="item"
             :keyWord="key"
             :type="el.type"
             v-show="item.show"
-          ></Context>
-          <Options :contexts="el.contexts"></Options>
+          ></Content>
+          <Options :contents="el.contents"></Options>
         </div>
       </div>
       <nested class="c-nested__item-sub" :list="el.elements" v-show="el.show" />
@@ -151,16 +151,16 @@ export default {
       this.$emit("input", value);
     },
     ChangeShow() {},
-    nestedStart: function(evt) {
+    nestedStart: function (evt) {
       this.$store.dispatch("logic/nestedStart", this.list[evt.oldIndex]);
     },
-    nestedEnd: function(evt) {
+    nestedEnd: function (evt) {
       this.$store.dispatch("logic/nestedEnd", {
         item: this.list[evt.newIndex],
         index: evt.newIndex
       });
     },
-    nestedMove: function(evt) {
+    nestedMove: function (evt) {
       this.$store.dispatch("logic/nestedMove", evt.relatedContext.list);
     }
   },

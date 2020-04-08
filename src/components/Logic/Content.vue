@@ -1,16 +1,16 @@
 <template>
   <!-- 值设定部分 -->
-  <div class="c-contexts">
+  <div class="c-contents">
     <!-- uint类型 -->
     <div
-      class="l-contexts-item l-contexts__name"
-      :class="{ 'l-contexts__name--sub': mode == 'soloMode' }"
+      class="l-contents-item l-contents__name"
+      :class="{ 'l-contents__name--sub': mode == 'soloMode' }"
     >
       <span>{{ item.name }}</span>
     </div>
     <template v-if="type == 'uint'">
       <!-- 类别，即大小上限 -->
-      <div v-if="keyWord == 'categories'" class="l-contexts-item">
+      <div v-if="keyWord == 'categories'" class="l-contents-item">
         <el-select v-model="item.value" placeholder="最大2的 256 次方">
           <el-option
             v-for="id in 32"
@@ -22,12 +22,12 @@
       </div>
 
       <!-- 初值 -->
-      <div v-else-if="keyWord == 'value'" class="l-contexts-item">
+      <div v-else-if="keyWord == 'value'" class="l-contents-item">
         <el-input v-model="item.value" placeholder="请输入一个数字"></el-input>
       </div>
 
       <!-- 名字 -->
-      <div v-else-if="keyWord == 'name'" class="l-contexts-item">
+      <div v-else-if="keyWord == 'name'" class="l-contents-item">
         <el-input
           v-model="item.value"
           placeholder="请输入一串英文字符"
@@ -38,7 +38,7 @@
     <!-- int类型 -->
     <template v-else-if="type == 'int'">
       <!-- 类别，即大小上限 -->
-      <div v-if="keyWord == 'categories'" class="l-contexts-item">
+      <div v-if="keyWord == 'categories'" class="l-contents-item">
         <el-select v-model="item.value" placeholder="最大2的 ±255 次方">
           <el-option
             v-for="id in 32"
@@ -50,12 +50,12 @@
       </div>
 
       <!-- 初值 -->
-      <div v-else-if="keyWord == 'value'" class="l-contexts-item">
+      <div v-else-if="keyWord == 'value'" class="l-contents-item">
         <el-input v-model="item.value" placeholder="请输入一个数字"></el-input>
       </div>
 
       <!-- 名字 -->
-      <div v-else-if="keyWord == 'name'" class="l-contexts-item">
+      <div v-else-if="keyWord == 'name'" class="l-contents-item">
         <el-input
           v-model="item.value"
           placeholder="请输入一串英文字符"
@@ -66,7 +66,7 @@
     <!-- bool类型 -->
     <template v-else-if="type == 'bool'">
       <!-- 初值 -->
-      <div v-if="keyWord == 'value'" class="l-contexts-item">
+      <div v-if="keyWord == 'value'" class="l-contents-item">
         <el-radio-group v-model="item.value" size="medium">
           <el-radio-button :label="true"></el-radio-button>
           <el-radio-button :label="false"></el-radio-button>
@@ -74,7 +74,7 @@
       </div>
 
       <!-- 名字 -->
-      <div v-else-if="keyWord == 'name'" class="l-contexts-item">
+      <div v-else-if="keyWord == 'name'" class="l-contents-item">
         <el-input
           v-model="item.value"
           placeholder="请输入一串英文字符"
@@ -90,7 +90,7 @@
         :placeholder="'请输入一个地址'"
       ></Expression>
 
-      <div v-else-if="keyWord == 'name'" class="l-contexts-item">
+      <div v-else-if="keyWord == 'name'" class="l-contents-item">
         <el-input
           v-model="item.value"
           placeholder="请输入一串英文字符"
@@ -101,12 +101,12 @@
     <!-- 字符数组类型，包括定长变长 -->
     <template v-else-if="type == 'byteArray'">
       <!-- 初值 -->
-      <div v-if="keyWord == 'value'" class="l-contexts-item">
+      <div v-if="keyWord == 'value'" class="l-contents-item">
         <el-input v-model="item.value" placeholder="请输入一串字符"></el-input>
       </div>
 
       <!-- 类型，即长度 -->
-      <div v-else-if="keyWord == 'categories'" class="l-contexts-item">
+      <div v-else-if="keyWord == 'categories'" class="l-contents-item">
         <el-select v-model="item.value" placeholder="最长 32 字节的字节数组">
           <el-option :label="`变长字节数组`" :value="`bytes`"></el-option>
 
@@ -120,7 +120,7 @@
       </div>
 
       <!-- 名字 -->
-      <div v-else-if="keyWord == 'name'" class="l-contexts-item">
+      <div v-else-if="keyWord == 'name'" class="l-contents-item">
         <el-input
           v-model="item.value"
           placeholder="请输入一串英文字符"
@@ -132,19 +132,44 @@
 
     <template v-else-if="type == 'mapping'">
       <!-- 初值 -->
-      <div v-if="keyWord == 'from'" class="l-contexts-item">
+      <div v-if="keyWord == 'from'" class="l-contents-item">
         <SelectType
           :item="item.value"
           :typeExcept="{ mapping: 'mapping' }"
         ></SelectType>
       </div>
 
-      <div v-else-if="keyWord == 'to'" class="l-contexts-item">
+      <div v-else-if="keyWord == 'to'" class="l-contents-item">
         <SelectType :item="item.value"></SelectType>
       </div>
 
       <!-- 名字 -->
-      <div v-else-if="keyWord == 'name'" class="l-contexts-item">
+      <div v-else-if="keyWord == 'name'" class="l-contents-item">
+        <el-input
+          v-model="item.value"
+          placeholder="请输入一串英文字符"
+        ></el-input>
+      </div>
+    </template>
+
+    <template v-else-if="type == 'struct'">
+      <!-- 名字 -->
+      <div v-if="keyWord == 'name'" class="l-contents-item">
+        <el-input
+          v-model="item.value"
+          placeholder="请输入一串英文字符"
+        ></el-input>
+      </div>
+    </template>
+
+    <template v-else-if="type == 'array'">
+      <!-- 初值 -->
+      <div v-if="keyWord == 'type'" class="l-contents-item">
+        <SelectType :item="item.value"></SelectType>
+      </div>
+
+      <!-- 名字 -->
+      <div v-else-if="keyWord == 'name'" class="l-contents-item">
         <el-input
           v-model="item.value"
           placeholder="请输入一串英文字符"
@@ -157,22 +182,22 @@
     <!-- 创建函数 -->
     <template v-else-if="type == 'function'">
       <!-- 名字 -->
-      <div v-if="keyWord == 'name'" class="l-contexts-item">
+      <div v-if="keyWord == 'name'" class="l-contents-item">
         <el-input
           v-model="item.value"
           placeholder="请输入一串英文字符"
         ></el-input>
       </div>
 
-      <div v-else-if="keyWord == 'param'" class="l-contexts-item">
+      <div v-else-if="keyWord == 'param'" class="l-contents-item">
         <Parameter :params="item.value"></Parameter>
       </div>
 
-      <div v-else-if="keyWord == 'returns'" class="l-contexts-item">
+      <div v-else-if="keyWord == 'returns'" class="l-contents-item">
         <Parameter :params="item.value"></Parameter>
       </div>
 
-      <div v-else-if="keyWord == 'type'" class="l-contexts-item">
+      <div v-else-if="keyWord == 'type'" class="l-contents-item">
         <el-select v-model="item.value" placeholder="内部函数">
           <el-option :label="'内部函数'" :value="`internal`">
             <span class="l-option-label">内部函数</span>
@@ -196,7 +221,7 @@
         </el-select>
       </div>
 
-      <div v-else-if="keyWord == 'behavior'" class="l-contexts-item">
+      <div v-else-if="keyWord == 'behavior'" class="l-contents-item">
         <el-select v-model="item.value" placeholder="默认模式">
           <el-option :label="'默认模式'" :value="``">
             <span class="l-option-label">默认模式</span>
@@ -228,25 +253,66 @@
 
     <template v-else-if="type == 'modifier'">
       <div>
-        <div v-if="keyWord == 'name'" class="l-contexts-item">
+        <div v-if="keyWord == 'name'" class="l-contents-item">
           <el-input
             v-model="item.value"
             placeholder="请输入一串英文字符"
           ></el-input>
         </div>
 
-        <div v-else-if="keyWord == 'param'" class="l-contexts-item">
+        <div v-else-if="keyWord == 'param'" class="l-contents-item">
           <Parameter :params="item.value"></Parameter>
         </div>
 
-        <div v-else-if="keyWord == 'returns'" class="l-contexts-item">
+        <div v-else-if="keyWord == 'returns'" class="l-contents-item">
           <Parameter :params="item.value"></Parameter>
         </div>
       </div>
     </template>
 
-    <template>
-      <div></div>
+    <template v-else-if="type == 'contract'">
+      <div>
+        <div v-if="keyWord == 'name'" class="l-contents-item">
+          <el-input
+            v-model="item.value"
+            placeholder="请输入一串英文字符"
+          ></el-input>
+        </div>
+      </div>
+    </template>
+
+    <template v-else-if="type == 'constructor'">
+      <!-- 名字 -->
+
+      <div v-if="keyWord == 'param'" class="l-contents-item">
+        <Parameter :params="item.value"></Parameter>
+      </div>
+
+      <div v-else-if="keyWord == 'type'" class="l-contents-item">
+        <el-select v-model="item.value" placeholder="公共函数">
+          <el-option :label="'内部函数'" :value="`internal`">
+            <span class="l-option-label">内部函数</span>
+            <Hint content="只可以该合约或该合约的子合约内部调用"> </Hint>
+          </el-option>
+          <el-option :label="`公共函数`" :value="`public`">
+            <span class="l-option-label">公共函数</span>
+            <Hint content="任何用户或者合约都能调用和访问"> </Hint>
+          </el-option>
+        </el-select>
+      </div>
+
+      <div v-else-if="keyWord == 'behavior'" class="l-contents-item">
+        <el-select v-model="item.value" placeholder="默认模式">
+          <el-option :label="'默认模式'" :value="``">
+            <span class="l-option-label">默认模式</span>
+            <Hint content="不可支付，但可读取/修改合约存储"> </Hint>
+          </el-option>
+          <el-option :label="`可支付`" :value="`payable`">
+            <span class="l-option-label">可支付</span>
+            <Hint content="可支付、读取/修改合约存储"> </Hint>
+          </el-option>
+        </el-select>
+      </div>
     </template>
   </div>
 </template>
@@ -259,7 +325,7 @@ import Parameter from "./Parameter";
 import Hint from "./Hint";
 export default {
   props: {
-    contexts: {
+    contents: {
       type: Object,
       required: false
     },
@@ -290,7 +356,7 @@ export default {
   },
   computed: {
     element() {
-      var temp = Object.assign({}, this.contexts);
+      var temp = Object.assign({}, this.contents);
       for (let x in temp) {
         if (temp[x].show == false) {
           delete temp[x];
@@ -310,7 +376,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.c-contexts {
+.c-contents {
   flex: 0 0 auto;
   font-family: "微软雅黑";
   font-weight: 900;
@@ -319,13 +385,13 @@ export default {
   display: flex;
   align-items: center;
   padding: 2px 0;
-  .l-contexts-item {
+  .l-contents-item {
     padding-right: 0.3rem;
   }
-  .l-contexts__name {
+  .l-contents__name {
     word-wrap: none;
   }
-  .l-contexts__name--sub {
+  .l-contents__name--sub {
     color: #c0c4cc !important;
     font-size: 70%;
   }

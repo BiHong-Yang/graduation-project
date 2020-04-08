@@ -41,18 +41,18 @@
         ></el-option>
       </el-select>
 
-      <Context
-        v-for="(it, key) in itemFilter(item.contexts)"
+      <Content
+        v-for="(it, key) in itemFilter(item.contents)"
         :key="key"
-        :contexts="itemFilter(item.contexts)"
+        :contents="itemFilter(item.contents)"
         :item="it"
         :keyWord="key"
         :type="item.type"
         :mode="'soloMode'"
-        class="l-item__contexts"
-      ></Context>
+        class="l-item__contents"
+      ></Content>
 
-      <!-- <Context :contexts="item.contexts" :type="item.type" :mode="'soloMode'"></Context> -->
+      <!-- <Content :contents="item.contents" :type="item.type" :mode="'soloMode'"></Content> -->
     </div>
 
     <!-- 添加参数 -->
@@ -107,15 +107,15 @@ export default {
     }
   },
   methods: {
-    deleteItem: function(index) {
+    deleteItem: function (index) {
       this.params.splice(index, 1);
     },
-    addParam: function() {
+    addParam: function () {
       this.params.push(
         JSON.parse(JSON.stringify(this.$store.state.logic.NoneType))
       );
     },
-    ChangeType: function(index) {
+    ChangeType: function (index) {
       console.log("in Change function:", index);
       this.params.splice(
         index,
@@ -125,17 +125,17 @@ export default {
         )
       );
     },
-    placeHolder: function(item) {
+    placeHolder: function (item) {
       return JSON.parse(
         JSON.stringify(this.ParamTypes[this.RevMap[item.type]].name)
       );
     },
-    itemFilter: function(contexts) {
+    itemFilter: function (contents) {
       let temp = {};
-      for (let x in contexts) {
+      for (let x in contents) {
         console.log(x);
-        if (contexts[x].show == true) {
-          temp[x] = contexts[x];
+        if (contents[x].show == true) {
+          temp[x] = contents[x];
         }
       }
       return temp;

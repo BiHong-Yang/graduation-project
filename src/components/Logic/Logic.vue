@@ -5,10 +5,10 @@
         <el-menu-item
           v-for="(item, id) in logicMenu"
           :key="id"
-          @click="showwitch=id"
+          @click="showwitch = id"
           :index="id.toString()"
         >
-          <span>{{item.name}}</span>
+          <span>{{ item.name }}</span>
         </el-menu-item>
       </el-menu>
     </el-aside>
@@ -34,7 +34,7 @@
     </el-aside>-->
 
     <el-aside width="60%">
-      <div v-for="(item, id) in logicMenu" :key="id" v-show="showwitch==id">
+      <div v-for="(item, id) in logicMenu" :key="id" v-show="showwitch == id">
         <draggable
           class="dragArea list-group"
           :list="item.elements"
@@ -48,7 +48,8 @@
             class="list-group-item"
             v-for="element in item.elements"
             :key="element.type"
-          >{{ element.name }}</el-menu-item>
+            >{{ element.name }}</el-menu-item
+          >
         </draggable>
       </div>
     </el-aside>
@@ -103,13 +104,13 @@ export default {
     };
   },
   methods: {
-    log: function(evt) {
+    log: function (evt) {
       window.console.log(evt);
     },
-    CloneItem: function(item) {
+    CloneItem: function (item) {
       this.$store.dispatch("logic/incGlobalId", 1);
       let temp = Object.assign({}, item);
-      for (let x in temp.context) {
+      for (let x in temp.content) {
         delete x.name;
       }
       console.log(temp);
@@ -125,7 +126,7 @@ export default {
 };
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 span {
   user-select: none;
 }

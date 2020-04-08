@@ -16,7 +16,7 @@ const state = {
     type: "none",
     name: "请选择类型",
     elements: [],
-    contexts: {}
+    contents: {}
   },
 
   // ParamTypes 的反向表，不用每次find
@@ -27,7 +27,9 @@ const state = {
     bool: 3,
     address: 4,
     byteArray: 5,
-    mapping: 6
+    mapping: 6,
+    struct: 7,
+    array: 8
   },
 
   // 测试用数据
@@ -36,7 +38,7 @@ const state = {
       type: "function",
       name: "创建函数",
       elements: [],
-      contexts: {
+      contents: {
         name: {
           name: "名字",
           value: "",
@@ -60,7 +62,7 @@ const state = {
       type: "function",
       name: "创建函数",
       elements: [],
-      contexts: {
+      contents: {
         name: {
           name: "名字",
           value: "",
@@ -84,7 +86,7 @@ const state = {
       type: "function",
       name: "创建函数",
       elements: [],
-      contexts: {
+      contents: {
         name: {
           name: "名字",
           value: "",
@@ -149,12 +151,12 @@ const state = {
           name: "自然数",
           elements: [],
 
-          contexts: {
+          contents: {
             name: {
               name: "名字",
               value: "",
               show: true,
-              use: true
+              use: false
             },
 
             value: {
@@ -177,12 +179,12 @@ const state = {
           name: "整数",
           elements: [],
 
-          contexts: {
+          contents: {
             name: {
               name: "名字",
               value: "",
               show: true,
-              use: true
+              use: false
             },
 
             value: {
@@ -205,12 +207,12 @@ const state = {
           name: "真假值",
           elements: [],
 
-          contexts: {
+          contents: {
             name: {
               name: "名字",
               value: "",
               show: true,
-              use: true
+              use: false
             },
             value: {
               name: "初值",
@@ -226,12 +228,12 @@ const state = {
           name: "地址",
           elements: [],
 
-          contexts: {
+          contents: {
             name: {
               name: "名字",
               value: "",
               show: true,
-              use: true
+              use: false
             },
             value: {
               name: "初值",
@@ -249,12 +251,12 @@ const state = {
           name: "字符数组",
           elements: [],
 
-          contexts: {
+          contents: {
             name: {
               name: "名字",
               value: "",
               show: true,
-              use: true
+              use: false
             },
             value: {
               name: "初值",
@@ -277,12 +279,12 @@ const state = {
           name: "映射",
           elements: [],
 
-          contexts: {
+          contents: {
             name: {
               name: "名字",
               value: "",
               show: true,
-              use: true
+              use: false
             },
             from: {
               name: "映射自",
@@ -290,7 +292,7 @@ const state = {
                 type: "none",
                 name: "请选择类型",
                 elements: [],
-                contexts: {}
+                contents: {}
               },
               elements: [],
               show: true,
@@ -302,13 +304,58 @@ const state = {
                 type: "none",
                 name: "请选择类型",
                 elements: [],
-                contexts: {}
+                contents: {}
               },
               elements: [],
               show: true,
               use: true
             }
           }
+        },
+
+        {
+          type: "struct",
+          name: "结构体",
+          elements: [],
+
+          contents: {
+            name: {
+              name: "名字",
+              value: "",
+              show: true,
+              use: true
+            }
+          },
+          show: true
+        },
+
+        {
+          type: "array",
+          name: "数组",
+          elements: [],
+
+          contents: {
+            name: {
+              name: "名字",
+              value: "",
+              show: true,
+              use: false
+            },
+            type: {
+              name: "基本元素",
+              value: {
+                type: "none",
+                name: "请选择类型",
+                elements: [],
+                contents: {}
+              },
+              elements: [],
+              show: true,
+              use: true
+            }
+          },
+
+          show: true
         }
       ]
     },
@@ -324,7 +371,7 @@ const state = {
           name: "创建函数",
           elements: [],
 
-          contexts: {
+          contents: {
             name: {
               name: "名字",
               value: "",
@@ -381,7 +428,7 @@ const state = {
             }
           ],
 
-          contexts: {
+          contents: {
             name: {
               name: "名字",
               value: "",
@@ -403,8 +450,58 @@ const state = {
           },
 
           show: true
+        },
+
+        // 创建合约
+        {
+          type: "contract",
+          name: "创建合约",
+          // 函数位置
+          elements: [
+            {
+              type: "constructor",
+              name: "构造函数",
+              elements: [],
+              contents: {
+                param: {
+                  name: "参数",
+                  value: [],
+                  show: false
+                },
+                // 外部可见性
+                type: {
+                  name: "函数类型",
+                  value: "public",
+                  show: false
+                },
+
+                behavior: {
+                  name: "调用行为",
+                  value: "",
+                  show: false
+                }
+              },
+              show: true
+            }
+          ],
+
+          contents: {
+            name: {
+              name: "名字",
+              value: "",
+              show: true
+            }
+          },
+
+          show: true
         }
       ]
+    },
+
+    {
+      name: "运算",
+      group: { name: "logic", pull: "clone", put: false, revertClone: true },
+      elements: [{}]
     }
   ]
 };
@@ -440,9 +537,9 @@ const mutations = {
       item.show = false;
     }
 
-    for (let x in item.contexts) {
-      state.ShowsOnMove.push(item.contexts[x].show);
-      item.contexts[x].show = false;
+    for (let x in item.contents) {
+      state.ShowsOnMove.push(item.contents[x].show);
+      item.contents[x].show = false;
     }
   },
 
@@ -457,15 +554,15 @@ const mutations = {
       if (item.show != undefined) {
         item.show = state.ShowsOnMove.shift();
       }
-      for (let x in item.contexts) {
-        item.contexts[x].show = state.ShowsOnMove.shift();
+      for (let x in item.contents) {
+        item.contents[x].show = state.ShowsOnMove.shift();
       }
     } else {
       if (state.MovedList[index].show != undefined) {
         state.MovedList[index].show = state.ShowsOnMove.shift();
       }
-      for (let x in state.MovedList[index].contexts) {
-        state.MovedList[index].contexts[x].show = state.ShowsOnMove.shift();
+      for (let x in state.MovedList[index].contents) {
+        state.MovedList[index].contents[x].show = state.ShowsOnMove.shift();
       }
       state.MovedList = [];
     }
@@ -480,8 +577,8 @@ const mutations = {
 
 const actions = {
   // 副代码区开关
-  ChangeToggle(context, value) {
-    context.commit("ChangeToggle", value);
+  ChangeToggle(content, value) {
+    content.commit("ChangeToggle", value);
   },
 
   // 更新代码

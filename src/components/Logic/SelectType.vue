@@ -19,15 +19,15 @@
       ></el-option>
     </el-select>
 
-    <Context
-      v-for="(it, key) in itemFilter(item.contexts)"
+    <Content
+      v-for="(it, key) in itemFilter(item.contents)"
       :key="key"
-      :contexts="itemFilter(item.contexts)"
+      :contents="itemFilter(item.contents)"
       :item="it"
       :keyWord="key"
       :type="item.type"
       :mode="'soloMode'"
-    ></Context>
+    ></Content>
   </div>
 </template>
 
@@ -45,7 +45,7 @@ export default {
     typeExcept: {
       required: false,
       type: Object,
-      default: function() {
+      default: function () {
         return {};
       }
     }
@@ -59,7 +59,7 @@ export default {
     })
   },
   methods: {
-    ChangeType: function() {
+    ChangeType: function () {
       console.log("in Change function:");
       console.log(this.item.type);
       console.log(this.RevMap[this.item.type]);
@@ -71,29 +71,29 @@ export default {
       this.item.elements = JSON.parse(
         JSON.stringify(this.ParamTypes[this.RevMap[this.item.type]])
       ).elements;
-      console.log("contexts");
-      this.item.contexts = JSON.parse(
+      console.log("contents");
+      this.item.contents = JSON.parse(
         JSON.stringify(this.ParamTypes[this.RevMap[this.item.type]])
-      ).contexts;
+      ).contents;
     },
-    placeHolder: function() {
+    placeHolder: function () {
       return JSON.parse(
         JSON.stringify(this.ParamTypes[this.RevMap[this.item.type]].name)
       );
     },
-    itemFilter: function(contexts) {
+    itemFilter: function (contents) {
       let temp = {};
-      for (let x in contexts) {
+      for (let x in contents) {
         console.log(x);
-        if (contexts[x].use == true) {
-          temp[x] = contexts[x];
+        if (contents[x].use == true) {
+          temp[x] = contents[x];
         }
       }
       return temp;
     },
 
     // 筛选一下到底可以选那些类别
-    typeFilter: function() {
+    typeFilter: function () {
       let temp = {};
       console.log(this.ParamTypes);
       console.log("except type: ", this.typeExcept);
