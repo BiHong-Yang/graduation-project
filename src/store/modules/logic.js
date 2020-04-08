@@ -164,7 +164,7 @@ const state = {
             },
             categories: {
               name: "上限",
-              value: "uint",
+              value: "uint256",
               show: false,
               use: true
             }
@@ -192,7 +192,7 @@ const state = {
             },
             categories: {
               name: "上限",
-              value: "int",
+              value: "int256",
               show: false,
               use: true
             }
@@ -349,6 +349,19 @@ const state = {
               name: "返回值",
               value: [],
               show: true
+            },
+
+            // 外部可见性 internal 还是 external
+            type: {
+              name: "函数类型",
+              value: "internal",
+              show: false
+            },
+
+            behavior: {
+              name: "调用行为",
+              value: "",
+              show: false
             }
           },
 

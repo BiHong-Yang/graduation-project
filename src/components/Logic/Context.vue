@@ -171,6 +171,57 @@
       <div v-else-if="keyWord == 'returns'" class="l-contexts-item">
         <Parameter :params="item.value"></Parameter>
       </div>
+
+      <div v-else-if="keyWord == 'type'" class="l-contexts-item">
+        <el-select v-model="item.value" placeholder="内部函数">
+          <el-option :label="'内部函数'" :value="`internal`">
+            <span class="l-option-label">内部函数</span>
+            <Hint content="只可以该合约或该合约的子合约内部调用"> </Hint>
+          </el-option>
+          <el-option :label="`外部函数`" :value="`external`">
+            <span class="l-option-label">外部函数</span>
+            <Hint content="用于在该合约外调用"> </Hint>
+          </el-option>
+          <el-option :label="`公共函数`" :value="`public`">
+            <span class="l-option-label">公共函数</span>
+            <Hint content="任何用户或者合约都能调用和访问"> </Hint>
+          </el-option>
+          <el-option :label="`私有函数`" :value="`privite`">
+            <span class="l-option-label">私有函数</span>
+            <Hint
+              content="只能在其所在的合约中调用和访问，即使是其子合约也没有权限访问"
+            >
+            </Hint>
+          </el-option>
+        </el-select>
+      </div>
+
+      <div v-else-if="keyWord == 'behavior'" class="l-contexts-item">
+        <el-select v-model="item.value" placeholder="默认模式">
+          <el-option :label="'默认模式'" :value="``">
+            <span class="l-option-label">默认模式</span>
+            <Hint content="不可支付，但可读取/修改合约存储"> </Hint>
+          </el-option>
+          <el-option :label="`可支付`" :value="`payable`">
+            <span class="l-option-label">可支付</span>
+            <Hint content="可支付、读取/修改合约存储"> </Hint>
+          </el-option>
+          <el-option :label="`仅查看`" :value="`view`">
+            <span class="l-option-label">仅查看</span>
+            <Hint
+              content="不可支付、修改合约存储，可读取合约存储（调用开销小于默认模式）"
+            >
+            </Hint>
+          </el-option>
+          <el-option :label="`纯调用`" :value="`pure`">
+            <span class="l-option-label">纯调用</span>
+            <Hint
+              content="不可支付、不可读取/修改合约存储（调用开销小于查看模式）"
+            >
+            </Hint>
+          </el-option>
+        </el-select>
+      </div>
     </template>
 
     <!-- 创建装饰器 -->
@@ -205,6 +256,7 @@
 import SelectType from "./SelectType";
 import Expression from "./Expression";
 import Parameter from "./Parameter";
+import Hint from "./Hint";
 export default {
   props: {
     contexts: {
@@ -231,10 +283,10 @@ export default {
     }
   },
   methods: {
-    checkShow: function(el) {
+    checkShow: function (el) {
       return el.show;
     },
-    doNothing: function() {}
+    doNothing: function () {}
   },
   computed: {
     element() {
@@ -251,7 +303,8 @@ export default {
     // nested,
     Expression,
     Parameter,
-    SelectType
+    SelectType,
+    Hint
   }
 };
 </script>
@@ -276,5 +329,15 @@ export default {
     color: #c0c4cc !important;
     font-size: 70%;
   }
+}
+.el-icon-question {
+  font-size: 120%;
+}
+.l-option-label {
+  flex: 1 1 auto;
+}
+.el-select-dropdown__item {
+  display: flex;
+  align-items: center;
 }
 </style>
