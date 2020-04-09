@@ -16,7 +16,7 @@ const state = {
     type: "none",
     name: "请选择类型",
     elements: [],
-    contents: {}
+    contents: {},
   },
 
   // ParamTypes 的反向表，不用每次find
@@ -29,7 +29,7 @@ const state = {
     byteArray: 5,
     mapping: 6,
     struct: 7,
-    array: 8
+    array: 8,
   },
 
   // 测试用数据
@@ -42,21 +42,21 @@ const state = {
         name: {
           name: "名字",
           value: "",
-          show: true
+          show: true,
         },
         param: {
           name: "参数",
           value: [],
-          show: true
+          show: true,
         },
         returns: {
           name: "返回值",
           value: [],
-          show: true
-        }
+          show: true,
+        },
       },
       show: true,
-      id: 2
+      id: 2,
     },
     {
       type: "function",
@@ -66,21 +66,21 @@ const state = {
         name: {
           name: "名字",
           value: "",
-          show: true
+          show: true,
         },
         param: {
           name: "参数",
           value: [],
-          show: true
+          show: true,
         },
         returns: {
           name: "返回值",
           value: [],
-          show: true
-        }
+          show: true,
+        },
       },
       show: true,
-      id: 3
+      id: 3,
     },
     {
       type: "function",
@@ -90,22 +90,22 @@ const state = {
         name: {
           name: "名字",
           value: "",
-          show: true
+          show: true,
         },
         param: {
           name: "参数",
           value: [],
-          show: true
+          show: true,
         },
         returns: {
           name: "返回值",
           value: [],
-          show: true
-        }
+          show: true,
+        },
       },
       show: true,
-      id: 4
-    }
+      id: 4,
+    },
 
     // {
     //     id: 1,
@@ -141,7 +141,13 @@ const state = {
   // 待转换的逻辑
   transformer: [
     // 创建变量
+    // 创建变量
+    // 创建变量
+    // 创建变量
+    // 创建变量
+    // 创建变量
     {
+      type: "variable",
       name: "创建变量",
       group: { name: "logic", pull: "clone", put: false, revertClone: true },
       elements: [
@@ -156,21 +162,21 @@ const state = {
               name: "名字",
               value: "",
               show: true,
-              use: false
+              use: false,
             },
 
             value: {
               name: "初值",
               value: null,
-              show: true
+              show: true,
             },
             categories: {
               name: "上限",
               value: "uint256",
               show: false,
-              use: true
-            }
-          }
+              use: true,
+            },
+          },
         },
 
         // int类型
@@ -184,21 +190,21 @@ const state = {
               name: "名字",
               value: "",
               show: true,
-              use: false
+              use: false,
             },
 
             value: {
               name: "初值",
               value: null,
-              show: true
+              show: true,
             },
             categories: {
               name: "上限",
               value: "int256",
               show: false,
-              use: true
-            }
-          }
+              use: true,
+            },
+          },
         },
 
         // bool类型
@@ -212,14 +218,14 @@ const state = {
               name: "名字",
               value: "",
               show: true,
-              use: false
+              use: false,
             },
             value: {
               name: "初值",
               value: false,
-              show: true
-            }
-          }
+              show: true,
+            },
+          },
         },
 
         // 地址类型
@@ -233,16 +239,16 @@ const state = {
               name: "名字",
               value: "",
               show: true,
-              use: false
+              use: false,
             },
             value: {
               name: "初值",
               value: 0x0,
               elements: [],
               useEle: false,
-              show: true
-            }
-          }
+              show: true,
+            },
+          },
         },
 
         // 字符数组类型，包括定长变长
@@ -256,20 +262,20 @@ const state = {
               name: "名字",
               value: "",
               show: true,
-              use: false
+              use: false,
             },
             value: {
               name: "初值",
               value: "",
-              show: true
+              show: true,
             },
             categories: {
               name: "上限",
               value: "byte32",
               show: false,
-              use: true
-            }
-          }
+              use: true,
+            },
+          },
         },
 
         // 映射类型
@@ -284,7 +290,7 @@ const state = {
               name: "名字",
               value: "",
               show: true,
-              use: false
+              use: false,
             },
             from: {
               name: "映射自",
@@ -292,11 +298,11 @@ const state = {
                 type: "none",
                 name: "请选择类型",
                 elements: [],
-                contents: {}
+                contents: {},
               },
               elements: [],
               show: true,
-              use: true
+              use: true,
             },
             to: {
               name: "映射到",
@@ -304,13 +310,13 @@ const state = {
                 type: "none",
                 name: "请选择类型",
                 elements: [],
-                contents: {}
+                contents: {},
               },
               elements: [],
               show: true,
-              use: true
-            }
-          }
+              use: true,
+            },
+          },
         },
 
         {
@@ -323,10 +329,10 @@ const state = {
               name: "名字",
               value: "",
               show: true,
-              use: true
-            }
+              use: true,
+            },
           },
-          show: true
+          show: true,
         },
 
         {
@@ -339,7 +345,7 @@ const state = {
               name: "名字",
               value: "",
               show: true,
-              use: false
+              use: false,
             },
             type: {
               name: "基本元素",
@@ -347,21 +353,25 @@ const state = {
                 type: "none",
                 name: "请选择类型",
                 elements: [],
-                contents: {}
+                contents: {},
               },
               elements: [],
               show: true,
-              use: true
-            }
+              use: true,
+            },
           },
-
-          show: true
-        }
-      ]
+        },
+      ],
     },
 
     // 创建函数与合约相关的内容
+    // 创建函数与合约相关的内容
+    // 创建函数与合约相关的内容
+    // 创建函数与合约相关的内容
+    // 创建函数与合约相关的内容
+    // 创建函数与合约相关的内容
     {
+      type: "container",
       name: "创建函数与合约",
       group: { name: "logic", pull: "clone", put: false, revertClone: true },
       elements: [
@@ -375,13 +385,13 @@ const state = {
             name: {
               name: "名字",
               value: "",
-              show: true
+              show: true,
             },
 
             param: {
               name: "参数",
               value: [],
-              show: true
+              show: true,
             },
 
             // 参数样式：
@@ -395,24 +405,24 @@ const state = {
             returns: {
               name: "返回值",
               value: [],
-              show: true
+              show: true,
             },
 
             // 外部可见性 internal 还是 external
             type: {
               name: "函数类型",
               value: "internal",
-              show: false
+              show: false,
             },
 
             behavior: {
               name: "调用行为",
               value: "",
-              show: false
-            }
+              show: false,
+            },
           },
 
-          show: true
+          show: true,
         },
 
         // 创建装饰器
@@ -424,22 +434,22 @@ const state = {
             {
               type: "modifier__inner",
               name: "函数位置",
-              elements: []
-            }
+              elements: [],
+            },
           ],
 
           contents: {
             name: {
               name: "名字",
               value: "",
-              show: true
+              show: true,
             },
 
             param: {
               name: "参数",
               value: [],
-              show: true
-            }
+              show: true,
+            },
 
             // 参数样式：
             // {
@@ -449,7 +459,7 @@ const state = {
             // }
           },
 
-          show: true
+          show: true,
         },
 
         // 创建合约
@@ -466,51 +476,480 @@ const state = {
                 param: {
                   name: "参数",
                   value: [],
-                  show: false
+                  show: false,
                 },
                 // 外部可见性
                 type: {
                   name: "函数类型",
                   value: "public",
-                  show: false
+                  show: false,
                 },
 
                 behavior: {
                   name: "调用行为",
                   value: "",
-                  show: false
-                }
+                  show: false,
+                },
               },
-              show: true
-            }
+              show: true,
+            },
           ],
 
           contents: {
             name: {
               name: "名字",
               value: "",
-              show: true
-            }
+              show: true,
+            },
           },
 
-          show: true
-        }
-      ]
+          show: true,
+        },
+      ],
     },
 
+    // 运算操作
+    // 运算操作
+    // 运算操作
+    // 运算操作
+    // 运算操作
+    // 运算操作
+
     {
+      type: "operation",
       name: "运算",
       group: { name: "logic", pull: "clone", put: false, revertClone: true },
-      elements: [{}]
-    }
-  ]
+      elements: [
+        // 加法
+        {
+          type: " + ",
+          name: "加法 + ",
+          elements: [],
+
+          contents: {
+            firstOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            lastOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+          },
+        },
+        // 减法
+        {
+          type: " - ",
+          name: "减法 - ",
+          elements: [],
+
+          contents: {
+            firstOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            lastOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+          },
+        },
+        // 乘法
+        {
+          type: " * ",
+          name: "乘法 * ",
+          elements: [],
+
+          contents: {
+            firstOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            lastOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+          },
+        },
+        // 除法
+        {
+          type: " / ",
+          name: "除法 / ",
+          elements: [],
+
+          contents: {
+            firstOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            lastOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+          },
+        },
+        // 取余数
+        {
+          type: " % ",
+          name: "取余数 % ",
+          elements: [],
+
+          contents: {
+            firstOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            lastOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+          },
+        },
+        // 幂
+        {
+          type: " ** ",
+          name: "幂 ** ",
+          elements: [],
+
+          contents: {
+            firstOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            lastOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+          },
+        },
+        // 取负
+        {
+          type: " -",
+          name: "取负 - ",
+          elements: [],
+
+          contents: {
+            lastOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+          },
+        },
+
+        // 大于
+        {
+          type: " > ",
+          name: "大于 > ",
+          elements: [],
+
+          contents: {
+            firstOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            lastOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+          },
+        },
+        // 小于
+        {
+          type: " < ",
+          name: "小于 < ",
+          elements: [],
+
+          contents: {
+            firstOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            lastOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+          },
+        },
+        // 大于等于
+        {
+          type: " >= ",
+          name: "大于等于 >= ",
+          elements: [],
+
+          contents: {
+            firstOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            lastOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+          },
+        },
+        // 小于等于
+        {
+          type: " <= ",
+          name: "小于等于 <= ",
+          elements: [],
+
+          contents: {
+            firstOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            lastOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+          },
+        },
+        // 相等
+        {
+          type: " == ",
+          name: "相等 == ",
+          elements: [],
+
+          contents: {
+            firstOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            lastOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+          },
+        },
+        // 不相等
+        {
+          type: " != ",
+          name: "不相等 != ",
+          elements: [],
+
+          contents: {
+            firstOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            lastOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+          },
+        },
+        // 同真
+        {
+          type: " && ",
+          name: "同真 && ",
+          elements: [],
+
+          contents: {
+            firstOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            lastOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+          },
+        },
+        // 存真
+        {
+          type: " || ",
+          name: "存真 || ",
+          elements: [],
+
+          contents: {
+            firstOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            lastOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+          },
+        },
+        // 否定
+        {
+          type: " ! ",
+          name: "否定 ! ",
+          elements: [],
+
+          contents: {
+            lastOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+          },
+        },
+        // 左移位
+        {
+          type: " << ",
+          name: "左移位 << ",
+          elements: [],
+
+          contents: {
+            firstOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            lastOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+          },
+        },
+        // 右移位
+        {
+          type: " >> ",
+          name: "右移位 >> ",
+          elements: [],
+
+          contents: {
+            firstOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            lastOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+          },
+        },
+      ],
+    },
+
+    // 一些基础自带的属性
+    {
+      type: "property",
+      name: "合约自带属性",
+      group: { name: "logic", pull: "clone", put: false, revertClone: true },
+      elements: [],
+    },
+
+    // 一些基础自带的方法
+    {
+      type: "method",
+      name: "合约自带方法",
+      group: { name: "logic", pull: "clone", put: false, revertClone: true },
+      elements: [],
+    },
+  ],
 };
 
 const getters = {
   // 可用作参数的类型
   ParamTypes: state => {
     return [state.NoneType].concat(state.transformer[0].elements);
-  }
+  },
+  OperaTypes: state => {
+    return Array.from(state.transformer[2].elements, x => x.type);
+  },
 };
 
 const mutations = {
@@ -572,7 +1011,7 @@ const mutations = {
   // 记录目标地点
   nestedMove: (state, element) => {
     state.MovedList = element;
-  }
+  },
 };
 
 const actions = {
@@ -604,7 +1043,7 @@ const actions = {
   // 移动中
   nestedMove: ({ commit }, element) => {
     commit("nestedMove", element);
-  }
+  },
 };
 
 export default {
@@ -612,5 +1051,5 @@ export default {
   state,
   getters,
   mutations,
-  actions
+  actions,
 };

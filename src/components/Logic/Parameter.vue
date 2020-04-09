@@ -85,26 +85,26 @@ export default {
     place: {
       required: false,
       type: String,
-      default: "createFunc"
+      default: "createFunc",
     },
     params: {
       required: false,
       type: Array,
       default: () => {
         return [];
-      }
-    }
+      },
+    },
   },
   computed: {
     ...mapGetters({
-      ParamTypes: "logic/ParamTypes"
+      ParamTypes: "logic/ParamTypes",
     }),
     ...mapState({
-      RevMap: status => status.logic.revMapForParamTypes
+      RevMap: status => status.logic.revMapForParamTypes,
     }),
     useHint() {
       return !this.$store.state.control.hint;
-    }
+    },
   },
   methods: {
     deleteItem: function (index) {
@@ -139,8 +139,8 @@ export default {
         }
       }
       return temp;
-    }
-  }
+    },
+  },
   // mounted: function() {
   //   console.log("monuted:", this.params);
   // },

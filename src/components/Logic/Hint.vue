@@ -16,20 +16,20 @@ export default {
   computed: {
     useHint() {
       return !this.$store.state.control.hint;
-    }
+    },
   },
   props: {
     content: {
       type: String,
       default: null,
-      required: false
+      required: false,
     },
     icon: {
       type: String,
       default: "el-icon-question",
-      required: false
-    }
-  }
+      required: false,
+    },
+  },
 };
 </script>
 

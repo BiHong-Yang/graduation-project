@@ -41,23 +41,27 @@
   background-color: #d2e8ff;
   //  #dcdfe6;
 }
-div {
-  &.name {
-    flex: 0 0 auto;
-    font-family: "微软雅黑";
-    font-weight: 900;
-    font-size: 140%;
-    color: #e6a23c;
-    // padding: 0 1em;
-    user-select: none;
-    display: inline-flex;
-    padding-right: 0.5em;
-    &:hover {
-      cursor: pointer;
-    }
+.o-item__name {
+  flex: 0 0 auto;
+  font-family: "微软雅黑";
+  font-weight: 900;
+  font-size: 140%;
+  color: #e6a23c;
+  // padding: 0 1em;
+  user-select: none;
+  display: inline-flex;
+  padding-right: 0.5em;
+  align-items: center;
+  &:hover {
+    cursor: pointer;
   }
 }
-
+.l-item__name--operations {
+  box-sizing: content-box;
+  padding: 0 0.5rem;
+  width: 1rem;
+  height: 1rem;
+}
 .line-num {
   min-width: 30px;
   height: 1.5rem;
@@ -86,7 +90,7 @@ div {
     :list="list"
     :value="value"
     @input="emitter"
-    handle=".name"
+    handle=".o-item__name"
     @start="nestedStart"
     @end="nestedEnd"
     :move="nestedMove"
@@ -96,7 +100,7 @@ div {
       :key="index"
       v-for="(el, index) in realValue"
     >
-      <div class="c-nested__item">
+      <div class="c-nested__item" v-if="!OperaTypes.includes(el.type)">
         <div
           class="line-num"
           @click="el.show = !el.show"
@@ -120,7 +124,7 @@ div {
           content="按住拖动"
           placement="top"
         >
-          <div class="name">{{ el.name }}</div>
+          <div class="o-item__name">{{ el.name }}</div>
         </el-tooltip>
 
         <div class="c-content__container">
@@ -136,6 +140,35 @@ div {
           <Options :contents="el.contents"></Options>
         </div>
       </div>
+
+      <!-- 对运算另外处理 -->
+      <div v-else class="c-nested__item">
+        <Content
+          v-if="el.contents.firstOP != undefined"
+          :contents="el.contents"
+          :item="el.contents.firstOP"
+          :keyWord="'firstOP'"
+          :type="el.type"
+          v-show="el.contents.firstOP.show"
+        ></Content>
+
+        <el-tooltip
+          :disabled="useHint"
+          effect="dark"
+          content="按住拖动"
+          placement="top"
+        >
+          <div class="o-item__name l-item__name--operations">{{ el.type }}</div>
+        </el-tooltip>
+
+        <Content
+          :contents="el.contents"
+          :item="el.contents.lastOP"
+          :keyWord="'lastOP'"
+          :type="el.type"
+          v-show="el.contents.lastOP.show"
+        ></Content>
+      </div>
       <nested class="c-nested__item-sub" :list="el.elements" v-show="el.show" />
     </div>
   </draggable>
@@ -144,6 +177,7 @@ div {
 <script>
 import Options from "../Options";
 import draggable from "vuedraggable";
+import { mapGetters } from "vuex";
 export default {
   name: "nested",
   methods: {
@@ -157,16 +191,16 @@ export default {
     nestedEnd: function (evt) {
       this.$store.dispatch("logic/nestedEnd", {
         item: this.list[evt.newIndex],
-        index: evt.newIndex
+        index: evt.newIndex,
       });
     },
     nestedMove: function (evt) {
       this.$store.dispatch("logic/nestedMove", evt.relatedContext.list);
-    }
+    },
   },
   components: {
     draggable,
-    Options
+    Options,
   },
   computed: {
     dragOptions() {
@@ -174,7 +208,7 @@ export default {
         animation: 0,
         group: this.group,
         disabled: false,
-        ghostClass: "ghost"
+        ghostClass: "ghost",
       };
     },
     // this.value when input = v-model
@@ -184,24 +218,27 @@ export default {
     },
     useHint() {
       return !this.$store.state.control.hint;
-    }
+    },
+    ...mapGetters({
+      OperaTypes: "logic/OperaTypes",
+    }),
   },
   props: {
     value: {
       required: false,
       type: Array,
-      default: null
+      default: null,
     },
     list: {
       required: false,
       type: Array,
-      default: null
+      default: null,
     },
     group: {
       required: false,
       type: String,
-      default: "logic"
-    }
-  }
+      default: "logic",
+    },
+  },
 };
 </script>

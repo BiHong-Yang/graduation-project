@@ -24,23 +24,23 @@ export default {
     return {
       clocation: ["1", "2"],
       count: 0,
-      myArray: []
+      myArray: [],
     };
   },
   methods: {
-    load: function() {
+    load: function () {
       this.count += 1;
-    }
+    },
   },
   components: {
     Location,
-    NestedWithVmodel
+    NestedWithVmodel,
   },
   computed: {
     ...mapState({
-      toggle: status => status.logic.SubcodeToggle
-    })
-  }
+      toggle: status => status.logic.SubcodeToggle,
+    }),
+  },
 };
 </script>
 

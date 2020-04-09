@@ -270,6 +270,8 @@
       </div>
     </template>
 
+    <!-- 创建合约 -->
+
     <template v-else-if="type == 'contract'">
       <div>
         <div v-if="keyWord == 'name'" class="l-contents-item">
@@ -314,6 +316,36 @@
         </el-select>
       </div>
     </template>
+
+    <template
+      v-else-if="
+        [
+          ' + ',
+          ' - ',
+          ' * ',
+          ' / ',
+          ' % ',
+          ' ** ',
+          ' < ',
+          ' > ',
+          ' <= ',
+          ' >= ',
+          ' == ',
+          ' != ',
+          ' && ',
+          ' || ',
+          ' ! ',
+          ' -',
+          ' << ',
+          ' >> ',
+        ].includes(type)
+      "
+    >
+      <Expression
+        :item="item"
+        :placeholder="'请输入操作数或变量名'"
+      ></Expression>
+    </template>
   </div>
 </template>
 
@@ -327,32 +359,32 @@ export default {
   props: {
     contents: {
       type: Object,
-      required: false
+      required: false,
     },
     type: {
       type: String,
-      required: false
+      required: false,
     },
     // 调用模式，分为单独调用 'soloMode' 和成组调用 'groupMode'
     mode: {
       type: String,
       required: false,
-      default: "groupMode"
+      default: "groupMode",
     },
     item: {
       type: Object,
-      required: false
+      required: false,
     },
     keyWord: {
       type: String,
-      required: false
-    }
+      required: false,
+    },
   },
   methods: {
     checkShow: function (el) {
       return el.show;
     },
-    doNothing: function () {}
+    doNothing: function () {},
   },
   computed: {
     element() {
@@ -363,15 +395,15 @@ export default {
         }
       }
       return Object.assign({}, temp);
-    }
+    },
   },
   components: {
     // nested,
     Expression,
     Parameter,
     SelectType,
-    Hint
-  }
+    Hint,
+  },
 };
 </script>
 
