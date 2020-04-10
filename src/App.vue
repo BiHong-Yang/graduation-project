@@ -11,8 +11,17 @@ export default {
   name: "app",
   components: {
     // Menu,
-    Home
-  }
+    Home,
+  },
+  created: function () {
+    if (localStorage.getItem("code") == null) {
+      this.$store.state.logic.elements = [];
+    } else {
+      this.$store.state.logic.elements = JSON.parse(
+        localStorage.getItem("code")
+      );
+    }
+  },
 };
 </script>
 

@@ -937,7 +937,36 @@ const state = {
       type: "method",
       name: "合约自带方法",
       group: { name: "logic", pull: "clone", put: false, revertClone: true },
-      elements: [],
+      elements: [
+        // 强制类型转换
+        {
+          type: "conversion",
+          name: "转换类型",
+          elements: [],
+
+          contents: {
+            item: {
+              name: "转换对象",
+              value: "",
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            target: {
+              name: "目标类型",
+              value: {
+                type: "none",
+                name: "请选择类型",
+                elements: [],
+                contents: {},
+              },
+              elements: [],
+              show: true,
+              use: true,
+            },
+          },
+        },
+      ],
     },
   ],
 };

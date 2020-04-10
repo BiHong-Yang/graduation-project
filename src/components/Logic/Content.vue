@@ -346,6 +346,21 @@
         :placeholder="'请输入操作数或变量名'"
       ></Expression>
     </template>
+
+    <template v-else-if="type == 'conversion'">
+      <div>
+        <div v-if="keyWord == 'item'" class="l-contents-item">
+          <Expression
+            :item="item"
+            :placeholder="'请输入操作数或变量名'"
+          ></Expression>
+        </div>
+
+        <div v-else-if="keyWord == 'target'" class="l-contents-item">
+          <SelectType :item="item.value"></SelectType>
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 

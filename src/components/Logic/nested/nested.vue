@@ -93,6 +93,7 @@
     handle=".o-item__name"
     @start="nestedStart"
     @end="nestedEnd"
+    @change="nestChange"
     :move="nestedMove"
   >
     <div
@@ -196,6 +197,13 @@ export default {
     },
     nestedMove: function (evt) {
       this.$store.dispatch("logic/nestedMove", evt.relatedContext.list);
+    },
+    nestChange: function () {
+      localStorage.setItem(
+        "code",
+        JSON.stringify(this.$store.state.logic.elements)
+      );
+      // console.log("change");
     },
   },
   components: {
