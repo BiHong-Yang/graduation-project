@@ -10,6 +10,7 @@
           v-show="!item.useEle && item.elements.length == 0"
           v-model="item.value"
           :placeholder="placeholder"
+          class="l-header__input"
         ></el-input>
       </div>
 
@@ -36,7 +37,7 @@
     </div>
 
     <div v-show="item.useEle" class="c-expression__body">
-      <nested class="nested" v-model="item.elements" />
+      <nested class="nested" :list="item.elements" />
     </div>
   </div>
 </template>
@@ -44,7 +45,12 @@
 <script>
 export default {
   props: ["item", "placeholder"],
-  components: {}
+  components: {},
+  computed: {
+    ExpChange() {
+      return String(0.7 * (this.item.value.length + 3)) + "em";
+    },
+  },
 };
 </script>
 
@@ -52,16 +58,21 @@ export default {
 .c-expression {
   display: flex;
   flex-direction: column;
-  min-width: 13.9rem;
+  // min-width: 13.9rem;
+  width: 100%;
   border: 1px solid #dcdfe6;
   border-radius: 3px;
 
   .c-expression__header {
     display: flex;
+    width: 100%;
     align-items: center;
     height: 100%;
     padding: 1px 4px 1px 1px;
 
+    .l-header__input {
+      flex: 1 1 auto;
+    }
     .l-header__item {
       color: #c0c4cc !important;
       font: 400 13.3333px Arial;
@@ -69,7 +80,6 @@ export default {
       width: 100%;
       height: 100%;
       padding: 0.7rem 0;
-      flex: 1 1 auto;
     }
     .l-header__button {
       height: 100%;

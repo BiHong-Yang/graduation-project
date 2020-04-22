@@ -361,6 +361,33 @@
         </div>
       </div>
     </template>
+
+    <template v-else-if="type == 'if'">
+      <div>
+        <div v-if="keyWord == 'condition'" class="l-contents-item">
+          <Expression
+            :item="item"
+            :placeholder="'请输入操作数或变量名'"
+          ></Expression>
+        </div>
+      </div>
+    </template>
+
+    <template v-else-if="type == 'else if'">
+      <div>
+        <div v-if="keyWord == 'condition'" class="l-contents-item">
+          <Expression
+            :item="item"
+            :placeholder="'请输入操作数或变量名'"
+          ></Expression>
+        </div>
+      </div>
+    </template>
+
+    <!-- <template v-else-if="type == ["else"].includes(type)">
+      <div>
+      </div>
+    </template> -->
   </div>
 </template>
 
@@ -434,6 +461,9 @@ export default {
   padding: 2px 0;
   .l-contents-item {
     padding-right: 0.3rem;
+  }
+  .l-contents-item--else {
+    margin: 0 0 0 1rem !important;
   }
   .l-contents__name {
     word-wrap: none;

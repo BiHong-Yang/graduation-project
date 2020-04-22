@@ -924,6 +924,76 @@ const state = {
       ],
     },
 
+    // 一些基础控制逻辑
+    {
+      type: "control",
+      name: "逻辑控制",
+      group: { name: "logic", pull: "clone", put: false, revertClone: true },
+      elements: [
+        {
+          type: "if",
+          name: "如果",
+          elements: [],
+
+          contents: {
+            condition: {
+              name: "条件",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+          },
+          show: true,
+        },
+        {
+          type: "else if",
+          name: "否则如果",
+          elements: [],
+
+          contents: {
+            condition: {
+              name: "条件",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+          },
+          show: true,
+        },
+        {
+          type: "else",
+          name: "否则",
+          elements: [],
+
+          contents: {},
+          show: true,
+        },
+        {
+          type: "break",
+          name: "终止循环",
+          elements: [],
+
+          contents: {},
+        },
+        {
+          type: "continue",
+          name: "进入下一次循环",
+          elements: [],
+
+          contents: {},
+        },
+        {
+          type: "return",
+          name: "返回",
+          elements: [],
+
+          contents: {},
+        },
+      ],
+    },
+
     // 一些基础自带的属性
     {
       type: "property",
@@ -1015,6 +1085,7 @@ const mutations = {
   // 恢复移动的组件之前的可见值，恢复之前样式
   nestedEnd: (state, { item, index }) => {
     if (state.MovedList == null) {
+      state.ShowsOnMove.length = 0;
       console.log("delete!");
       return;
     }

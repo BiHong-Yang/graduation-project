@@ -1,5 +1,44 @@
 <template>
-  <el-container>
+  <div class="c-logic-panel">
+    <div class="c-logic-panel__classes">
+      <el-menu :default-openeds="['1']">
+        <el-menu-item
+          v-for="(item, id) in logicMenu"
+          :key="id"
+          @click="showwitch = id"
+          :index="id.toString()"
+        >
+          <span>{{ item.name }}</span>
+        </el-menu-item>
+      </el-menu>
+    </div>
+
+    <div class="c-logic-panel__items">
+      <div v-for="(item, id) in logicMenu" :key="id" v-show="showwitch == id">
+        <draggable
+          class="dragArea list-group"
+          :list="item.elements"
+          :group="item.group"
+          @change="log"
+          tag="el-menu"
+          :clone="CloneItem"
+          :sort="false"
+        >
+          <el-menu-item
+            class="list-group-item"
+            v-for="element in item.elements"
+            :key="element.type"
+          >
+            <span class="o-item__name">
+              {{ element.name }}
+            </span>
+            <Hint :content="element.hint"></Hint>
+          </el-menu-item>
+        </draggable>
+      </div>
+    </div>
+
+    <!-- <el-container>
     <el-aside width="40%">
       <el-menu :default-openeds="['1']">
         <el-menu-item
@@ -11,7 +50,7 @@
           <span>{{ item.name }}</span>
         </el-menu-item>
       </el-menu>
-    </el-aside>
+    </el-aside> -->
 
     <!-- <el-aside width="60%">
       <div class="col-3">
@@ -33,7 +72,7 @@
       </div>
     </el-aside>-->
 
-    <el-aside width="60%">
+    <!-- <el-aside width="60%">
       <div v-for="(item, id) in logicMenu" :key="id" v-show="showwitch == id">
         <draggable
           class="dragArea list-group"
@@ -57,7 +96,8 @@
         </draggable>
       </div>
     </el-aside>
-  </el-container>
+  </el-container> -->
+  </div>
 </template>
 
 <script>
@@ -133,6 +173,23 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.c-logic-panel {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: stretch;
+  .c-logic-panel__classes {
+    width: 40%;
+    flex: 0 0 auto;
+  }
+  .c-logic-panel__items {
+    flex: 1 1 auto;
+    overflow: auto;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}
 span {
   user-select: none;
 }
@@ -163,5 +220,9 @@ span {
     padding: 0.7rem 0;
     flex: 0 0 auto;
   }
+}
+.el-aside {
+  overflow: auto;
+  height: 100%;
 }
 </style>

@@ -187,6 +187,7 @@ export default {
     },
     ChangeShow() {},
     nestedStart: function (evt) {
+      console.log("start");
       this.$store.dispatch("logic/nestedStart", this.list[evt.oldIndex]);
     },
     nestedEnd: function (evt) {
