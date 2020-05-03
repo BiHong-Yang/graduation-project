@@ -100,7 +100,7 @@ export default {
       ParamTypes: "logic/ParamTypes",
     }),
     ...mapState({
-      RevMap: status => status.logic.revMapForParamTypes,
+      RevMap: (status) => status.logic.revMapForParamTypes,
     }),
     useHint() {
       return !this.$store.state.control.hint;

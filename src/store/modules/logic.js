@@ -1043,11 +1043,11 @@ const state = {
 
 const getters = {
   // 可用作参数的类型
-  ParamTypes: state => {
+  ParamTypes: (state) => {
     return [state.NoneType].concat(state.transformer[0].elements);
   },
-  OperaTypes: state => {
-    return Array.from(state.transformer[2].elements, x => x.type);
+  OperaTypes: (state) => {
+    return Array.from(state.transformer[2].elements, (x) => x.type);
   },
 };
 
@@ -1063,7 +1063,7 @@ const mutations = {
   },
 
   // 改变全局id
-  incGlobalId: state => {
+  incGlobalId: (state) => {
     state.globalId++;
   },
 

@@ -15,8 +15,8 @@ export default {
     return {};
   },
   components: {
-    draggable
-  }
+    draggable,
+  },
 };
 </script>
 

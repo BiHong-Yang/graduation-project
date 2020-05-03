@@ -18,7 +18,7 @@ import rawDisplayer from "./infra/raw-displayer.vue";
 export default {
   data() {
     return {
-      begin: []
+      begin: [],
     };
   },
   name: "nested-with-vmodel",
@@ -26,7 +26,7 @@ export default {
   order: 16,
   components: {
     Nested,
-    rawDisplayer
+    rawDisplayer,
   },
   computed: {
     elements: {
@@ -35,13 +35,13 @@ export default {
       },
       set(value) {
         this.$store.dispatch("logic/updateElements", value);
-      }
+      },
     },
     transformer() {
       return this.$store.state.logic.transformer;
-    }
+    },
   },
-  methods: {}
+  methods: {},
 };
 </script>
 

@@ -9,22 +9,22 @@ const props = {
   name: "raw-displayer",
   title: {
     required: true,
-    type: String
+    type: String,
   },
   value: {
-    required: true
-  }
+    required: true,
+  },
 };
 export default {
   props,
   computed: {
     valueString() {
       return JSON.stringify(this.value, null, 2);
-    }
-  }
+    },
+  },
 };
 </script>
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 pre {
   text-align: start;
 }

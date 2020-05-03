@@ -114,38 +114,6 @@ export default {
   data() {
     return {
       showwitch: 1,
-      list1: [
-        {
-          id: 1,
-          name: "Shrek",
-          elements: [],
-          show: true,
-        },
-        {
-          id: 2,
-          name: "Fiona",
-          elements: [],
-          show: true,
-        },
-        {
-          id: 3,
-          name: "Donkey",
-          elements: [],
-          show: true,
-        },
-        {
-          id: 4,
-          name: "Lord Farquad",
-          elements: [],
-          show: true,
-        },
-        {
-          id: 5,
-          name: "Prince Charming",
-          elements: [],
-          show: true,
-        },
-      ],
     };
   },
   methods: {

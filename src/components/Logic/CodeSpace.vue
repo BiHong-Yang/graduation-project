@@ -38,7 +38,7 @@ export default {
   },
   computed: {
     ...mapState({
-      toggle: status => status.logic.SubcodeToggle,
+      toggle: (status) => status.logic.SubcodeToggle,
     }),
   },
 };

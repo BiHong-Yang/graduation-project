@@ -34,13 +34,13 @@ export default {
       // console.log(this.contents[key].show);
       this.contents[key].show = !this.contents[key].show;
       // console.log(this.contents[key].show);
-    }
+    },
   },
   computed: {
     useHint() {
       return !this.$store.state.control.hint;
-    }
-  }
+    },
+  },
 };
 </script>
 

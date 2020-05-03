@@ -40,23 +40,23 @@ export default {
     item: {
       required: false,
       type: Object,
-      default: null
+      default: null,
     },
     typeExcept: {
       required: false,
       type: Object,
       default: function () {
         return {};
-      }
-    }
+      },
+    },
   },
   computed: {
     ...mapGetters({
-      ParamTypes: "logic/ParamTypes"
+      ParamTypes: "logic/ParamTypes",
     }),
     ...mapState({
-      RevMap: status => status.logic.revMapForParamTypes
-    })
+      RevMap: (status) => status.logic.revMapForParamTypes,
+    }),
   },
   methods: {
     ChangeType: function () {
@@ -107,8 +107,8 @@ export default {
         temp[x] = this.ParamTypes[x];
       }
       return temp;
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="scss" scoped>

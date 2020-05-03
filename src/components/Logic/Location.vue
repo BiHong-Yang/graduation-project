@@ -4,7 +4,7 @@
       <div class="front"></div>
       <div class="numbox" v-for="(item, index) in location" :key="index">
         <div class="num">
-          <span>{{item}}</span>
+          <span>{{ item }}</span>
         </div>
         <div class="icon">
           <i class="el-icon-caret-right"></i>
@@ -13,7 +13,11 @@
     </div>
     <button class="togglebox" @click="changeHint">关闭tips</button>
     <div class="togglebox">
-      <el-switch @change="subtoggle" v-model="toggle" active-text="副代码区开关"></el-switch>
+      <el-switch
+        @change="subtoggle"
+        v-model="toggle"
+        active-text="副代码区开关"
+      ></el-switch>
     </div>
   </div>
 </template>
@@ -23,22 +27,22 @@ export default {
   props: ["location"],
   data() {
     return {
-      toggle: this.$store.state.logic.SubcodeToggle
+      toggle: this.$store.state.logic.SubcodeToggle,
     };
   },
   methods: {
-    subtoggle: function() {
+    subtoggle: function () {
       this.$store.dispatch("logic/ChangeToggle", this.toggle);
     },
-    changeHint: function() {
+    changeHint: function () {
       this.$store.state.control.hint = !this.$store.state.control.hint;
-    }
+    },
   },
-  computed: {}
+  computed: {},
 };
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .num {
   min-width: 30px;
   font-family: "微软雅黑";
