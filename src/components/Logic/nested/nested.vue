@@ -103,6 +103,7 @@
     >
       <div class="c-nested__item" v-if="!OperaTypes.includes(el.type)">
         <div
+          v-if="!ValueTypes.includes(el.type)"
           class="line-num"
           @click="el.show = !el.show"
           :class="{ 'hight-light': el.elements.length > 0 }"
@@ -138,7 +139,10 @@
             :type="el.type"
             v-show="item.show"
           ></Content>
-          <Options :contents="el.contents"></Options>
+          <Options
+            v-if="JSON.stringify(el.contents) != '{}'"
+            :contents="el.contents"
+          ></Options>
         </div>
       </div>
 
@@ -159,7 +163,9 @@
           content="按住拖动"
           placement="top"
         >
-          <div class="o-item__name l-item__name--operations">{{ el.type }}</div>
+          <div class="o-item__name l-item__name--operations">
+            {{ el.type }}
+          </div>
         </el-tooltip>
 
         <Content
@@ -230,6 +236,7 @@ export default {
     },
     ...mapGetters({
       OperaTypes: "logic/OperaTypes",
+      ValueTypes: "logic/ValueTypes",
     }),
   },
   props: {

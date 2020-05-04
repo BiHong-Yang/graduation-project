@@ -127,6 +127,7 @@ export default {
         delete x.name;
         delete x.hint;
       }
+      delete temp.hint;
       console.log(temp);
       temp.id = this.$store.state.logic.globalId;
       return JSON.parse(JSON.stringify(temp));

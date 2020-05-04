@@ -1,17 +1,18 @@
 <template>
   <div id="app">
-    <Home></Home>
+    <!-- <Home></Home> -->
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import Home from "./components/Home.vue";
+// import Home from "./components/Home.vue";
 
 export default {
   name: "app",
   components: {
     // Menu,
-    Home,
+    // Home,
   },
   created: function () {
     if (localStorage.getItem("code") == null) {

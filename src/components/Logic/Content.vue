@@ -11,7 +11,7 @@
     <template v-if="type == 'uint'">
       <!-- 类别，即大小上限 -->
       <div v-if="keyWord == 'categories'" class="l-contents-item">
-        <el-select v-model="item.value" placeholder="最大2的 256 次方">
+        <el-select v-model="item.value" placeholder="最大2的 256 次方减一">
           <el-option
             v-for="id in 32"
             :key="id"
@@ -317,6 +317,7 @@
       </div>
     </template>
 
+    <!-- 运算符 -->
     <template
       v-else-if="
         [
@@ -362,6 +363,7 @@
       </div>
     </template>
 
+    <!-- if条件 -->
     <template v-else-if="type == 'if'">
       <div>
         <div v-if="keyWord == 'condition'" class="l-contents-item">
@@ -373,6 +375,7 @@
       </div>
     </template>
 
+    <!-- else if 判断 -->
     <template v-else-if="type == 'else if'">
       <div>
         <div v-if="keyWord == 'condition'" class="l-contents-item">
@@ -384,10 +387,63 @@
       </div>
     </template>
 
-    <!-- <template v-else-if="type == ["else"].includes(type)">
-      <div>
+    <!-- 区块哈希 -->
+    <template v-else-if="type == 'blockhash'">
+      <Expression :item="item" :placeholder="'请输入区块id 0~255'"></Expression>
+    </template>
+
+    <!-- 大模运算 -->
+    <template v-else-if="['addmod', 'mulmod'].includes(type)">
+      <div class="l-contents-item">
+        <Expression
+          :item="item"
+          :placeholder="'请输入操作数或变量名'"
+        ></Expression>
       </div>
-    </template> -->
+    </template>
+
+    <!-- 哈希们 -->
+    <template v-else-if="['keccak256', 'ripemd160', 'sha256'].includes(type)">
+      <div v-if="keyWord == 'param'" class="l-contents-item">
+        <VariableParam :params="item.value"></VariableParam>
+      </div>
+    </template>
+
+    <!-- 椭圆曲线哈希 -->
+    <template v-else-if="['ecrecover'].includes(type)">
+      <div class="l-contents-item">
+        <Expression
+          :item="item"
+          :placeholder="'请输入操作数或变量名'"
+        ></Expression>
+      </div>
+    </template>
+
+    <!-- 地址相关函数 -->
+    <template
+      v-else-if="['balance', 'transfer', 'send', 'selfdestruct'].includes(type)"
+    >
+      <div class="l-contents-item">
+        <Expression
+          :item="item"
+          :placeholder="'请输入操作数或变量名'"
+        ></Expression>
+      </div>
+    </template>
+
+    <!-- 两种 call -->
+    <template v-else-if="['call', 'delegatecall'].includes(type)">
+      <div v-if="keyWord == 'param'" class="l-contents-item">
+        <VariableParam :params="item.value"></VariableParam>
+      </div>
+
+      <div v-else class="l-contents-item">
+        <Expression
+          :item="item"
+          :placeholder="'请输入操作数或变量名'"
+        ></Expression>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -397,6 +453,7 @@ import SelectType from "./SelectType";
 import Expression from "./Expression";
 import Parameter from "./Parameter";
 import Hint from "./Hint";
+import VariableParam from "./VariableParam";
 export default {
   props: {
     contents: {
@@ -445,6 +502,7 @@ export default {
     Parameter,
     SelectType,
     Hint,
+    VariableParam,
   },
 };
 </script>

@@ -2,11 +2,11 @@
   <el-tooltip
     class="item"
     effect="dark"
-    :content="content"
     placement="top-start"
     :open-delay="0"
     :disabled="useHint"
   >
+    <div slot="content" v-html="content"></div>
     <i class="c-hint-icon" :class="icon"></i>
   </el-tooltip>
 </template>

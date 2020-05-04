@@ -19,6 +19,15 @@ const state = {
     contents: {},
   },
 
+  // 空表达式
+  NoneExpression: {
+    name: "",
+    value: null,
+    elements: [],
+    useEle: false,
+    show: true,
+  },
+
   // ParamTypes 的反向表，不用每次find
   revMapForParamTypes: {
     none: 0,
@@ -140,11 +149,6 @@ const state = {
 
   // 待转换的逻辑
   transformer: [
-    // 创建变量
-    // 创建变量
-    // 创建变量
-    // 创建变量
-    // 创建变量
     // 创建变量
     {
       type: "variable",
@@ -986,7 +990,7 @@ const state = {
         },
         {
           type: "return",
-          name: "返回",
+          name: "函数返回",
           elements: [],
 
           contents: {},
@@ -999,7 +1003,160 @@ const state = {
       type: "property",
       name: "合约自带属性",
       group: { name: "logic", pull: "clone", put: false, revertClone: true },
-      elements: [],
+      elements: [
+        // 矿工地址
+        {
+          type: "block.coinbase",
+          name: "矿工地址",
+          elements: [],
+
+          contents: {},
+          hint: `返回记录该交易的矿工的地址<br>
+          可用于给矿工小费<br>
+          类型： 地址(address)<br>
+          代码： block.coinbase`,
+        },
+
+        // 当前区块 gas 限额
+        {
+          type: "block.gaslimit",
+          name: "gas 限额",
+          elements: [],
+
+          contents: {},
+          hint: `返回当前区块的 gas 限额<br>
+          类型： 256字节的非负整数(uint)<br>
+          代码： block.gaslimit`,
+        },
+
+        // 当前区块号
+        {
+          type: "block.number",
+          name: "区块号",
+          elements: [],
+
+          contents: {},
+          hint: `返回当前区块的区块号<br>
+          类型： 256字节的非负整数(uint)<br>
+          代码： block.number`,
+        },
+
+        // 当前区块时间戳
+        {
+          type: "block.timestamp",
+          name: "时间戳",
+          elements: [],
+
+          contents: {},
+          hint: `自 unix epoch 起始到当前区块创建以秒计的时间戳<br>
+          类型： 256字节的非负整数(uint)<br>
+          代码： block.timestamp`,
+        },
+
+        // 当前区块难度
+        {
+          type: "gasleft()",
+          name: "当前区块难度",
+          elements: [],
+
+          contents: {},
+          hint: `代码进行到当前步骤剩余的gas<br>
+          类型： 256字节的非负整数(uint)<br>
+          代码： gasleft()`,
+        },
+
+        // 完整的 calldata
+        {
+          type: "msg.data",
+          name: "消息调用数据",
+          elements: [],
+
+          contents: {},
+          hint: `call 函数所携带的所有 data 信息<br>
+          类型： 变长字节数组（bytes）<br>
+          代码： msg.data`,
+        },
+
+        // 消息发送者
+        {
+          type: "msg.sender",
+          name: "消息发送者",
+          elements: [],
+
+          contents: {},
+          hint: `调用该条指令所在函数的调用者的地址<br>
+          类型： 地址(address)<br>
+          代码： msg.sender`,
+        },
+
+        // 消息调用前四位
+        {
+          type: "msg.sig",
+          name: "消息函数标识符",
+          elements: [],
+
+          contents: {},
+          hint: `调用信息的函数标识<br>
+          类型： 长度为四字节的数组（bytes4）<br>
+          代码： msg.sig`,
+        },
+
+        // 调用的费用
+        {
+          type: "msg.value",
+          name: "消息附加费用",
+          elements: [],
+
+          contents: {},
+          hint: `调用消息附带的以太币的价值<br>
+          单位： wei（1 wei = 10^-18 ether, 1 ether 约等于 1500￥ ） <br>
+          <span style="color:green">基于 合约自带方法：”xx调用(call/delegatecall)“</span><br>
+          类型： 256字节的非负整数（uint）<br>
+          代码： msg.value`,
+        },
+
+        // 交易的gas价格
+        {
+          type: "tx.gasprice",
+          name: "交易执行价格",
+          elements: [],
+
+          contents: {},
+          hint: `执行交易的gas价格<br>
+          gas价格决定程序每步操作的价格<br>
+          更高的gas价格可让交易更快上链<br>
+          单位： wei（1 wei = 10^-18 ether, 1 ether 约等于 1500￥ ） <br>
+          <span style="color:green">基于 合约自带方法：”xx调用(call/delegatecall)“</span><br>
+          类型： 256字节的非负整数（uint）<br>
+          代码： tx.gasprice`,
+        },
+
+        // 交易发起者
+        {
+          type: "tx.origin",
+          name: "交易发起者",
+          elements: [],
+
+          contents: {},
+          hint: `调用链的最初发起者<br>
+          <span style="color:green">基于 合约自带方法：”xx调用(call/delegatecall)“</span><br>
+          类型： 地址（address）<br>
+          代码： tx.origin<br>
+          <span style="color:red">可能产生意想不到的效果！请充分了解后谨慎使用！</span>`,
+        },
+
+        // this 指针
+        {
+          type: "this",
+          name: "当前合约",
+          elements: [],
+
+          contents: {},
+          hint: `当前合约的地址<br>
+          类型： 当前合约（可被强制转换为地址类型）<br>
+          代码： this`,
+        },
+      ],
     },
 
     // 一些基础自带的方法
@@ -1036,7 +1193,416 @@ const state = {
             },
           },
         },
+
+        // 指定区块区块哈希
+        {
+          type: "blockhash",
+          name: "区块哈希",
+          elements: [],
+
+          contents: {
+            index: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+          },
+          hint: `只可以指定最近的256个区块`,
+        },
+
+        // 加模
+        {
+          type: "addmod",
+          name: "加模",
+          elements: [],
+
+          contents: {
+            firstOP: {
+              name: "操作数x",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            secondOP: {
+              name: "操作数y",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            lastOP: {
+              name: "模数k",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+          },
+          hint: `计算 (x + y) % k 的值<br>
+          三个参数均为 256字节的整数<br>
+          返回： 256字节的整数（uint）<br>
+          代码： addmod(uint x, uint y, uint k) returns (uint)<br>
+          样例：addmod(1,10,5) 该样例返回 1`,
+        },
+
+        // 乘模
+        {
+          type: "mulmod",
+          name: "乘模",
+          elements: [],
+
+          contents: {
+            firstOP: {
+              name: "操作数x",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            secondOP: {
+              name: "操作数y",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            lastOP: {
+              name: "模数k",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+          },
+          hint: `计算 (x + y) % k 的值<br>
+          三个参数均为 256字节的整数<br>
+          返回： 256字节的整数（uint）<br>
+          代码： mul(uint x, uint y, uint k) returns (uint)<br>
+          样例：mulmod(2,3,5) 该样例返回 1`,
+        },
+
+        // Ethereum-SHA-3 （Keccak-256）哈希
+        {
+          type: "keccak256",
+          name: "区块哈希(Keccak-256)",
+          elements: [],
+
+          contents: {
+            param: {
+              name: "参数",
+              value: [],
+              show: true,
+            },
+          },
+          hint: `计算紧打包内容的 Ethereum-SHA-3 （Keccak-256）哈希值<br>
+          参数个数没有限制，但必须有清晰的类型<br>
+          返回：32字节的字节数组<br>
+          代码：keccak256(abi.encodePacked(#内容#)) returns (bytes32)<br>
+          样例：keccak256(abi.encodePacked("abc",uint(123),b))<br>
+          sha3与keccak256等价<br>
+          <span style="color:yellow">最常用<span>`,
+        },
+
+        // sha256 哈希
+        {
+          type: "sha256",
+          name: "区块哈希(Keccak-256)",
+          elements: [],
+
+          contents: {
+            param: {
+              name: "参数",
+              value: [],
+              show: true,
+            },
+          },
+          hint: `计算紧打包内容的 Ethereum-SHA-3 （Keccak-256）哈希值<br>
+          参数个数没有限制，但必须有清晰的类型<br>
+          返回：32字节的字节数组<br>
+          代码：sha256(abi.encodePacked(#内容#)) returns (bytes32)<br>
+          样例：sha256(abi.encodePacked("abc",uint(123),b))<br>
+          <span style="color:yellow">最常用<span>`,
+        },
+
+        //  RIPEMD-160 哈希
+        {
+          type: "ripemd160",
+          name: "区块哈希(RIPEMD-160)",
+          elements: [],
+
+          contents: {
+            param: {
+              name: "参数",
+              value: [],
+              show: true,
+            },
+          },
+          hint: `计算紧打包内容的 RIPEMD-160 哈希值<br>
+          参数个数没有限制，但必须有清晰的类型<br>
+          返回：20字节的字节数组<br>
+          代码：ripemd160(abi.encodePacked(#内容#)) returns (bytes20)<br>
+          样例：ripemd160(abi.encodePacked("abc",uint(123),b))<br>`,
+        },
+
+        //  椭圆曲线哈希
+        {
+          type: "ecrecover",
+          name: "区块哈希(椭圆曲线)",
+          elements: [],
+
+          contents: {
+            hash: {
+              name: "签名",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            v: {
+              name: "v",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            r: {
+              name: "r",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            s: {
+              name: "s",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+          },
+          hint: `计算 椭圆曲线(ecrecover) 哈希值<br>
+          可用于验证签名<br>
+          返回：20字节的字节数组<br>
+          代码：ecrecover(bytes32 hash, uint8 v, bytes32 r, bytes32 s) returns (address)<br>
+          <a style="color:#4089ff" href="https://ethereum.stackexchange.com/questions/15364/ecrecover-from-geth-and-web3-eth-sign">具体用法单击此处</a>`,
+        },
+
+        // 账户余额
+        {
+          type: "balance",
+          name: "账户余额",
+          elements: [],
+
+          contents: {
+            address: {
+              name: "地址",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+          },
+          hint: `获取目标地址的账户余额<br>
+          返回：256字节非负整数<br>
+          代码：&ltaddress&gt.balance (uint256)<br>
+          `,
+        },
+
+        // 转账 transfer
+        {
+          type: "transfer",
+          name: "账户余额",
+          elements: [],
+
+          contents: {
+            address: {
+              name: "地址",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            amount: {
+              name: "金额",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+          },
+          hint: `向目标地址账户转账指定金额<br>
+          单位： wei（1 wei = 10^-18 ether, 1 ether 约等于 1500￥ ） <br>
+          代码：&ltaddress&gt.transfer(uint256 amount)<br>
+          <span style="color:green">失败时抛出异常,程序终止运行</span><br>
+          <span style="color:yellow">更安全</span>
+          `,
+        },
+
+        // 转账 send
+        {
+          type: "send",
+          name: "账户余额",
+          elements: [],
+
+          contents: {
+            address: {
+              name: "地址",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            amount: {
+              name: "金额",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+          },
+          hint: `向目标地址账户转账指定金额<br>
+          单位： wei（1 wei = 10^-18 ether, 1 ether 约等于 1500￥ ） <br>
+          代码：&ltaddress&gt.send(uint256 amount) returns (bool)<br>
+          <span style="color:green">失败时返回false，程序继续运行</span><br>
+          <span style="color:yellow">可以处理转账失败的后果</span>
+          `,
+        },
+
+        // 外部调用 call
+        {
+          type: "call",
+          name: "外部调用",
+          elements: [],
+
+          contents: {
+            address: {
+              name: "地址",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            function: {
+              name: "目标函数",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            param: {
+              name: "调用参数",
+              value: [],
+              show: true,
+            },
+            amount: {
+              name: "附带金额",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: false,
+            },
+            gas: {
+              name: "gas上限",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: false,
+            },
+          },
+          hint: `使用指定参数调用指定地址的合约的指定函数<br>
+          参数顺序与个数应与目标函数相同<br>
+          代码：&ltaddress&gt.call(bytes4(keccak256(#函数样式#)),参数1，参数2，...)<br>
+          样例：addr.call(bytes4(keccak256("increaseAge(string,uint256)")),"jack", 1)<br>
+          样例中 目标地址：addr ，函数样式：increaseAge(string,uint256) ， 参数："jack" 和 1<br>
+          <a style="color:#4089ff" href="https://www.jianshu.com/p/a5c97d0d7cae">具体用法单击此处</a><br>
+          <span style="color:yellow">调用函数做出的存储区改变发生在拥有该函数的合约的存储空间</span><br>
+          <span style="color:red">底层函数！请充分了解后再使用！</span>
+          `,
+        },
+
+        // 外部调用 delegatecall
+        {
+          type: "delegatecall",
+          name: "委派调用",
+          elements: [],
+
+          contents: {
+            address: {
+              name: "地址",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            function: {
+              name: "目标函数",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            param: {
+              name: "调用参数",
+              value: [],
+              show: true,
+            },
+            amount: {
+              name: "附带金额",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: false,
+            },
+            gas: {
+              name: "gas上限",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: false,
+            },
+          },
+          hint: `使用指定参数调用指定地址的合约的指定函数<br>
+          参数顺序与个数应与目标函数相同<br>
+          代码：&ltaddress&gt.delegatecall(bytes4(keccak256(#函数样式#)),参数1，参数2，...)<br>
+          样例：addr.delegatecall(bytes4(keccak256("increaseAge(string,uint256)")),"jack", 1)<br>
+          样例中 目标地址：addr ，函数样式：increaseAge(string,uint256) ， 参数："jack" 和 1<br>
+          <a style="color:#4089ff" href="https://www.jianshu.com/p/fd5075ff0ab9">具体用法单击此处</a><br>
+          <span style="color:yellow">调用函数做出的存储区改变发生在调用该函数的合约的存储空间</span><br>
+          <span style="color:red">底层函数！请充分了解后再使用！</span>
+          `,
+        },
+
+        // 销毁函数
+        {
+          type: "selfdestruct",
+          name: "销毁合约",
+          elements: [],
+
+          contents: {
+            address: {
+              name: "地址",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+          },
+          hint: `销毁当前合约，把余额发送到指定地址<br>
+          代码：selfdestruct(address recipient)<br>
+          样例：selfdestruct(addr)`,
+        },
       ],
+    },
+
+    // 错误处理
+    {
+      type: "error",
+      name: "错误处理",
+      group: { name: "logic", pull: "clone", put: false, revertClone: true },
+      elements: [{}],
     },
   ],
 };
@@ -1048,6 +1614,11 @@ const getters = {
   },
   OperaTypes: (state) => {
     return Array.from(state.transformer[2].elements, (x) => x.type);
+  },
+  ValueTypes: (state) => {
+    return Array.from(state.transformer[4].elements, (x) => x.type).concat(
+      Array.from(state.transformer[5].elements, (x) => x.type)
+    );
   },
 };
 
