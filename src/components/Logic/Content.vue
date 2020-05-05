@@ -11,11 +11,11 @@
     <template v-if="type == 'uint'">
       <!-- 类别，即大小上限 -->
       <div v-if="keyWord == 'categories'" class="l-contents-item">
-        <el-select v-model="item.value" placeholder="最大2的 256 次方减一">
+        <el-select v-model="item.value" placeholder="256字节">
           <el-option
             v-for="id in 32"
             :key="id"
-            :label="`最大2的 ${8 * (33 - id)} 次方`"
+            :label="`${8 * (33 - id)}字节`"
             :value="`uint${8 * (33 - id)}`"
           ></el-option>
         </el-select>
@@ -39,11 +39,11 @@
     <template v-else-if="type == 'int'">
       <!-- 类别，即大小上限 -->
       <div v-if="keyWord == 'categories'" class="l-contents-item">
-        <el-select v-model="item.value" placeholder="最大2的 ±255 次方">
+        <el-select v-model="item.value" placeholder="256字节">
           <el-option
             v-for="id in 32"
             :key="id"
-            :label="`最大2的 ±${8 * (33 - id) - 1} 次方`"
+            :label="`${8 * (33 - id)}字节`"
             :value="`int${8 * (33 - id)}`"
           ></el-option>
         </el-select>
@@ -438,6 +438,18 @@
       </div>
 
       <div v-else class="l-contents-item">
+        <Expression
+          :item="item"
+          :placeholder="'请输入操作数或变量名'"
+        ></Expression>
+      </div>
+    </template>
+
+    <!-- 错误处理 -->
+    <template
+      v-else-if="['require', 'assert', 'revert', 'selfdestruct'].includes(type)"
+    >
+      <div class="l-contents-item">
         <Expression
           :item="item"
           :placeholder="'请输入操作数或变量名'"

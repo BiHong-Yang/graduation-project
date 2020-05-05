@@ -1,6 +1,45 @@
+function VarbLogin(items, location) {
+  for (let i = 0; i < items.length; i++) {
+    // 有名字一定是变量，注册之
+    if (items[i].contents === undefined) {
+      continue;
+    }
+    if (items[i].contents.name !== undefined) {
+      state.variables.push(
+        JSON.parse(
+          JSON.stringify({
+            name: items[i].contents.name.value,
+            type: items[i].type,
+            location: location,
+          })
+        )
+      );
+    }
+    // 没东西了，结束了
+    if (JSON.stringify(items[i].elements) == "[]") {
+      continue;
+    }
+    // 有名字记名字，没名字记编号
+    if (items[i].contents.name !== undefined) {
+      VarbLogin(
+        items[i].elements,
+        location.concat([items[i].contents.name.value])
+      );
+    } else {
+      VarbLogin(items[i].elements, location.concat([String(i + 1)]));
+    }
+  }
+}
+
 const state = {
   // 记录移动时的show情况
   ShowsOnMove: [],
+
+  // 批量删除开关
+  kill: false,
+
+  // 判断是否开始了
+  started: false,
 
   // 记录目标list
   MovedList: [],
@@ -42,110 +81,10 @@ const state = {
   },
 
   // 测试用数据
-  elements: [
-    {
-      type: "function",
-      name: "创建函数",
-      elements: [],
-      contents: {
-        name: {
-          name: "名字",
-          value: "",
-          show: true,
-        },
-        param: {
-          name: "参数",
-          value: [],
-          show: true,
-        },
-        returns: {
-          name: "返回值",
-          value: [],
-          show: true,
-        },
-      },
-      show: true,
-      id: 2,
-    },
-    {
-      type: "function",
-      name: "创建函数",
-      elements: [],
-      contents: {
-        name: {
-          name: "名字",
-          value: "",
-          show: true,
-        },
-        param: {
-          name: "参数",
-          value: [],
-          show: true,
-        },
-        returns: {
-          name: "返回值",
-          value: [],
-          show: true,
-        },
-      },
-      show: true,
-      id: 3,
-    },
-    {
-      type: "function",
-      name: "创建函数",
-      elements: [],
-      contents: {
-        name: {
-          name: "名字",
-          value: "",
-          show: true,
-        },
-        param: {
-          name: "参数",
-          value: [],
-          show: true,
-        },
-        returns: {
-          name: "返回值",
-          value: [],
-          show: true,
-        },
-      },
-      show: true,
-      id: 4,
-    },
+  elements: [],
 
-    // {
-    //     id: 1,
-    //     name: "Shrek",
-    //     elements: [],
-    //     show: true,
-    // },
-    // {
-    //     id: 2,
-    //     name: "Fiona",
-    //     elements: [{
-    //             id: 4,
-    //             name: "Lord Farquad",
-    //             elements: [],
-    //             show: true,
-    //         },
-    //         {
-    //             id: 5,
-    //             name: "Prince Charming",
-    //             elements: [],
-    //             show: true,
-    //         }
-    //     ],
-    //     show: true,
-    // },
-    // {
-    //     id: 3,
-    //     name: "Donkey",
-    //     elements: [],
-    // }
-  ],
+  // 变量注册
+  variables: [],
 
   // 待转换的逻辑
   transformer: [
@@ -368,11 +307,6 @@ const state = {
       ],
     },
 
-    // 创建函数与合约相关的内容
-    // 创建函数与合约相关的内容
-    // 创建函数与合约相关的内容
-    // 创建函数与合约相关的内容
-    // 创建函数与合约相关的内容
     // 创建函数与合约相关的内容
     {
       type: "container",
@@ -1602,7 +1536,83 @@ const state = {
       type: "error",
       name: "错误处理",
       group: { name: "logic", pull: "clone", put: false, revertClone: true },
-      elements: [{}],
+      elements: [
+        // 错误处理 require
+        {
+          type: "require",
+          name: "条件错误处理",
+          elements: [],
+
+          contents: {
+            condition: {
+              name: "条件",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            message: {
+              name: "错误信息",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: false,
+            },
+          },
+          hint: `判断是否满足条件，若不满足，抛出异常并回退状态<br>
+          代码：require(bool condition)<br>
+          样例：require(6==2*3)（此条将不抛出异常，程序继续正常执行） <br>
+          <span style="color:yellow">此处理方式会返还剩余gas，并可以提供错误信息，多用于判断传入参数是否满足条件</span>`,
+        },
+
+        // 错误处理 assert
+        {
+          type: "assert",
+          name: "异常处理",
+          elements: [],
+
+          contents: {
+            condition: {
+              name: "条件",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+          },
+          hint: `判断是否满足条件，若不满足，抛出异常并回退状态<br>
+          代码：assert(bool condition)<br>
+          样例：assert(6==2*3)（此条将不抛出异常，程序继续正常执行） <br>
+          <span style="color:yellow">此处理方式会销毁剩余gas，通常在程序运行中发生异常时</span>`,
+        },
+
+        // 错误处理 revert
+        {
+          type: "revert",
+          name: "中断",
+          elements: [],
+
+          contents: {
+            condition: {
+              name: "条件",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            message: {
+              name: "错误信息",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: false,
+            },
+          },
+          hint: `直接抛出异常并回退状态<br>
+          代码：revert()<br>
+          <span style="color:yellow">此处理方式会返还剩余gas，并可以提供错误信息，多用于判断传入参数是否满足条件</span>`,
+        },
+      ],
     },
   ],
 };
@@ -1641,6 +1651,7 @@ const mutations = {
   // 开始移动
   // 将所有附带元素全部设为不可见，减小移动的组件的体积
   nestedStart: (state, item) => {
+    state.started = true;
     if (item.show != undefined) {
       state.ShowsOnMove.push(item.show);
       item.show = false;
@@ -1655,33 +1666,74 @@ const mutations = {
   // 结束移动
   // 恢复移动的组件之前的可见值，恢复之前样式
   nestedEnd: (state, { item, index }) => {
+    // 若不处在删除模式
+    if (!state.started) {
+      return;
+    } else {
+      state.started = false;
+    }
+
+    // 由于之后都是缩放操作，这里最适合注册变量
+    state.variables.length = 0;
+    VarbLogin(state.elements, []);
+
+    console.log(state.ShowsOnMove);
     if (state.MovedList == null) {
       state.ShowsOnMove.length = 0;
-      console.log("delete!");
+      state.MovedList = [];
+
       return;
     }
-    if (state.MovedList.length == 0) {
-      if (item.show != undefined) {
-        item.show = state.ShowsOnMove.shift();
+    if (state.kill == false) {
+      if (state.MovedList.length == 0) {
+        if (item.show != undefined) {
+          item.show = state.ShowsOnMove.shift();
+        }
+        for (let x in item.contents) {
+          item.contents[x].show = state.ShowsOnMove.shift();
+        }
+      } else {
+        if (state.MovedList[index].show != undefined) {
+          state.MovedList[index].show = state.ShowsOnMove.shift();
+        }
+        for (let x in state.MovedList[index].contents) {
+          state.MovedList[index].contents[x].show = state.ShowsOnMove.shift();
+        }
+        state.MovedList = [];
       }
-      for (let x in item.contents) {
-        item.contents[x].show = state.ShowsOnMove.shift();
+    }
+    // 若处在删除模式，则当移动之后不删除该单元
+    else {
+      if (state.MovedList.length > 0) {
+        if (state.MovedList[index].show != undefined) {
+          state.MovedList[index].show = state.ShowsOnMove.shift();
+        }
+        for (let x in state.MovedList[index].contents) {
+          state.MovedList[index].contents[x].show = state.ShowsOnMove.shift();
+        }
+        state.MovedList = [];
       }
-    } else {
-      if (state.MovedList[index].show != undefined) {
-        state.MovedList[index].show = state.ShowsOnMove.shift();
-      }
-      for (let x in state.MovedList[index].contents) {
-        state.MovedList[index].contents[x].show = state.ShowsOnMove.shift();
-      }
-      state.MovedList = [];
+      // state.ShowsOnMove = [];
     }
   },
 
   // 移动中
   // 记录目标地点
   nestedMove: (state, element) => {
+    // console.log(state, element);
     state.MovedList = element;
+  },
+
+  // 批量删除
+  nestDelete: (state, { list, index }) => {
+    console.log("here");
+    console.log(state.MovedList);
+    if (state.MovedList == null) {
+      state.ShowsOnMove.length = 0;
+      return;
+    } else if (state.MovedList.length == 0) {
+      list.splice(index, 1);
+    }
   },
 };
 
@@ -1714,6 +1766,11 @@ const actions = {
   // 移动中
   nestedMove: ({ commit }, element) => {
     commit("nestedMove", element);
+  },
+
+  // 批量删除
+  nestDelete: ({ commit }, payload) => {
+    commit("nestDelete", payload);
   },
 };
 

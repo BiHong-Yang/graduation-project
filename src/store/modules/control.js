@@ -1,4 +1,5 @@
 const state = {
+  // 提示开关
   hint: true,
 };
 

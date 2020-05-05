@@ -92,7 +92,9 @@
     @input="emitter"
     handle=".o-item__name"
     @start="nestedStart"
+    @add="nestedEnd"
     @end="nestedEnd"
+    @unchoose="nestDelete"
     @change="nestChange"
     :move="nestedMove"
   >
@@ -197,6 +199,7 @@ export default {
       this.$store.dispatch("logic/nestedStart", this.list[evt.oldIndex]);
     },
     nestedEnd: function (evt) {
+      console.log("end");
       this.$store.dispatch("logic/nestedEnd", {
         item: this.list[evt.newIndex],
         index: evt.newIndex,
@@ -206,11 +209,16 @@ export default {
       this.$store.dispatch("logic/nestedMove", evt.relatedContext.list);
     },
     nestChange: function () {
-      localStorage.setItem(
-        "code",
-        JSON.stringify(this.$store.state.logic.elements)
-      );
+      // 为回退留的地方
       // console.log("change");
+    },
+    nestDelete: function (evt) {
+      if (this.$store.state.logic.kill) {
+        this.$store.dispatch("logic/nestDelete", {
+          list: this.list,
+          index: evt.oldIndex,
+        });
+      }
     },
   },
   components: {

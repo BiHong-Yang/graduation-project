@@ -7,7 +7,7 @@
       <raw-displayer :title="'Vuex Store'" :value="elements" />
     </div>
     <div>
-      <raw-displayer :title="'transformer'" :value="transformer" />
+      <raw-displayer :title="'Variables'" :value="variables" />
     </div>
   </div>
 </template>
@@ -39,6 +39,9 @@ export default {
     },
     transformer() {
       return this.$store.state.logic.transformer;
+    },
+    variables() {
+      return this.$store.state.logic.variables;
     },
   },
   methods: {},
