@@ -1,10 +1,10 @@
 <template>
   <div id="codespace">
     <div class="header">
-      <Location :location="clocation"></Location>
+      <Location></Location>
     </div>
     <div id="sub" v-show="toggle">
-      <div class="subcode"></div>
+      <Vars></Vars>
     </div>
 
     <div id="main">
@@ -16,6 +16,7 @@
 <script>
 // import $ from "jquery";
 import Location from "./Location";
+import Vars from "./Vars";
 import { mapState } from "vuex";
 import NestedWithVmodel from "./nested-with-vmodel";
 
@@ -35,6 +36,7 @@ export default {
   components: {
     Location,
     NestedWithVmodel,
+    Vars,
   },
   computed: {
     ...mapState({
@@ -60,7 +62,7 @@ export default {
 
 #sub {
   flex: 0 0 auto;
-  height: 50%;
+  height: 30%;
 }
 
 #main {

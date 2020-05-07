@@ -16,6 +16,15 @@
   cursor: pointer;
 }
 
+.l-icon--big {
+  align-items: center;
+  font-size: 150%;
+}
+
+.l-icon--big:hover {
+  cursor: pointer;
+}
+
 .u-align-self-fstart {
   align-self: flex-start !important;
 }

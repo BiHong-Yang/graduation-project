@@ -2,8 +2,8 @@
   <div class="location">
     <div class="out">
       <div class="front"></div>
-      <div class="numbox" v-for="(item, index) in location" :key="index">
-        <div class="num">
+      <div class="numbox" v-for="(item, index) in locationName" :key="index">
+        <div class="num" @click="changeLocation(index)">
           <span>{{ item }}</span>
         </div>
         <div class="icon">
@@ -23,8 +23,8 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 export default {
-  props: ["location"],
   data() {
     return {
       toggle: this.$store.state.logic.SubcodeToggle,
@@ -37,8 +37,17 @@ export default {
     changeHint: function () {
       this.$store.state.control.hint = !this.$store.state.control.hint;
     },
+    changeLocation: function (index) {
+      this.location.splice(index + 1);
+      this.$store.dispatch("logic/refreshVars");
+    },
   },
-  computed: {},
+  computed: {
+    ...mapState({
+      location: (status) => status.logic.location,
+      locationName: (status) => status.logic.locationName,
+    }),
+  },
 };
 </script>
 

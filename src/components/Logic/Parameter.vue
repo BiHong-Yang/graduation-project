@@ -5,41 +5,43 @@
       :key="index"
       class="c-Parameter__item l-Parameter__item"
     >
-      <!-- 删除参数 -->
-
-      <el-tooltip
-        class="item"
-        effect="dark"
-        content="删除该参数"
-        placement="top-start"
-        :disabled="useHint"
-      >
-        <span
-          class="l-icon--small u-align-self-fstart"
-          @click="deleteItem(index)"
-        >
-          <i class="el-icon-close"></i>
-        </span>
-      </el-tooltip>
-
       <!-- 显示参数 -->
+      <div class="c-item__header">
+        <el-select
+          class="c-header__select"
+          v-model="item.type"
+          :placeholder="placeHolder(item)"
+          @change="ChangeType(index)"
+        >
+          <!-- 从这里开始，弄选择更改 -->
 
-      <el-select
-        v-model="item.type"
-        :placeholder="placeHolder(item)"
-        @change="ChangeType(index)"
-      >
-        <!-- 从这里开始，弄选择更改 -->
+          <!-- 从这里开始，弄选择更改 -->
+          <el-option
+            v-for="(types, id) in ParamTypes"
+            :key="types.name + id"
+            :label="types.name"
+            :value="types.type"
+            class="c-Parameter-name"
+          ></el-option>
+        </el-select>
 
-        <!-- 从这里开始，弄选择更改 -->
-        <el-option
-          v-for="(types, id) in ParamTypes"
-          :key="types.name + id"
-          :label="types.name"
-          :value="types.type"
-          class="c-Parameter-name"
-        ></el-option>
-      </el-select>
+        <!-- 删除参数 -->
+
+        <el-tooltip
+          class="item c-header__delete"
+          effect="dark"
+          content="删除该参数"
+          placement="top-start"
+          :disabled="useHint"
+        >
+          <span
+            class="l-icon--big u-align-self-fstart"
+            @click="deleteItem(index)"
+          >
+            <i class="el-icon-circle-close"></i>
+          </span>
+        </el-tooltip>
+      </div>
 
       <Content
         v-for="(it, key) in itemFilter(item.contents)"
@@ -150,7 +152,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .c-Parameter {
   display: flex;
   // flex-wrap: wrap;
@@ -165,9 +167,27 @@ export default {
     border: 1px solid #dcdfe6;
     border-radius: 3px;
     padding: 2px;
+    .c-item__header {
+      display: flex;
+      align-items: center;
+      .c-header__select {
+        flex: 1 1 auto;
+      }
+      .c-header__delete {
+        flex: 0 0 auto;
+      }
+    }
   }
   .l-Parameter__item {
     margin-left: 2px;
   }
+}
+.l-icon {
+  padding: 0 5px;
+}
+.l-icon--big {
+  padding: 0.25rem;
+}
+.l-item__contents {
 }
 </style>

@@ -13,37 +13,7 @@ export default {
     // Menu,
     // Home,
   },
-  methods: {
-    storeThings: function () {
-      console.log("now!");
-      alert("leave");
-      this.stopTimer();
-      localStorage.setItem(
-        "code",
-        JSON.stringify(this.$store.state.logic.elements)
-      );
-      localStorage.setItem(
-        "globalId",
-        JSON.stringify(this.$store.state.logic.globalId)
-      );
-      return "花Q!";
-    },
-  },
-  mounted: function () {
-    alert("mounted");
-    this.$store.state.control.kill = false;
-    if (localStorage.getItem("code") == null) {
-      this.$store.state.logic.elements = [];
-      this.$store.state.logic.globalId = 10;
-    } else {
-      this.$store.state.logic.elements = JSON.parse(
-        localStorage.getItem("code")
-      );
-      this.$store.state.logic.globalId = JSON.parse(
-        localStorage.getItem("globalId")
-      );
-    }
-  },
+  methods: {},
 };
 </script>
 

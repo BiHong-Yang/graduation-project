@@ -68,7 +68,6 @@
 import Logic from "./Logic/Logic.vue";
 import CodeSpace from "./Logic/CodeSpace.vue";
 import TrashBin from "./Logic/TrashBin";
-
 export default {
   data() {
     return {
@@ -81,5 +80,38 @@ export default {
     TrashBin,
   },
   methods: {},
+  mounted() {
+    // 加关窗口事件
+    window.onbeforeunload = () => {
+      localStorage.setItem(
+        "code",
+        JSON.stringify(this.$store.state.logic.elements)
+      );
+      localStorage.setItem(
+        "globalId",
+        JSON.stringify(this.$store.state.logic.globalId)
+      );
+    };
+
+    // 恢复状态
+    this.$store.state.control.kill = false;
+    if (localStorage.getItem("code") == null) {
+      this.$store.state.logic.elements = [];
+      this.$store.state.logic.globalId = 10;
+    } else {
+      this.$store.state.logic.elements = JSON.parse(
+        localStorage.getItem("code")
+      );
+      this.$store.state.logic.globalId = JSON.parse(
+        localStorage.getItem("globalId")
+      );
+    }
+
+    // 刷新变量
+    this.$store.dispatch("logic/refreshVars");
+  },
+  beforeDestroy() {
+    window.onbeforeunload = null;
+  },
 };
 </script>

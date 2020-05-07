@@ -24,7 +24,7 @@
       <div class="el-icon-arrow-right l-header__button"></div>
     </div>
 
-    <div
+    <!-- <div
       v-show="item.useEle"
       class="c-expression__header"
       @click="item.useEle = !item.useEle"
@@ -34,10 +34,18 @@
       </div>
 
       <div class="el-icon-arrow-down l-header__button"></div>
-    </div>
+    </div> -->
 
     <div v-show="item.useEle" class="c-expression__body">
-      <nested class="nested" :list="item.elements" />
+      <div class="o-body__block">
+        <div class="o-block__mask" v-show="item.elements.length == 0">
+          <span> 请填入表达式</span>
+        </div>
+        <nested class="nested" :list="item.elements" />
+      </div>
+      <div class="o-body__icon" @click="item.useEle = !item.useEle">
+        <div class="el-icon-arrow-down l-header__button"></div>
+      </div>
     </div>
   </div>
 </template>
@@ -82,23 +90,56 @@ export default {
       padding: 0.7rem 0;
     }
     .l-header__button {
-      height: 100%;
       color: #303133;
-      padding: 0.7rem 0;
-      flex: 0 0 auto;
     }
   }
 
   .c-expression__body {
-    padding: 0.1rem;
+    display: flex;
+    align-items: stretch;
+    .o-body__block {
+      height: 100%;
+      width: 100%;
+      position: relative;
+      .o-block__mask {
+        margin: 0;
+        min-height: 5rem;
+        border-radius: 3px;
+        box-sizing: border-box;
+        display: inline-block;
+        z-index: 1;
+        position: absolute;
+        width: calc(100% - 1.25rem);
+        align-items: center;
+        justify-content: center;
+        color: #c0c4cc;
+        font-weight: 100;
+        font-size: 90%;
+        font-family: "Avenir", Helvetica, Arial, sans-serif;
+        display: flex;
+      }
+
+      .nested {
+        min-height: 5rem;
+        margin: 3px 0 0 3px;
+        border: 1px solid #dcdfe6;
+        border-radius: 3px;
+        box-sizing: border-box;
+        display: inline-block;
+        background-color: transparent;
+        z-index: 100;
+        min-width: calc(100% - 1px) !important;
+      }
+    }
+
+    .o-body__icon {
+      .l-header__button {
+        height: 100%;
+        color: #303133;
+        padding: 0.7rem 0.4rem;
+        flex: 0 0 auto;
+      }
+    }
   }
-}
-.nested {
-  margin: 0;
-  min-height: 5rem;
-  border: 1px solid #c0c4cc;
-  border-radius: 3px;
-  box-sizing: border-box;
-  display: inline-block;
 }
 </style>

@@ -1,11 +1,11 @@
-function VarbLogin(items, location) {
+function VarFind(items, location, list) {
   for (let i = 0; i < items.length; i++) {
     // 有名字一定是变量，注册之
     if (items[i].contents === undefined) {
       continue;
     }
     if (items[i].contents.name !== undefined) {
-      state.variables.push(
+      list.push(
         JSON.parse(
           JSON.stringify({
             name: items[i].contents.name.value,
@@ -21,13 +21,82 @@ function VarbLogin(items, location) {
     }
     // 有名字记名字，没名字记编号
     if (items[i].contents.name !== undefined) {
-      VarbLogin(
+      VarFind(
         items[i].elements,
-        location.concat([items[i].contents.name.value])
+        location.concat([items[i].contents.name.value]),
+        list
       );
     } else {
-      VarbLogin(items[i].elements, location.concat([String(i + 1)]));
+      VarFind(items[i].elements, location.concat([String(i + 1)]), list);
     }
+  }
+}
+
+function VarLogin() {
+  state.varAlready.length = 0;
+  state.varPotential.length = 0;
+  state.locationName.length = 1;
+  console.log("here");
+  let item = {
+    elements: state.elements,
+  };
+  // 搜索每一层
+  // 为已知变量服务
+  for (let i = 0; i < state.location.length; i++) {
+    state.varAlready.push([]);
+
+    // 搜索该层中每个元素
+    for (let j = 0; j < item.elements.length; j++) {
+      // 如果有名字那肯定是变量，记下来
+      if (item.elements[j].contents.name !== undefined) {
+        state.varAlready[i].push(
+          JSON.parse(
+            JSON.stringify({
+              name: item.elements[j].contents.name.value,
+              type: item.elements[j].type,
+            })
+          )
+        );
+      }
+    }
+    // 进入下一层前的准备
+    if (i + 1 < state.location.length) {
+      // 加入下一层 locationName
+      // 如果有名字 加名字
+      if (item.elements[state.location[i + 1]].contents.name !== undefined) {
+        state.locationName.push(
+          item.elements[state.location[i + 1]].contents.name.value
+        );
+      }
+      // 如果没名字，加位置
+      else {
+        state.locationName.push(String(state.location[i + 1] + 1));
+      }
+      // 提升item
+      item = item.elements[state.location[i + 1]];
+    }
+  }
+
+  // 为潜在变量服务
+  for (let i = 0; i < item.elements.length; i++) {
+    // 弄个东西
+    state.varPotential.push({
+      name:
+        item.elements[i].contents.name !== undefined
+          ? item.elements[i].contents.name.value
+          : String(i + 1),
+      vars: [],
+    });
+    // 弄好丢到vars里
+    VarFind(
+      item.elements[i].elements,
+      state.locationName.concat(
+        item.elements[i].contents.name !== undefined
+          ? item.elements[i].contents.name.value
+          : String(i + 1)
+      ),
+      state.varPotential[i].vars
+    );
   }
 }
 
@@ -83,8 +152,32 @@ const state = {
   // 测试用数据
   elements: [],
 
-  // 变量注册
+  // 改好之后要删除
   variables: [],
+
+  // 现在代表的变量的位置
+  // 内容为数字
+  location: [0],
+
+  // 用名字来表示的位置
+  // 内容全为字符串
+  locationName: ["base"],
+
+  // 必然能用的变量
+  // 内容：
+  // inner: {
+  //   name: xxx,
+  //   type: xxx,
+  // },
+  varAlready: [],
+
+  // 潜在能用的变量
+  // 内容
+  // inner: {
+  //   name: xxx, 该单元的内容
+  //   vars: xxx, 该单元内变量的内容
+  // },
+  varPotential: [],
 
   // 待转换的逻辑
   transformer: [
@@ -1627,7 +1720,7 @@ const getters = {
   },
   ValueTypes: (state) => {
     return Array.from(state.transformer[4].elements, (x) => x.type).concat(
-      Array.from(state.transformer[5].elements, (x) => x.type)
+      Array.from(state.transformer[5].elements, (x) => x.type).concat(["var"])
     );
   },
 };
@@ -1672,10 +1765,9 @@ const mutations = {
     } else {
       state.started = false;
     }
-
+    console.log("end here!");
     // 由于之后都是缩放操作，这里最适合注册变量
-    state.variables.length = 0;
-    VarbLogin(state.elements, []);
+    VarLogin();
 
     console.log(state.ShowsOnMove);
     if (state.MovedList == null) {
@@ -1735,6 +1827,11 @@ const mutations = {
       list.splice(index, 1);
     }
   },
+
+  // 更新变量
+  refreshVars: () => {
+    VarLogin();
+  },
 };
 
 const actions = {
@@ -1771,6 +1868,11 @@ const actions = {
   // 批量删除
   nestDelete: ({ commit }, payload) => {
     commit("nestDelete", payload);
+  },
+
+  // 更新变量
+  refreshVars: ({ commit }) => {
+    commit("refreshVars");
   },
 };
 

@@ -3,16 +3,23 @@
     <div class="nested">
       <nested :list="elements" />
     </div>
-    <div>
+    <div class="raw">
       <raw-displayer :title="'Vuex Store'" :value="elements" />
     </div>
-    <div>
-      <raw-displayer :title="'Variables'" :value="variables" />
+    <div class="raw">
+      <raw-displayer :title="'varAlready'" :value="varAlready" />
+    </div>
+    <div class="raw">
+      <raw-displayer :title="'varPotential'" :value="varPotential" />
+    </div>
+    <div class="raw">
+      <raw-displayer :title="'location'" :value="location" />
     </div>
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex";
 import Nested from "./nested/nested.vue";
 import rawDisplayer from "./infra/raw-displayer.vue";
 export default {
@@ -37,12 +44,12 @@ export default {
         this.$store.dispatch("logic/updateElements", value);
       },
     },
-    transformer() {
-      return this.$store.state.logic.transformer;
-    },
-    variables() {
-      return this.$store.state.logic.variables;
-    },
+    ...mapState({
+      transformer: (status) => status.logic.transformer,
+      varAlready: (status) => status.logic.varAlready,
+      varPotential: (status) => status.logic.varPotential,
+      location: (status) => status.logic.location,
+    }),
   },
   methods: {},
 };
@@ -63,5 +70,8 @@ export default {
   min-height: 100%;
   min-width: 100%;
   display: inline-flex;
+}
+.raw {
+  border: 1px black solid;
 }
 </style>
