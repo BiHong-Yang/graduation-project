@@ -30,6 +30,7 @@
       <div v-else-if="keyWord == 'name'" class="l-contents-item">
         <el-input
           v-model="item.value"
+          @change="refreshVars()"
           placeholder="请输入一串英文字符"
         ></el-input>
       </div>
@@ -58,6 +59,7 @@
       <div v-else-if="keyWord == 'name'" class="l-contents-item">
         <el-input
           v-model="item.value"
+          @change="refreshVars()"
           placeholder="请输入一串英文字符"
         ></el-input>
       </div>
@@ -77,6 +79,7 @@
       <div v-else-if="keyWord == 'name'" class="l-contents-item">
         <el-input
           v-model="item.value"
+          @change="refreshVars()"
           placeholder="请输入一串英文字符"
         ></el-input>
       </div>
@@ -93,6 +96,7 @@
       <div v-else-if="keyWord == 'name'" class="l-contents-item">
         <el-input
           v-model="item.value"
+          @change="refreshVars()"
           placeholder="请输入一串英文字符"
         ></el-input>
       </div>
@@ -122,6 +126,7 @@
       <!-- 名字 -->
       <div v-else-if="keyWord == 'name'" class="l-contents-item">
         <el-input
+          @change="refreshVars()"
           v-model="item.value"
           placeholder="请输入一串英文字符"
         ></el-input>
@@ -146,6 +151,7 @@
       <!-- 名字 -->
       <div v-else-if="keyWord == 'name'" class="l-contents-item">
         <el-input
+          @change="refreshVars()"
           v-model="item.value"
           placeholder="请输入一串英文字符"
         ></el-input>
@@ -158,6 +164,7 @@
       <!-- 初值 -->
       <div v-if="keyWord == 'name'" class="l-contents-item">
         <el-input
+          @change="refreshVars()"
           v-model="item.value"
           placeholder="请输入一串英文字符"
         ></el-input>
@@ -180,6 +187,7 @@
       <!-- 名字 -->
       <div v-if="keyWord == 'name'" class="l-contents-item">
         <el-input
+          @change="refreshVars()"
           v-model="item.value"
           placeholder="请输入一串英文字符"
         ></el-input>
@@ -195,6 +203,7 @@
       <!-- 名字 -->
       <div v-else-if="keyWord == 'name'" class="l-contents-item">
         <el-input
+          @change="refreshVars()"
           v-model="item.value"
           placeholder="请输入一串英文字符"
         ></el-input>
@@ -208,17 +217,22 @@
       <!-- 名字 -->
       <div v-if="keyWord == 'name'" class="l-contents-item">
         <el-input
+          @change="refreshVars()"
           v-model="item.value"
           placeholder="请输入一串英文字符"
         ></el-input>
       </div>
 
       <div v-else-if="keyWord == 'param'" class="l-contents-item">
-        <Parameter :params="item.value"></Parameter>
+        <Parameter :mode="'name'" :params="item.value"></Parameter>
+      </div>
+
+      <div v-else-if="keyWord == 'modifiers'" class="l-contents-item">
+        <Parameter :mode="'simple'" :params="item.value"></Parameter>
       </div>
 
       <div v-else-if="keyWord == 'returns'" class="l-contents-item">
-        <Parameter :params="item.value"></Parameter>
+        <Parameter :mode="'only'" :params="item.value"></Parameter>
       </div>
 
       <div v-else-if="keyWord == 'type'" class="l-contents-item">
@@ -279,6 +293,7 @@
       <div>
         <div v-if="keyWord == 'name'" class="l-contents-item">
           <el-input
+            @change="refreshVars()"
             v-model="item.value"
             placeholder="请输入一串英文字符"
           ></el-input>
@@ -300,6 +315,7 @@
       <div>
         <div v-if="keyWord == 'name'" class="l-contents-item">
           <el-input
+            @change="refreshVars()"
             v-model="item.value"
             placeholder="请输入一串英文字符"
           ></el-input>
@@ -533,6 +549,9 @@ export default {
       return el.show;
     },
     doNothing: function () {},
+    refreshVars: function () {
+      this.$store.dispatch("logic/refreshVars");
+    },
   },
   computed: {
     element() {

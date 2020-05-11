@@ -8,7 +8,7 @@
       <!-- 显示参数 -->
       <div class="c-item__header">
         <el-select
-          v-if="mode == 'select'"
+          v-if="['select', 'name'].includes(mode)"
           class="c-header__select"
           v-model="item.type"
           :placeholder="placeHolder(item)"
@@ -26,12 +26,30 @@
           ></el-option>
         </el-select>
         <!-- 简单模式 -->
-        <div v-else>
+        <div v-else-if="mode == 'simple'">
           <Expression
             :item="item"
             :placeholder="'请输入操作数或变量名'"
           ></Expression>
         </div>
+        <!-- 仅选择模式 -->
+        <el-select
+          v-else-if="mode == 'only'"
+          class="c-header__select"
+          v-model="item.type"
+          :placeholder="placeHolder(item)"
+        >
+          <!-- 从这里开始，弄选择更改 -->
+
+          <!-- 从这里开始，弄选择更改 -->
+          <el-option
+            v-for="(types, id) in ParamTypes"
+            :key="types.name + id"
+            :label="types.name"
+            :value="types.type"
+            class="c-Parameter-name"
+          ></el-option>
+        </el-select>
 
         <!-- 删除参数 -->
 
@@ -53,6 +71,19 @@
           v-for="(it, key) in itemFilter(item.contents)"
           :key="key"
           :contents="itemFilter(item.contents)"
+          :item="it"
+          :keyWord="key"
+          :type="item.type"
+          :mode="'soloMode'"
+          class="l-item__contents"
+        ></Content>
+      </template>
+      <!-- 函数的参数，只记名字 -->
+      <template v-else-if="mode == 'name'">
+        <Content
+          v-for="(it, key) in nameFilter(item.contents)"
+          :key="key"
+          :contents="nameFilter(item.contents)"
           :item="it"
           :keyWord="key"
           :type="item.type"
@@ -151,6 +182,16 @@ export default {
         if (contents[x].show == true) {
           temp[x] = contents[x];
         }
+      }
+      return temp;
+    },
+    nameFilter: function (contents) {
+      let temp = {};
+      if (contents.categories != undefined) {
+        temp.categories = contents.categories;
+      }
+      if (contents.name != undefined) {
+        temp.name = contents.name;
       }
       return temp;
     },

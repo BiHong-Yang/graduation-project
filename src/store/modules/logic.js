@@ -172,6 +172,7 @@ const state = {
     name: "请选择类型",
     elements: [],
     contents: {},
+    useEle: false,
   },
 
   // 空表达式
