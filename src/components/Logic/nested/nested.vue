@@ -46,15 +46,17 @@
   font-family: "微软雅黑";
   font-weight: 900;
   font-size: 140%;
-  color: #e6a23c;
-  // padding: 0 1em;
+  // color: #e6a23c;
   user-select: none;
   display: inline-flex;
-  padding-right: 0.5em;
+  // padding-right: 0.5em;
   align-items: center;
   &:hover {
     cursor: pointer;
   }
+}
+.l-item__name--common {
+  padding-right: 0.5em;
 }
 .l-item__name--operations {
   box-sizing: content-box;
@@ -103,7 +105,11 @@
       :key="index"
       v-for="(el, index) in realValue"
     >
-      <div class="c-nested__item" v-if="!OperaTypes.includes(el.type)">
+      <div
+        class="c-nested__item"
+        :style="{ color: useColor(el.type) }"
+        v-if="!OperaTypes.includes(el.type)"
+      >
         <div
           v-if="!ValueTypes.includes(el.type)"
           class="line-num"
@@ -128,7 +134,12 @@
           content="按住拖动"
           placement="top"
         >
-          <div class="o-item__name">{{ el.name }}</div>
+          <div
+            class="o-item__name"
+            :class="{ 'l-item__name--common': !ValueTypes.includes(el.type) }"
+          >
+            {{ el.name }}
+          </div>
         </el-tooltip>
 
         <div class="c-content__container">
@@ -220,6 +231,36 @@ export default {
         });
       }
     },
+    useColor: function (type) {
+      // 变量用浅绿 创建和使用
+      if (this.TypeGroups(0).concat(["var", "struct"]).includes(type)) {
+        return "#4EC9B0";
+      }
+      // 合约 函数用黄
+      else if (this.TypeGroups(1).concat(["constructor"]).includes(type)) {
+        return "#FFB742";
+      }
+      // 运算用浅蓝
+      else if (this.TypeGroups(2).includes(type)) {
+        return "#9CDCF0";
+      }
+      // 逻辑用浅紫
+      else if (this.TypeGroups(3).includes(type)) {
+        return "#C586C0";
+      }
+      // 合约属性用深绿 带装饰器的函数位置
+      else if (this.TypeGroups(4).concat(["modifier__inner"]).includes(type)) {
+        return "#006699";
+      }
+      // 合约方法用橙色 带构造函数
+      else if (this.TypeGroups(5).includes(type)) {
+        return "#CE8349";
+      }
+      // 错误处理用粉红
+      else if (this.TypeGroups(6).includes(type)) {
+        return "#FF5842";
+      }
+    },
   },
   components: {
     draggable,
@@ -245,6 +286,7 @@ export default {
     ...mapGetters({
       OperaTypes: "logic/OperaTypes",
       ValueTypes: "logic/ValueTypes",
+      TypeGroups: "logic/TypeGroups",
     }),
   },
   props: {

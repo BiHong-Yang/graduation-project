@@ -1,4 +1,4 @@
-function VarFind(items, location, list) {
+function VarFind(items, location, locationName, list) {
   for (let i = 0; i < items.length; i++) {
     // 有名字一定是变量，注册之
     if (items[i].contents === undefined) {
@@ -8,9 +8,10 @@ function VarFind(items, location, list) {
       list.push(
         JSON.parse(
           JSON.stringify({
-            name: items[i].contents.name.value,
             type: items[i].type,
-            location: location,
+            name: items[i].contents.name.value,
+            location: location.concat([i]),
+            locationName: locationName.concat([items[i].contents.name.value]),
           })
         )
       );
@@ -23,20 +24,39 @@ function VarFind(items, location, list) {
     if (items[i].contents.name !== undefined) {
       VarFind(
         items[i].elements,
-        location.concat([items[i].contents.name.value]),
+        location.concat(JSON.parse(JSON.stringify(i))),
+        locationName.concat([items[i].contents.name.value]),
         list
       );
     } else {
-      VarFind(items[i].elements, location.concat([String(i + 1)]), list);
+      VarFind(
+        items[i].elements,
+        location.concat(JSON.parse(JSON.stringify(i))),
+        locationName.concat([String(i + 1)]),
+        list
+      );
     }
   }
 }
 
 function VarLogin() {
+  // 保证不会乱指
+  for (
+    let i = 1;
+    i < Math.min(state.locationId.length, state.location.length);
+    i++
+  ) {
+    if (
+      getAttributes(state.location.slice(0, i + 1).id != state.locationId[i])
+    ) {
+      state.location.splice(i + 1);
+      break;
+    }
+  }
   state.varAlready.length = 0;
   state.varPotential.length = 0;
-  state.locationName.length = 1;
-  console.log("here");
+  state.locationName.splice(1);
+  state.locationId.splice(1);
   let item = {
     elements: state.elements,
   };
@@ -44,19 +64,34 @@ function VarLogin() {
   // 为已知变量服务
   for (let i = 0; i < state.location.length; i++) {
     state.varAlready.push([]);
-
     // 搜索该层中每个元素
     for (let j = 0; j < item.elements.length; j++) {
       // 如果有名字那肯定是变量，记下来
       if (item.elements[j].contents.name !== undefined) {
+        console.log("item :", item.elements[j]);
         state.varAlready[i].push(
           JSON.parse(
             JSON.stringify({
-              name: item.elements[j].contents.name.value,
               type: item.elements[j].type,
+              name: item.elements[j].contents.name.value,
+              contents: {},
+              location: state.location.slice(0, i + 1).concat([j]),
+              locationName: state.locationName
+                .slice(0, i + 1)
+                .concat(item.elements[j].contents.name.value),
             })
           )
         );
+        // if (varAlready[i].type == 'struct') {
+        //   for (let k = 0; k < item.elements[j].elements.length; k++) {
+        //     varAlready[i].contents[
+        //       item.elements[j].elements[k].contents.name.value
+        //     ] = {
+        //       type: item.elements[j].elements[k].type,
+        //       name:
+        //     };
+        //   }
+        // }
       }
     }
     // 进入下一层前的准备
@@ -72,11 +107,11 @@ function VarLogin() {
       else {
         state.locationName.push(String(state.location[i + 1] + 1));
       }
+      state.locationId.push(item.elements[state.location[i + 1]].id);
       // 提升item
       item = item.elements[state.location[i + 1]];
     }
   }
-
   // 为潜在变量服务
   for (let i = 0; i < item.elements.length; i++) {
     // 弄个东西
@@ -90,6 +125,7 @@ function VarLogin() {
     // 弄好丢到vars里
     VarFind(
       item.elements[i].elements,
+      state.location.concat(i),
       state.locationName.concat(
         item.elements[i].contents.name !== undefined
           ? item.elements[i].contents.name.value
@@ -98,6 +134,17 @@ function VarLogin() {
       state.varPotential[i].vars
     );
   }
+  console.log("after");
+}
+
+function getAttributes(location) {
+  // 找到元素
+  let temp = { elements: state.elements };
+  for (let i = 1; i < location.length; i++) {
+    temp = temp.elements[location[i]];
+    console.log(("temp: ", temp));
+  }
+  return JSON.parse(JSON.stringify(temp));
 }
 
 const state = {
@@ -145,15 +192,24 @@ const state = {
     address: 4,
     byteArray: 5,
     mapping: 6,
-    struct: 7,
+    struct_creator: 7,
     array: 8,
+  },
+
+  // 统计颜色
+  color: {
+    // 浅蓝: "#9CDCF0", //变量
+    橙色: "#CE8349", // 字符串
+    // 深蓝: "#569CD6", //类型
+    绿色: "#006699", // 注释
+    黄色: "#FFF119", // 函数名
+    浅绿: "#4EC9B0", //对象
+    紫色: "#C586C0", //条件
+    粉红: "#FF5842", // 错误
   },
 
   // 测试用数据
   elements: [],
-
-  // 改好之后要删除
-  variables: [],
 
   // 现在代表的变量的位置
   // 内容为数字
@@ -162,6 +218,9 @@ const state = {
   // 用名字来表示的位置
   // 内容全为字符串
   locationName: ["base"],
+
+  // 用于记录id 保证location不会乱指
+  locationId: [0],
 
   // 必然能用的变量
   // 内容：
@@ -190,7 +249,7 @@ const state = {
         // uint类型
         {
           type: "uint",
-          name: "自然数",
+          name: "非负整数",
           elements: [],
 
           contents: {
@@ -356,22 +415,6 @@ const state = {
         },
 
         {
-          type: "struct",
-          name: "结构体",
-          elements: [],
-
-          contents: {
-            name: {
-              name: "名字",
-              value: "",
-              show: true,
-              use: true,
-            },
-          },
-          show: true,
-        },
-
-        {
           type: "array",
           name: "数组",
           elements: [],
@@ -451,6 +494,12 @@ const state = {
               value: "",
               show: false,
             },
+
+            modifiers: {
+              name: "装饰器",
+              value: [],
+              show: false,
+            },
           },
 
           show: true,
@@ -465,6 +514,7 @@ const state = {
             {
               type: "modifier__inner",
               name: "函数位置",
+              contents: {},
               elements: [],
             },
           ],
@@ -501,7 +551,7 @@ const state = {
           elements: [
             {
               type: "constructor",
-              name: "构造函数",
+              name: "合约构造函数",
               elements: [],
               contents: {
                 param: {
@@ -534,6 +584,23 @@ const state = {
             },
           },
 
+          show: true,
+        },
+
+        // 构建结构体
+        {
+          type: "struct_creator",
+          name: "定义新类型",
+          elements: [],
+
+          contents: {
+            name: {
+              name: "名字",
+              value: "",
+              show: true,
+              use: true,
+            },
+          },
           show: true,
         },
       ],
@@ -1723,6 +1790,12 @@ const getters = {
       Array.from(state.transformer[5].elements, (x) => x.type).concat(["var"])
     );
   },
+  TypeGroups: (state) => (groupId) => {
+    return Array.from(state.transformer[groupId].elements, (x) => x.type);
+  },
+  GetItem: () => (location) => {
+    return getAttributes(location);
+  },
 };
 
 const mutations = {
@@ -1760,6 +1833,7 @@ const mutations = {
   // 恢复移动的组件之前的可见值，恢复之前样式
   nestedEnd: (state, { item, index }) => {
     // 若不处在删除模式
+    VarLogin();
     if (!state.started) {
       return;
     } else {
@@ -1767,7 +1841,6 @@ const mutations = {
     }
     console.log("end here!");
     // 由于之后都是缩放操作，这里最适合注册变量
-    VarLogin();
 
     console.log(state.ShowsOnMove);
     if (state.MovedList == null) {
@@ -1818,13 +1891,15 @@ const mutations = {
 
   // 批量删除
   nestDelete: (state, { list, index }) => {
-    console.log("here");
     console.log(state.MovedList);
     if (state.MovedList == null) {
       state.ShowsOnMove.length = 0;
+      VarLogin();
+
       return;
     } else if (state.MovedList.length == 0) {
       list.splice(index, 1);
+      VarLogin();
     }
   },
 

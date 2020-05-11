@@ -4,7 +4,7 @@
     effect="dark"
     placement="top-start"
     :open-delay="0"
-    :disabled="useHint"
+    v-if="!useHint"
   >
     <div slot="content" v-html="content"></div>
     <i class="c-hint-icon" :class="icon"></i>

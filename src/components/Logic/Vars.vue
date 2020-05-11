@@ -4,7 +4,7 @@
     <div class="c-Vars__block">
       <div class="c-item" v-for="(item, index) in varAlready" :key="index">
         <!-- 位置 -->
-        <div class="c-item__location">
+        <div class="c-item__location" @click="changeLocation(index)">
           <span class="o-location__name">
             {{ locationName[index] }}
           </span>
@@ -64,6 +64,10 @@ export default {
       this.location.push(index);
       this.$store.dispatch("logic/refreshVars");
     },
+    changeLocation: function (index) {
+      this.location.splice(index + 1);
+      this.$store.dispatch("logic/refreshVars");
+    },
   },
   components: {
     VarRegister,
@@ -108,6 +112,9 @@ export default {
 
         .o-location__name {
           box-sizing: border-box;
+        }
+        &:hover {
+          cursor: pointer;
         }
       }
 

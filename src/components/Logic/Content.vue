@@ -152,7 +152,31 @@
       </div>
     </template>
 
+    <!-- 结构体 -->
+
     <template v-else-if="type == 'struct'">
+      <!-- 初值 -->
+      <div v-if="keyWord == 'name'" class="l-contents-item">
+        <el-input
+          v-model="item.value"
+          placeholder="请输入一串英文字符"
+        ></el-input>
+      </div>
+      <!-- <Parameter :params="item.value"></Parameter> -->
+      <!-- <SelectType :mode="'struct'" :item="item.value"></SelectType> -->
+      <!-- <Expression
+          :item="item"
+          :placeholder="'请输入操作数或变量名'"
+        ></Expression> -->
+      <StructValue
+        v-else-if="keyWord == 'value'"
+        class="l-contents-item"
+        :value="item.value"
+      ></StructValue>
+    </template>
+
+    <!-- 创建 -->
+    <template v-else-if="type == 'struct_creator'">
       <!-- 名字 -->
       <div v-if="keyWord == 'name'" class="l-contents-item">
         <el-input
@@ -405,7 +429,7 @@
     <!-- 哈希们 -->
     <template v-else-if="['keccak256', 'ripemd160', 'sha256'].includes(type)">
       <div v-if="keyWord == 'param'" class="l-contents-item">
-        <VariableParam :params="item.value"></VariableParam>
+        <Parameter :mode="'simple'" :params="item.value"></Parameter>
       </div>
     </template>
 
@@ -434,10 +458,12 @@
     <!-- 两种 call -->
     <template v-else-if="['call', 'delegatecall'].includes(type)">
       <div v-if="keyWord == 'param'" class="l-contents-item">
-        <VariableParam :params="item.value"></VariableParam>
+        <Parameter :mode="'simple'" :params="item.value"></Parameter>
       </div>
 
       <div v-else class="l-contents-item">
+        <!-- <Parameter :params="item.value"></Parameter> -->
+
         <Expression
           :item="item"
           :placeholder="'请输入操作数或变量名'"
@@ -446,6 +472,17 @@
     </template>
 
     <!-- 错误处理 -->
+    <template
+      v-else-if="['require', 'assert', 'revert', 'selfdestruct'].includes(type)"
+    >
+      <div class="l-contents-item">
+        <Expression
+          :item="item"
+          :placeholder="'请输入操作数或变量名'"
+        ></Expression>
+      </div>
+    </template>
+
     <template
       v-else-if="['require', 'assert', 'revert', 'selfdestruct'].includes(type)"
     >
@@ -465,7 +502,7 @@ import SelectType from "./SelectType";
 import Expression from "./Expression";
 import Parameter from "./Parameter";
 import Hint from "./Hint";
-import VariableParam from "./VariableParam";
+import StructValue from "./StructValue";
 export default {
   props: {
     contents: {
@@ -514,7 +551,7 @@ export default {
     Parameter,
     SelectType,
     Hint,
-    VariableParam,
+    StructValue,
   },
 };
 </script>

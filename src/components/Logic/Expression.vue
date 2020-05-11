@@ -66,7 +66,7 @@ export default {
 .c-expression {
   display: flex;
   flex-direction: column;
-  // min-width: 13.9rem;
+  min-width: 13.9rem;
   width: 100%;
   border: 1px solid #dcdfe6;
   border-radius: 3px;
@@ -90,6 +90,8 @@ export default {
       padding: 0.7rem 0;
     }
     .l-header__button {
+      flex: 0 0 auto;
+
       color: #303133;
     }
   }

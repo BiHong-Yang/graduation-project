@@ -8,6 +8,7 @@
       <!-- 显示参数 -->
       <div class="c-item__header">
         <el-select
+          v-if="mode == 'select'"
           class="c-header__select"
           v-model="item.type"
           :placeholder="placeHolder(item)"
@@ -24,6 +25,13 @@
             class="c-Parameter-name"
           ></el-option>
         </el-select>
+        <!-- 简单模式 -->
+        <div v-else>
+          <Expression
+            :item="item"
+            :placeholder="'请输入操作数或变量名'"
+          ></Expression>
+        </div>
 
         <!-- 删除参数 -->
 
@@ -34,25 +42,24 @@
           placement="top-start"
           :disabled="useHint"
         >
-          <span
-            class="l-icon--big u-align-self-fstart"
-            @click="deleteItem(index)"
-          >
+          <span class="l-icon--big" @click="deleteItem(index)">
             <i class="el-icon-circle-close"></i>
           </span>
         </el-tooltip>
       </div>
-
-      <Content
-        v-for="(it, key) in itemFilter(item.contents)"
-        :key="key"
-        :contents="itemFilter(item.contents)"
-        :item="it"
-        :keyWord="key"
-        :type="item.type"
-        :mode="'soloMode'"
-        class="l-item__contents"
-      ></Content>
+      <!-- 内容 -->
+      <template v-if="mode == 'select'">
+        <Content
+          v-for="(it, key) in itemFilter(item.contents)"
+          :key="key"
+          :contents="itemFilter(item.contents)"
+          :item="it"
+          :keyWord="key"
+          :type="item.type"
+          :mode="'soloMode'"
+          class="l-item__contents"
+        ></Content>
+      </template>
 
       <!-- <Content :contents="item.contents" :type="item.type" :mode="'soloMode'"></Content> -->
     </div>
@@ -95,6 +102,11 @@ export default {
       default: () => {
         return [];
       },
+    },
+    mode: {
+      required: false,
+      type: String,
+      default: "select",
     },
   },
   computed: {
@@ -169,7 +181,7 @@ export default {
     padding: 2px;
     .c-item__header {
       display: flex;
-      align-items: center;
+      align-items: stretch;
       .c-header__select {
         flex: 1 1 auto;
       }
@@ -186,7 +198,9 @@ export default {
   padding: 0 5px;
 }
 .l-icon--big {
-  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  padding: 0 0.2rem 0 0.3rem;
 }
 .l-item__contents {
 }

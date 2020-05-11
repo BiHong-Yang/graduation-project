@@ -82,6 +82,7 @@ export default {
   methods: {},
   mounted() {
     // 加关窗口事件
+    console.log(this.$store.state.logic.locationId);
     window.onbeforeunload = () => {
       localStorage.setItem(
         "code",
@@ -91,13 +92,19 @@ export default {
         "globalId",
         JSON.stringify(this.$store.state.logic.globalId)
       );
+      localStorage.setItem(
+        "location",
+        JSON.stringify(this.$store.state.logic.location)
+      );
     };
 
     // 恢复状态
     this.$store.state.control.kill = false;
     if (localStorage.getItem("code") == null) {
+      console.log("new one");
       this.$store.state.logic.elements = [];
       this.$store.state.logic.globalId = 10;
+      this.$store.state.logic.location = [0];
     } else {
       this.$store.state.logic.elements = JSON.parse(
         localStorage.getItem("code")
@@ -105,10 +112,14 @@ export default {
       this.$store.state.logic.globalId = JSON.parse(
         localStorage.getItem("globalId")
       );
+      this.$store.state.logic.location = JSON.parse(
+        localStorage.getItem("location")
+      );
     }
-
+    console.log("going to refresh");
     // 刷新变量
     this.$store.dispatch("logic/refreshVars");
+    console.log("after refresh");
   },
   beforeDestroy() {
     window.onbeforeunload = null;

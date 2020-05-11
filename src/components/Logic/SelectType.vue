@@ -60,18 +60,12 @@ export default {
   },
   methods: {
     ChangeType: function () {
-      console.log("in Change function:");
-      console.log(this.item.type);
-      console.log(this.RevMap[this.item.type]);
-      console.log(this.ParamTypes[this.RevMap[this.item.type]]);
       this.item.name = JSON.parse(
         JSON.stringify(this.ParamTypes[this.RevMap[this.item.type]])
       ).name;
-      console.log("elements");
       this.item.elements = JSON.parse(
         JSON.stringify(this.ParamTypes[this.RevMap[this.item.type]])
       ).elements;
-      console.log("contents");
       this.item.contents = JSON.parse(
         JSON.stringify(this.ParamTypes[this.RevMap[this.item.type]])
       ).contents;
@@ -84,7 +78,7 @@ export default {
     itemFilter: function (contents) {
       let temp = {};
       for (let x in contents) {
-        console.log(x);
+        // console.log(x);
         if (contents[x].use == true) {
           temp[x] = contents[x];
         }
@@ -95,13 +89,8 @@ export default {
     // 筛选一下到底可以选那些类别
     typeFilter: function () {
       let temp = {};
-      console.log(this.ParamTypes);
-      console.log("except type: ", this.typeExcept);
       for (let x in this.ParamTypes) {
-        console.log("x is ", x);
-        console.log("type is: ", this.ParamTypes[x].type);
         if (this.ParamTypes[x].type in this.typeExcept) {
-          console.log("except: ", x);
           continue;
         }
         temp[x] = this.ParamTypes[x];
