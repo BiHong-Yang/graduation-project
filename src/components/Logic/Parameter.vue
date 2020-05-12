@@ -161,7 +161,6 @@ export default {
       );
     },
     ChangeType: function (index) {
-      console.log("in Change function:", index);
       this.params.splice(
         index,
         1,
@@ -186,6 +185,7 @@ export default {
       return temp;
     },
     nameFilter: function (contents) {
+      console.log("in name");
       let temp = {};
       if (contents.categories != undefined) {
         temp.categories = contents.categories;

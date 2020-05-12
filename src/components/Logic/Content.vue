@@ -182,9 +182,9 @@
       ></StructValue>
     </template>
 
-    <!-- 创建 -->
-    <template v-else-if="type == 'struct_creator'">
-      <!-- 名字 -->
+    <!-- 合约 与结构体类似 -->
+    <template v-else-if="type == 'contract'">
+      <!-- 初值 -->
       <div v-if="keyWord == 'name'" class="l-contents-item">
         <el-input
           @change="refreshVars()"
@@ -192,6 +192,17 @@
           placeholder="请输入一串英文字符"
         ></el-input>
       </div>
+      <!-- <Parameter :params="item.value"></Parameter> -->
+      <!-- <SelectType :mode="'struct'" :item="item.value"></SelectType> -->
+      <!-- <Expression
+          :item="item"
+          :placeholder="'请输入操作数或变量名'"
+        ></Expression> -->
+      <StructValue
+        v-else-if="keyWord == 'value'"
+        class="l-contents-item"
+        :value="item.value"
+      ></StructValue>
     </template>
 
     <template v-else-if="type == 'array'">
@@ -208,12 +219,16 @@
           placeholder="请输入一串英文字符"
         ></el-input>
       </div>
+      <!-- 长度 -->
+      <div v-else-if="keyWord == 'len'" class="l-contents-item">
+        <el-input v-model="item.value" placeholder="请输入一个数字"></el-input>
+      </div>
     </template>
 
     <!-- 函数部分 -->
 
     <!-- 创建函数 -->
-    <template v-else-if="type == 'function'">
+    <template v-else-if="type == 'function_creator'">
       <!-- 名字 -->
       <div v-if="keyWord == 'name'" class="l-contents-item">
         <el-input
@@ -311,7 +326,7 @@
 
     <!-- 创建合约 -->
 
-    <template v-else-if="type == 'contract'">
+    <template v-else-if="type == 'contract_creator'">
       <div>
         <div v-if="keyWord == 'name'" class="l-contents-item">
           <el-input
@@ -320,6 +335,18 @@
             placeholder="请输入一串英文字符"
           ></el-input>
         </div>
+      </div>
+    </template>
+
+    <!-- 创建结构体 -->
+    <template v-else-if="type == 'struct_creator'">
+      <!-- 名字 -->
+      <div v-if="keyWord == 'name'" class="l-contents-item">
+        <el-input
+          @change="refreshVars()"
+          v-model="item.value"
+          placeholder="请输入一串英文字符"
+        ></el-input>
       </div>
     </template>
 
@@ -592,7 +619,7 @@ export default {
     margin: 0 0 0 1rem !important;
   }
   .l-contents__name {
-    word-wrap: none;
+    white-space: nowrap;
   }
   .l-contents__name--sub {
     color: #c0c4cc !important;

@@ -35,66 +35,9 @@ export default {
   methods: {
     CloneItem: function (item) {
       this.$store.dispatch("logic/incGlobalId", 1);
-
-      // 如果是结构体构建器
-      if (item.type == "struct_creator") {
-        let temp = {
-          type: "struct",
-          name: "创建 " + item.name,
-          elements: [],
-          contents: {
-            name: {
-              name: "名字",
-              value: "",
-              show: true,
-              use: false,
-            },
-            value: {
-              name: "初值",
-              value: {},
-              elements: [],
-              show: true,
-            },
-          },
-          id: this.$store.state.logic.globalId,
-        };
-        let attrs = this.GetItem(item.location);
-        console.log("here1");
-        for (let i = 0; i < attrs.elements.length; i++) {
-          temp.contents.value.value[attrs.elements[i].contents.name.value] = {
-            name: attrs.elements[i].contents.name.value,
-            value: null,
-            elements: [],
-            useEle: false,
-            show: true,
-            type: attrs.elements[i].type,
-            // use: true,
-          };
-          if (attrs.elements[i].type == "struct") {
-            temp.contents.value.value[
-              attrs.elements[i].contents.name.value
-            ].value = attrs.elements[i].contents.value.value;
-          }
-        }
-        console.log("here2");
-        return JSON.parse(JSON.stringify(temp));
-      }
-      // 其他情况
-      else {
-        let temp = {
-          type: "var",
-          name: item.name,
-          elements: [],
-          contents: {},
-          value: {
-            type: item.type,
-            name: item.name,
-          },
-          id: this.$store.state.logic.globalId,
-        };
-
-        return JSON.parse(JSON.stringify(temp));
-      }
+      let temp = this.CreateVar(item);
+      temp.id = this.$store.state.logic.globalId;
+      return temp;
     },
   },
   components: {
@@ -102,7 +45,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      GetItem: "logic/GetItem",
+      CreateVar: "logic/CreateVar",
     }),
   },
 };

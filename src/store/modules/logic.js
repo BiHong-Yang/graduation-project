@@ -12,6 +12,7 @@ function VarFind(items, location, locationName, list) {
             name: items[i].contents.name.value,
             location: location.concat([i]),
             locationName: locationName.concat([items[i].contents.name.value]),
+            creatorId: items[i].id,
           })
         )
       );
@@ -38,8 +39,21 @@ function VarFind(items, location, locationName, list) {
     }
   }
 }
-
+// 注册所有变量到 varMap
+function allVar(els, location) {
+  for (let i = 0; i < els.length; i++) {
+    if (els[i].contents.name != undefined) {
+      state.varMap.set(els[i].id, location.concat(i));
+      if (els[i].elements.length > 0) {
+        allVar(els[i].elements, location.concat(i));
+      }
+    }
+  }
+}
+// 变量
 function VarLogin() {
+  state.varMap.clear();
+  allVar(state.elements, [0]);
   // 保证不会乱指
   for (
     let i = 1;
@@ -79,6 +93,7 @@ function VarLogin() {
               locationName: state.locationName
                 .slice(0, i + 1)
                 .concat(item.elements[j].contents.name.value),
+              creatorId: item.elements[j].id,
             })
           )
         );
@@ -147,6 +162,233 @@ function getAttributes(location) {
   return JSON.parse(JSON.stringify(temp));
 }
 
+function getName(item) {
+  return item.contents.name != undefined
+    ? item.contents.name.value
+    : item.contents.discribe.value;
+}
+
+function createVar(item) {
+  let attrs = getAttributes(item.location);
+  console.log("item.type:", item.type);
+  // 如果是结构体构建器
+  if (item.type == "struct_creator") {
+    let temp = {
+      type: item.type.split("_")[0],
+      name: "创建 " + item.name,
+      elements: [],
+      contents: {
+        name: {
+          name: "名字",
+          value: "",
+          show: true,
+          use: false,
+        },
+        value: {
+          name: "初值",
+          value: {},
+          elements: [],
+          show: true,
+        },
+      },
+      creatorId: item.creatorId,
+    };
+    console.log("here1");
+    for (let i = 0; i < attrs.elements.length; i++) {
+      temp.contents.value.value[getName(attrs.elements[i])] = {
+        name: getName(attrs.elements[i]),
+        value: null,
+        elements: [],
+        useEle: false,
+        show: true,
+        type: attrs.elements[i].type,
+        creatorId: attrs.elements[i].id,
+        // use: true,
+      };
+      if (attrs.elements[i].type == "struct") {
+        temp.contents.value.value[getName(attrs.elements[i])].value =
+          attrs.elements[i].contents.value.value;
+      }
+    }
+    console.log("here2");
+    return JSON.parse(JSON.stringify(temp));
+  }
+  // 处理合约
+  else if (item.type == "contract_creator") {
+    let temp = {
+      type: item.type.split("_")[0],
+      name: "创建 " + item.name,
+      elements: [],
+      contents: {
+        name: {
+          name: "名字",
+          value: "",
+          show: true,
+          use: false,
+        },
+        value: {
+          name: "",
+          value: {},
+          elements: [],
+          show: false,
+        },
+      },
+
+      // id: this.$store.state.logic.globalId,
+      creatorId: item.creatorId,
+    };
+    console.log("here11");
+    for (let i = 0; i < attrs.elements.length; i++) {
+      temp.contents.value.value[getName(attrs.elements[i])] = {
+        name: getName(attrs.elements[i]),
+        value: null,
+        elements: [],
+        useEle: false,
+        show: true,
+        type: attrs.elements[i].type,
+        creatorId: attrs.elements[i].id,
+        // use: true,
+      };
+      if (attrs.elements[i].type == "struct") {
+        temp.contents.value.value[getName(attrs.elements[i])].value =
+          attrs.elements[i].contents.value.value;
+      } else if (attrs.elements[i].type == "constructor") {
+        temp.contents.param = attrs.elements[i].contents.param;
+      }
+    }
+    console.log("here22");
+    return JSON.parse(JSON.stringify(temp));
+  }
+  // 处理函数
+  else if (item.type == "function_creator") {
+    console.log("function start");
+    let temp = {
+      type: item.type.split("_")[0],
+      name: item.name,
+      elements: [],
+      contents: {
+        param: attrs.contents.param,
+        value: {
+          name: "返回值处理",
+          value: {
+            returns: {
+              name: "接收返回值",
+              value: attrs.contents.returns.value.concat([]).fill({
+                value: null,
+                elements: [],
+                useEle: false,
+                show: true,
+              }),
+            },
+            use: {
+              name: "使用返回值",
+            },
+          },
+          show: true,
+        },
+      },
+      // id: this.$store.state.logic.globalId,
+      creatorId: item.creatorId,
+    };
+    console.log("here11");
+    return JSON.parse(JSON.stringify(temp));
+  }
+  // 没有附加属性
+  else if (["uint", "int", "bool", "address"].includes(item.type)) {
+    let temp = {
+      type: item.type + "_var",
+      name: item.name,
+      elements: [],
+      contents: {},
+      value: {
+        type: item.type,
+        name: item.name,
+        categories: attrs.contents.categories.value,
+      },
+      // id: this.$store.state.logic.globalId,
+      creatorId: item.creatorId,
+    };
+
+    return JSON.parse(JSON.stringify(temp));
+  }
+  // 可以选取元素
+  else if (["byteArray", "array"].includes(item.type)) {
+    let temp = {
+      type: item.type + "_var",
+      name: item.name,
+      elements: [],
+      contents: {
+        value: {
+          name: "选取属性",
+          value: {
+            self: {
+              name: "本身",
+            },
+            // 数组第几个元素
+            number: {
+              name: "选取元素",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            length: {
+              name: "数组长度",
+            },
+          },
+          show: true,
+        },
+      },
+      value: {
+        type: item.type,
+        name: item.name,
+        categories: attrs.contents.categories.value,
+      },
+      // id: this.$store.state.logic.globalId,
+      creatorId: item.creatorId,
+    };
+
+    return JSON.parse(JSON.stringify(temp));
+  }
+  // 映射
+  else if (["mapping"].includes(item.type)) {
+    let temp = {
+      type: item.type + "_var",
+      name: item.name,
+      elements: [],
+      contents: {
+        // 数组第几个元素
+        value: {
+          name: "选取属性",
+          value: {
+            self: {
+              name: "本身",
+            },
+            from: {
+              name: "映射键",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+          },
+          show: true,
+        },
+      },
+      value: {
+        type: item.type,
+        name: item.name,
+      },
+      // id: this.$store.state.logic.globalId,
+      creatorId: item.creatorId,
+    };
+
+    return JSON.parse(JSON.stringify(temp));
+  }
+}
+
+const map = new Map();
+
 const state = {
   // 记录移动时的show情况
   ShowsOnMove: [],
@@ -193,8 +435,7 @@ const state = {
     address: 4,
     byteArray: 5,
     mapping: 6,
-    struct_creator: 7,
-    array: 8,
+    array: 7,
   },
 
   // 统计颜色
@@ -211,6 +452,9 @@ const state = {
 
   // 测试用数据
   elements: [],
+
+  // 注册所有变量
+  varMap: map,
 
   // 现在代表的变量的位置
   // 内容为数字
@@ -439,6 +683,12 @@ const state = {
               show: true,
               use: true,
             },
+            len: {
+              name: "最大长度",
+              value: null,
+              show: false,
+              use: false,
+            },
           },
         },
       ],
@@ -452,7 +702,7 @@ const state = {
       elements: [
         // 创建函数
         {
-          type: "function",
+          type: "function_creator",
           name: "创建函数",
           elements: [],
 
@@ -506,6 +756,35 @@ const state = {
           show: true,
         },
 
+        // 函数的样式，仅作记录
+        // {
+        //   type: "function",
+        //   name: "xxx",
+        //   elements: [],
+
+        //   contents: {
+        //     param: {
+        //       name: "参数",
+        //       value: [
+        //       {
+
+        //       },
+        //       {
+
+        //       }],
+        //       show: true,
+        //     },
+
+        //     returns: {
+        //       name: "返回值",
+        //       value: [],
+        //       show: true,
+        //     },
+        //   },
+
+        //   show: true,
+        // },
+
         // 创建装饰器
         {
           type: "modifier",
@@ -546,7 +825,7 @@ const state = {
 
         // 创建合约
         {
-          type: "contract",
+          type: "contract_creator",
           name: "创建合约",
           // 函数位置
           elements: [
@@ -555,6 +834,10 @@ const state = {
               name: "合约构造函数",
               elements: [],
               contents: {
+                discribe: {
+                  value: "构造函数",
+                  show: false,
+                },
                 param: {
                   name: "参数",
                   value: [],
@@ -1794,8 +2077,8 @@ const getters = {
   TypeGroups: (state) => (groupId) => {
     return Array.from(state.transformer[groupId].elements, (x) => x.type);
   },
-  GetItem: () => (location) => {
-    return getAttributes(location);
+  CreateVar: () => (item) => {
+    return createVar(item);
   },
 };
 
@@ -1843,7 +2126,7 @@ const mutations = {
     console.log("end here!");
     // 由于之后都是缩放操作，这里最适合注册变量
 
-    console.log(state.ShowsOnMove);
+    console.log("showOnMove:", state.ShowsOnMove);
     if (state.MovedList == null) {
       state.ShowsOnMove.length = 0;
       state.MovedList = [];

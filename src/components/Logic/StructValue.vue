@@ -3,7 +3,7 @@
     <!-- 显示参数 -->
     <Content
       class="c-StructValue__item"
-      v-for="(it, key) in value"
+      v-for="(it, key) in valueFilter()"
       :key="key"
       :item="it"
       :keyWord="'value'"
@@ -29,6 +29,19 @@ export default {
       default: function () {
         return {};
       },
+    },
+  },
+  methods: {
+    valueFilter: function () {
+      let temp = {};
+      for (let x in this.value) {
+        console.log("value : ", this.value);
+        console.log("x:", x);
+        if (this.value[x].type != "mapping") {
+          temp[x] = this.value[x];
+        }
+      }
+      return temp;
     },
   },
 };
