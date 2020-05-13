@@ -40,14 +40,12 @@ function VarFind(items, location, locationName, list) {
   }
 }
 
-// 注册所有变量到 varMap
-function allVar(els, location) {
+// 注册所有元素的索引
+function allElements(els, location) {
   for (let i = 0; i < els.length; i++) {
-    if (els[i].contents.name != undefined) {
-      state.varMap.set(els[i].id, location.concat(i));
-      if (els[i].elements.length > 0) {
-        allVar(els[i].elements, location.concat(i));
-      }
+    state.varMap.set(els[i].id, location.concat(i));
+    if (els[i].elements.length > 0) {
+      allElements(els[i].elements, location.concat(i));
     }
   }
 }
@@ -55,7 +53,7 @@ function allVar(els, location) {
 // 变量
 function VarLogin() {
   state.varMap.clear();
-  allVar(state.elements, [0]);
+  allElements(state.elements, [0]);
   // 保证不会乱指
   for (
     let i = 1;
@@ -84,13 +82,12 @@ function VarLogin() {
     for (let j = 0; j < item.elements.length; j++) {
       // 如果有名字那肯定是变量，记下来
       if (item.elements[j].contents.name !== undefined) {
-        console.log("item :", item.elements[j]);
+        // console.log("item :", item.elements[j]);
         state.varAlready[i].push(
           JSON.parse(
             JSON.stringify({
               type: item.elements[j].type,
               name: item.elements[j].contents.name.value,
-              contents: {},
               location: state.location.slice(0, i + 1).concat([j]),
               locationName: state.locationName
                 .slice(0, i + 1)
@@ -157,6 +154,7 @@ function VarLogin() {
 // 通过一个地址找到指定的东西
 function getAttributes(location) {
   // 找到元素
+  console.log("location is in get:", location);
   let temp = { elements: state.elements };
   for (let i = 1; i < location.length; i++) {
     temp = temp.elements[location[i]];
@@ -172,11 +170,41 @@ function getName(item) {
     : item.contents.discribe.value;
 }
 
+// 浓缩元素的函数（标准化一下）
+function varSimplify(item) {
+  let temp = {
+    name: getName(item),
+    value: null,
+    elements: [],
+    useEle: false,
+    show: true,
+    type: item.type,
+    creatorId: item.id,
+  };
+  // 如果是结构体那加一层
+
+  if (item.type == "struct") {
+    temp.value = {};
+    temp.value[getName(item)].value = item.contents.value.value;
+  }
+  if (item.type == "contract") {
+    temp.value = {};
+
+    for (let i = 0; i < item.contents.param.value.length; i++) {
+      temp.value[getName(item.contents.param[i])] = varSimplify(
+        item.contents.param[i]
+      );
+    }
+  }
+  return temp;
+}
 // 从记录在案的变量如何变成实际纸上的变量
 function createVar(item) {
   let attrs = getAttributes(item.location);
   console.log("item.type:", item.type);
+
   // 如果是结构体构建器
+
   if (item.type == "struct_creator") {
     let temp = {
       type: item.type.split("_")[0],
@@ -199,25 +227,16 @@ function createVar(item) {
       creatorId: item.creatorId,
     };
     console.log("here1");
+    // 如果是普通的元素那么记下来
     for (let i = 0; i < attrs.elements.length; i++) {
-      temp.contents.value.value[getName(attrs.elements[i])] = {
-        name: getName(attrs.elements[i]),
-        value: null,
-        elements: [],
-        useEle: false,
-        show: true,
-        type: attrs.elements[i].type,
-        creatorId: attrs.elements[i].id,
-        // use: true,
-      };
-      if (attrs.elements[i].type == "struct") {
-        temp.contents.value.value[getName(attrs.elements[i])].value =
-          attrs.elements[i].contents.value.value;
-      }
+      temp.contents.value.value[getName(attrs.elements[i])] = varSimplify(
+        attrs.elements[i]
+      );
     }
     console.log("here2");
     return JSON.parse(JSON.stringify(temp));
   }
+
   // 处理合约
   else if (item.type == "contract_creator") {
     let temp = {
@@ -229,13 +248,11 @@ function createVar(item) {
           name: "名字",
           value: "",
           show: true,
-          use: false,
         },
         value: {
-          name: "",
+          name: "参数值",
           value: {},
-          elements: [],
-          show: false,
+          show: true,
         },
       },
 
@@ -243,27 +260,25 @@ function createVar(item) {
       creatorId: item.creatorId,
     };
     console.log("here11");
+    // 只需要找参数即可
     for (let i = 0; i < attrs.elements.length; i++) {
-      temp.contents.value.value[getName(attrs.elements[i])] = {
-        name: getName(attrs.elements[i]),
-        value: null,
-        elements: [],
-        useEle: false,
-        show: true,
-        type: attrs.elements[i].type,
-        creatorId: attrs.elements[i].id,
-        // use: true,
-      };
-      if (attrs.elements[i].type == "struct") {
-        temp.contents.value.value[getName(attrs.elements[i])].value =
-          attrs.elements[i].contents.value.value;
-      } else if (attrs.elements[i].type == "constructor") {
-        temp.contents.param = attrs.elements[i].contents.param;
+      if (attrs.elements[i].type == "constructor") {
+        for (
+          let j = 0;
+          j < attrs.elements[i].contents.param.value.length;
+          j++
+        ) {
+          temp.contents.value.value[
+            getName(attrs.elements[i].contents.param.value[j])
+          ] = varSimplify(attrs.elements[i].contents.param.value[j]);
+        }
+        break;
       }
     }
     console.log("here22");
     return JSON.parse(JSON.stringify(temp));
   }
+
   // 处理函数
   else if (item.type == "function_creator") {
     console.log("function start");
@@ -272,7 +287,11 @@ function createVar(item) {
       name: item.name,
       elements: [],
       contents: {
-        param: attrs.contents.param,
+        param: {
+          name: "参数赋值",
+          value: {},
+          show: true,
+        },
         value: {
           name: "返回值处理",
           value: {
@@ -284,22 +303,32 @@ function createVar(item) {
                 useEle: false,
                 show: true,
               }),
+              contents: {},
             },
             use: {
               name: "使用返回值",
+              contents: {},
             },
           },
+          key: "returns",
           show: true,
         },
       },
       // id: this.$store.state.logic.globalId,
       creatorId: item.creatorId,
     };
+    Array.from(attrs.contents.param.value, (x) => varSimplify(x));
+    for (let i = 0; i < attrs.contents.param.value.length; i++) {
+      temp.contents.param.value[
+        getName(attrs.contents.param.value[i])
+      ] = varSimplify(attrs.contents.param.value[i]);
+    }
     console.log("here11");
     return JSON.parse(JSON.stringify(temp));
   }
+
   // 没有附加属性
-  else if (["uint", "int", "bool"].includes(item.type)) {
+  else if (["uint", "int"].includes(item.type)) {
     let temp = {
       type: item.type + "_var",
       name: item.name,
@@ -315,7 +344,9 @@ function createVar(item) {
     };
 
     return JSON.parse(JSON.stringify(temp));
-  } else if (["address"].includes(item.type)) {
+  }
+  // 抵制的处理与上面类似但不具有区分
+  else if (["address", "bool"].includes(item.type)) {
     let temp = {
       type: item.type + "_var",
       name: item.name,
@@ -331,6 +362,7 @@ function createVar(item) {
 
     return JSON.parse(JSON.stringify(temp));
   }
+
   // 可以选取元素
   else if (["byteArray", "array"].includes(item.type)) {
     let temp = {
@@ -343,6 +375,7 @@ function createVar(item) {
           value: {
             self: {
               name: "本身",
+              contents: {},
             },
             // 数组第几个元素
             number: {
@@ -356,6 +389,7 @@ function createVar(item) {
               name: "数组长度",
             },
           },
+          key: "self",
           show: true,
         },
       },
@@ -371,6 +405,7 @@ function createVar(item) {
 
     return JSON.parse(JSON.stringify(temp));
   }
+
   // 映射
   else if (["mapping"].includes(item.type)) {
     let temp = {
@@ -384,6 +419,7 @@ function createVar(item) {
           value: {
             self: {
               name: "本身",
+              contents: {},
             },
             from: {
               name: "映射键",
@@ -393,6 +429,7 @@ function createVar(item) {
               show: true,
             },
           },
+          key: "self",
           show: true,
         },
       },
@@ -408,23 +445,27 @@ function createVar(item) {
 
     return JSON.parse(JSON.stringify(temp));
   }
+
   // 合约和结构体
   else if (["struct", "contract"].includes(item.type)) {
-    console.log("sc here");
+    // 找到创建者
+    let father = getAttributes(state.varMap.get(attrs.creatorId));
     let temp = {
       type: item.type + "_var",
       name: attrs.contents.name.value,
       elements: [],
       contents: {
         value: {
-          name: "",
+          name: "使用属性",
           value: {
             self: {
               name: "本身",
+              contents: {},
             },
           },
           elements: [],
-          show: false,
+          key: "self",
+          show: true,
         },
       },
 
@@ -433,12 +474,19 @@ function createVar(item) {
     };
     console.log("here33");
     console.log("attrs:", attrs);
-    for (let x in attrs.contents.value.value) {
-      temp.contents.value.value[x] = {
-        name: x,
-        type: attrs.contents.value.value[x].type,
-        creatorId: attrs.contents.value.value[x].creatorId,
-      };
+
+    // 递归寻找内容物
+    for (let i = 0; i < father.elements.length; i++) {
+      // 这个是对构造函数的特判
+      console.log("element name:", father.elements[i]);
+      if (father.elements[i].contents.name != undefined) {
+        temp.contents.value.value[getName(father.elements[i])] = createVar({
+          type: father.elements[i].type,
+          name: getName(father.elements[i]),
+          location: state.varMap.get(father.elements[i].id),
+          creatorId: father.id,
+        });
+      }
     }
 
     console.log("here44");
@@ -567,6 +615,8 @@ const state = {
             value: {
               name: "初值",
               value: null,
+              elements: [],
+              useEle: false,
               show: true,
             },
             categories: {
@@ -595,6 +645,8 @@ const state = {
             value: {
               name: "初值",
               value: null,
+              elements: [],
+              useEle: false,
               show: true,
             },
             categories: {
@@ -621,7 +673,9 @@ const state = {
             },
             value: {
               name: "初值",
-              value: false,
+              value: null,
+              elements: [],
+              useEle: false,
               show: true,
             },
           },
@@ -666,6 +720,8 @@ const state = {
             value: {
               name: "初值",
               value: "",
+              elements: [],
+              useEle: false,
               show: true,
             },
             categories: {

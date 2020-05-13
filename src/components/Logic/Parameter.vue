@@ -139,6 +139,13 @@ export default {
       type: String,
       default: "select",
     },
+    typeExcept: {
+      required: false,
+      type: Object,
+      default: function () {
+        return {};
+      },
+    },
   },
   computed: {
     ...mapGetters({

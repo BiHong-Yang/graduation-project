@@ -22,10 +22,11 @@
       </div>
 
       <!-- 初值 -->
-      <div v-else-if="keyWord == 'value'" class="l-contents-item">
-        <el-input v-model="item.value" placeholder="请输入一个数字"></el-input>
-      </div>
-
+      <Expression
+        v-if="keyWord == 'value'"
+        :item="item"
+        :placeholder="'请输入一个数字'"
+      ></Expression>
       <!-- 名字 -->
       <div v-else-if="keyWord == 'name'" class="l-contents-item">
         <el-input
@@ -51,9 +52,11 @@
       </div>
 
       <!-- 初值 -->
-      <div v-else-if="keyWord == 'value'" class="l-contents-item">
-        <el-input v-model="item.value" placeholder="请输入一个数字"></el-input>
-      </div>
+      <Expression
+        v-if="keyWord == 'value'"
+        :item="item"
+        :placeholder="'请输入一个数字'"
+      ></Expression>
 
       <!-- 名字 -->
       <div v-else-if="keyWord == 'name'" class="l-contents-item">
@@ -105,10 +108,11 @@
     <!-- 字符数组类型，包括定长变长 -->
     <template v-else-if="type == 'byteArray'">
       <!-- 初值 -->
-      <div v-if="keyWord == 'value'" class="l-contents-item">
-        <el-input v-model="item.value" placeholder="请输入一串字符"></el-input>
-      </div>
-
+      <Expression
+        v-if="keyWord == 'value'"
+        :item="item"
+        :placeholder="'请输入一个字符串'"
+      ></Expression>
       <!-- 类型，即长度 -->
       <div v-else-if="keyWord == 'categories'" class="l-contents-item">
         <el-select v-model="item.value" placeholder="最长 32 字节的字节数组">
@@ -160,7 +164,7 @@
 
     <!-- 结构体 -->
 
-    <template v-else-if="type == 'struct'">
+    <template v-else-if="['struct', 'contract'].includes(type)">
       <!-- 初值 -->
       <div v-if="keyWord == 'name'" class="l-contents-item">
         <el-input
@@ -204,6 +208,28 @@
         :value="item.value"
       ></StructValue>
     </template>
+
+    <template v-else-if="type == 'array'">
+      <!-- 初值 -->
+      <div v-if="keyWord == 'type'" class="l-contents-item">
+        <SelectType :item="item.value"></SelectType>
+      </div>
+
+      <!-- 名字 -->
+      <div v-else-if="keyWord == 'name'" class="l-contents-item">
+        <el-input
+          @change="refreshVars()"
+          v-model="item.value"
+          placeholder="请输入一串英文字符"
+        ></el-input>
+      </div>
+      <!-- 长度 -->
+      <div v-else-if="keyWord == 'len'" class="l-contents-item">
+        <el-input v-model="item.value" placeholder="请输入一个数字"></el-input>
+      </div>
+    </template>
+
+    <!-- 对变量的处理 -->
 
     <template v-else-if="type == 'array'">
       <!-- 初值 -->
@@ -536,6 +562,23 @@
         ></Expression>
       </div>
     </template>
+
+    <!-- 对变量们的处理 -->
+    <!--  -->
+    <template v-else-if="['function'].includes(type)">
+      <!-- 参数 -->
+      <StructValue
+        v-if="keyWord == 'param'"
+        class="l-contents-item"
+        :value="item.value"
+      ></StructValue>
+      <!-- 属性 -->
+      <GetAttibute
+        v-else-if="keyWord == 'value'"
+        class="l-contents-item"
+        :item="item"
+      ></GetAttibute>
+    </template>
   </div>
 </template>
 
@@ -546,6 +589,7 @@ import Expression from "./Expression";
 import Parameter from "./Parameter";
 import Hint from "./Hint";
 import StructValue from "./StructValue";
+import GetAttibute from "./GetAttibute";
 export default {
   props: {
     contents: {
@@ -598,6 +642,7 @@ export default {
     SelectType,
     Hint,
     StructValue,
+    GetAttibute,
   },
 };
 </script>
