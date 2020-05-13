@@ -39,6 +39,7 @@ function VarFind(items, location, locationName, list) {
     }
   }
 }
+
 // 注册所有变量到 varMap
 function allVar(els, location) {
   for (let i = 0; i < els.length; i++) {
@@ -50,6 +51,7 @@ function allVar(els, location) {
     }
   }
 }
+
 // 变量
 function VarLogin() {
   state.varMap.clear();
@@ -152,6 +154,7 @@ function VarLogin() {
   console.log("after");
 }
 
+// 通过一个地址找到指定的东西
 function getAttributes(location) {
   // 找到元素
   let temp = { elements: state.elements };
@@ -162,12 +165,14 @@ function getAttributes(location) {
   return JSON.parse(JSON.stringify(temp));
 }
 
+// 对constructor的特判函数
 function getName(item) {
   return item.contents.name != undefined
     ? item.contents.name.value
     : item.contents.discribe.value;
 }
 
+// 从记录在案的变量如何变成实际纸上的变量
 function createVar(item) {
   let attrs = getAttributes(item.location);
   console.log("item.type:", item.type);
@@ -294,7 +299,7 @@ function createVar(item) {
     return JSON.parse(JSON.stringify(temp));
   }
   // 没有附加属性
-  else if (["uint", "int", "bool", "address"].includes(item.type)) {
+  else if (["uint", "int", "bool"].includes(item.type)) {
     let temp = {
       type: item.type + "_var",
       name: item.name,
@@ -304,6 +309,21 @@ function createVar(item) {
         type: item.type,
         name: item.name,
         categories: attrs.contents.categories.value,
+      },
+      // id: this.$store.state.logic.globalId,
+      creatorId: item.creatorId,
+    };
+
+    return JSON.parse(JSON.stringify(temp));
+  } else if (["address"].includes(item.type)) {
+    let temp = {
+      type: item.type + "_var",
+      name: item.name,
+      elements: [],
+      contents: {},
+      value: {
+        type: item.type,
+        name: item.name,
       },
       // id: this.$store.state.logic.globalId,
       creatorId: item.creatorId,
@@ -339,6 +359,7 @@ function createVar(item) {
           show: true,
         },
       },
+      // 后面可能可以删掉
       value: {
         type: item.type,
         name: item.name,
@@ -375,6 +396,8 @@ function createVar(item) {
           show: true,
         },
       },
+      // 后面可能可以删掉
+
       value: {
         type: item.type,
         name: item.name,
@@ -383,6 +406,42 @@ function createVar(item) {
       creatorId: item.creatorId,
     };
 
+    return JSON.parse(JSON.stringify(temp));
+  }
+  // 合约和结构体
+  else if (["struct", "contract"].includes(item.type)) {
+    console.log("sc here");
+    let temp = {
+      type: item.type + "_var",
+      name: attrs.contents.name.value,
+      elements: [],
+      contents: {
+        value: {
+          name: "",
+          value: {
+            self: {
+              name: "本身",
+            },
+          },
+          elements: [],
+          show: false,
+        },
+      },
+
+      // id: this.$store.state.logic.globalId,
+      creatorId: item.creatorId,
+    };
+    console.log("here33");
+    console.log("attrs:", attrs);
+    for (let x in attrs.contents.value.value) {
+      temp.contents.value.value[x] = {
+        name: x,
+        type: attrs.contents.value.value[x].type,
+        creatorId: attrs.contents.value.value[x].creatorId,
+      };
+    }
+
+    console.log("here44");
     return JSON.parse(JSON.stringify(temp));
   }
 }
@@ -2071,7 +2130,9 @@ const getters = {
   },
   ValueTypes: (state) => {
     return Array.from(state.transformer[4].elements, (x) => x.type).concat(
-      Array.from(state.transformer[5].elements, (x) => x.type).concat(["var"])
+      Array.from(state.transformer[5].elements, (x) => x.type).concat(
+        Array.from(state.transformer[0].elements, (x) => x.type + "_var")
+      )
     );
   },
   TypeGroups: (state) => (groupId) => {
