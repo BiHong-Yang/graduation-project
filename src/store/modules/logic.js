@@ -422,9 +422,10 @@ function createVar(item) {
               contents: {},
             },
             from: {
-              name: "映射键",
+              name: "映射键对应元素",
               value: null,
               elements: [],
+              contents: {},
               useEle: false,
               show: true,
             },

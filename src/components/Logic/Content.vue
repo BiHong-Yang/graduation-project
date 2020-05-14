@@ -564,7 +564,8 @@
     </template>
 
     <!-- 对变量们的处理 -->
-    <!--  -->
+
+    <!-- 函数 -->
     <template v-else-if="['function'].includes(type)">
       <!-- 参数 -->
       <StructValue
@@ -574,7 +575,37 @@
       ></StructValue>
       <!-- 属性 -->
       <GetAttibute
+        :mode="'return'"
         v-else-if="keyWord == 'value'"
+        class="l-contents-item"
+        :item="item"
+      ></GetAttibute>
+    </template>
+
+    <!-- 合约变量和结构体变量 -->
+    <template v-else-if="['contract_var', 'struct_var'].includes(type)">
+      <GetAttibute
+        v-if="keyWord == 'value'"
+        class="l-contents-item"
+        :item="item"
+      ></GetAttibute>
+    </template>
+
+    <!-- 映射类型 -->
+    <template v-else-if="['mapping_var'].includes(type)">
+      <GetAttibute
+        :mode="'from'"
+        v-if="keyWord == 'value'"
+        class="l-contents-item"
+        :item="item"
+      ></GetAttibute>
+    </template>
+
+    <!-- 映射类型 -->
+    <template v-else-if="['byteArray_var', 'array_var'].includes(type)">
+      <GetAttibute
+        :mode="'key'"
+        v-if="keyWord == 'value'"
         class="l-contents-item"
         :item="item"
       ></GetAttibute>
