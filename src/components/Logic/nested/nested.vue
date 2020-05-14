@@ -111,7 +111,7 @@
         v-if="!OperaTypes.includes(el.type)"
       >
         <div
-          v-if="!ValueTypes.includes(el.type)"
+          v-if="!ValueTypes.concat(['modifier_var']).includes(el.type)"
           class="line-num"
           @click="el.show = !el.show"
           :class="{ 'hight-light': el.elements.length > 0 }"

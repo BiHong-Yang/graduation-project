@@ -265,15 +265,15 @@
       </div>
 
       <div v-else-if="keyWord == 'param'" class="l-contents-item">
-        <Parameter :mode="'name'" :params="item.value"></Parameter>
+        <Parameter :mode="'param'" :params="item.value"></Parameter>
       </div>
 
       <div v-else-if="keyWord == 'modifiers'" class="l-contents-item">
-        <Parameter :mode="'simple'" :params="item.value"></Parameter>
+        <Parameter :mode="'modifiers'" :params="item.value"></Parameter>
       </div>
 
       <div v-else-if="keyWord == 'returns'" class="l-contents-item">
-        <Parameter :mode="'only'" :params="item.value"></Parameter>
+        <Parameter :mode="'returns'" :params="item.value"></Parameter>
       </div>
 
       <div v-else-if="keyWord == 'type'" class="l-contents-item">
@@ -407,6 +407,10 @@
             <Hint content="可支付、读取/修改合约存储"> </Hint>
           </el-option>
         </el-select>
+      </div>
+
+      <div v-else-if="keyWord == 'modifiers'" class="l-contents-item">
+        <Parameter :mode="'modifiers'" :params="item.value"></Parameter>
       </div>
     </template>
 
@@ -582,6 +586,16 @@
       ></GetAttibute>
     </template>
 
+    <!-- 装饰器 -->
+    <template v-else-if="['modifier_var'].includes(type)">
+      <!-- 参数 -->
+      <StructValue
+        v-if="keyWord == 'param'"
+        class="l-contents-item"
+        :value="item.value"
+      ></StructValue>
+    </template>
+
     <!-- 合约变量和结构体变量 -->
     <template v-else-if="['contract_var', 'struct_var'].includes(type)">
       <GetAttibute
@@ -609,6 +623,23 @@
         class="l-contents-item"
         :item="item"
       ></GetAttibute>
+    </template>
+
+    <!-- 返回值 -->
+    <template v-else-if="['return'].includes(type)">
+      <div v-if="keyWord == 'value'" class="l-contents-item">
+        <Parameter :mode="'modifiers'" :params="item.value"></Parameter>
+      </div>
+    </template>
+    <!-- 对新注册的东西 -->
+    <template v-else>
+      <div v-if="keyWord == 'name'" class="l-contents-item">
+        <el-input
+          v-model="item.value"
+          @change="refreshVars()"
+          placeholder="请输入一串英文字符"
+        ></el-input>
+      </div>
     </template>
   </div>
 </template>

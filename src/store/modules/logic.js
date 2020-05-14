@@ -280,7 +280,7 @@ function createVar(item) {
   }
 
   // 处理函数
-  else if (item.type == "function_creator") {
+  else if (["function_creator"].includes(item.type)) {
     console.log("function start");
     let temp = {
       type: item.type.split("_")[0],
@@ -317,7 +317,34 @@ function createVar(item) {
       // id: this.$store.state.logic.globalId,
       creatorId: item.creatorId,
     };
-    Array.from(attrs.contents.param.value, (x) => varSimplify(x));
+
+    for (let i = 0; i < attrs.contents.param.value.length; i++) {
+      temp.contents.param.value[
+        getName(attrs.contents.param.value[i])
+      ] = varSimplify(attrs.contents.param.value[i]);
+    }
+    console.log("here11");
+    return JSON.parse(JSON.stringify(temp));
+  }
+
+  // 处理装饰器
+  else if (["modifier"].includes(item.type)) {
+    console.log("function start");
+    let temp = {
+      type: item.type + "_var",
+      name: item.name,
+      elements: [],
+      contents: {
+        param: {
+          name: "参数赋值",
+          value: {},
+          show: true,
+        },
+      },
+      // id: this.$store.state.logic.globalId,
+      creatorId: item.creatorId,
+    };
+
     for (let i = 0; i < attrs.contents.param.value.length; i++) {
       temp.contents.param.value[
         getName(attrs.contents.param.value[i])
@@ -493,6 +520,166 @@ function createVar(item) {
     console.log("here44");
     return JSON.parse(JSON.stringify(temp));
   }
+}
+
+// 之后是转换函数
+// 之后是转换函数
+// 之后是转换函数
+// 之后是转换函数
+// 之后是转换函数
+
+// 初始化
+function codeInit() {
+  let temp = "pragma solidity >=0.4.22 <0.7.0;\n\n";
+  for (let i = 0; i < state.elements.length; i++) {
+    temp += codeElements(state.elements[i], "");
+  }
+  return temp;
+}
+
+// 处理参数
+function codeParam(params) {
+  if (params.length == 0) {
+    return "";
+  } else {
+    let temp = [];
+    for (let i = 0; i < params.length; i++) {
+      // if (returns[i].categories != undefined) {
+      //   temp.push(returns[i].categories.value);
+      // } else {
+      //   temp.push(returns[i].type);
+      // }
+      switch (params[i].type) {
+        case ("byteArray", "array"): {
+          temp.push(
+            `${params[i].categories.value}[] memory ${getName(params[i])}`
+          );
+          break;
+        }
+
+        default: {
+          temp.push(`${params[i].categories.value}[] ${getName(params[i])}`);
+          break;
+        }
+      }
+    }
+    return `(${temp.join(", ")}) `;
+  }
+}
+// 处理返回值
+function codeReturns(returns) {
+  if (returns.length == 0) {
+    return "";
+  } else {
+    let temp = [];
+    for (let i = 0; i < returns.length; i++) {
+      if (returns[i].categories != undefined) {
+        temp.push(returns[i].categories.value);
+      } else {
+        temp.push(returns[i].type);
+      }
+    }
+    return `returns (${temp.join(", ")}) `;
+  }
+  // 处理函数返回值
+}
+// 处理装饰器
+function codeModifiers(modifiers) {
+  // 处理函数装饰器
+  if (modifiers.length == 0) {
+    return "";
+  } else {
+    let temp = [];
+    for (let i = 0; i < modifiers.length; i++) {
+      if (
+        JSON.stringify(modifiers[i].elements[0].contents.param.value) != "{}"
+      ) {
+        temp.push(
+          `${modifiers[i].elements[0].name}(${Object.keys(
+            modifiers[i].elements[0].contents.param.value
+          )
+            .filter((x) => x != "name")
+            .join(", ")}) `
+        );
+      } else {
+        temp.push(`${modifiers[i].elements[0].name} `);
+      }
+    }
+    return `${temp.join(" ")} `;
+  }
+}
+
+// 快捷找参数（好看点）
+function getValue(item, key) {
+  return typeof item.contents[key].value == "string" &&
+    item.contents[key].value.length > 0
+    ? item.contents[key].value + " "
+    : item.contents[key].value;
+}
+
+// 处理元素
+function codeElements(item, space) {
+  let temp;
+  switch (item.type) {
+    case "contract_creator": {
+      temp = `contract ${getName(item)} {\n`;
+      for (let i = 0; i < item.elements.length; i++) {
+        temp += codeElements(item.elements[i], space.concat("\t"));
+      }
+      temp += `}\n`;
+      break;
+    }
+    case "function_creator": {
+      temp = `${space}function ${getName(item)}${codeParam(
+        getValue(item, "param").value
+      )}${getValue(item, "type")}${getValue(item, "behavior")}${codeModifiers(
+        getValue(item, "modifiers").value
+      )}${codeReturns(getValue(item, "returns").value)} {\n`;
+      for (let i = 0; i < item.elements.length; i++) {
+        temp += codeElements(item.elements[i], space.concat("\t"));
+      }
+      temp += `${space}}\n`;
+      break;
+    }
+    case "constructor": {
+      temp = `${space}constructor (${codeParam(
+        getValue(item, "param").value
+      )})${getValue(item, "type")}${getValue(item, "behavior")}${codeModifiers(
+        getValue(item, "modifiers").value
+      )}${codeReturns(getValue(item, "returns").value)} {\n`;
+      for (let i = 0; i < item.elements.length; i++) {
+        temp += codeElements(item.elements[i], space.concat("\t"));
+      }
+      temp += `${space}}\n`;
+      break;
+    }
+    case "struct_creator": {
+      temp = `${space}struct ${getName(item)} {\n`;
+      for (let i = 0; i < item.elements.length; i++) {
+        temp += codeElements(item.elements[i], space.concat("\t"));
+      }
+      temp += `${space}}\n`;
+      break;
+    }
+    case "modifier": {
+      temp = `${space}modifier ${getName(item)}(${codeParam(
+        getValue(item, "param")
+      )}) {\n`;
+      for (let i = 0; i < item.elements.length; i++) {
+        temp += codeElements(item.elements[i], space.concat("\t"));
+      }
+      temp += `${space}}\n`;
+      break;
+    }
+    case "modifier__inner": {
+      temp = `${space}_;\n`;
+      break;
+    }
+    case "function": {
+      break;
+    }
+  }
+  return temp;
 }
 
 const map = new Map();
@@ -969,6 +1156,11 @@ const state = {
                 behavior: {
                   name: "调用行为",
                   value: "",
+                  show: false,
+                },
+                modifiers: {
+                  name: "装饰器",
+                  value: [],
                   show: false,
                 },
               },
@@ -1487,7 +1679,13 @@ const state = {
           name: "函数返回",
           elements: [],
 
-          contents: {},
+          contents: {
+            value: {
+              name: "返回值",
+              value: [],
+              show: true,
+            },
+          },
         },
       ],
     },
@@ -2197,6 +2395,31 @@ const getters = {
   },
   CreateVar: () => (item) => {
     return createVar(item);
+  },
+  GetCode: () => {
+    return codeInit();
+  },
+  GetContracts: () => {
+    let temp = [];
+    for (let i = 0; i < state.elements.length; i++) {
+      if (state.elements[i].type == "contract_creator") {
+        temp.push({
+          type: getName(state.elements[i]),
+          name: `合约 ${getName(state.elements[i])}`,
+          elements: [],
+          contents: {
+            name: {
+              name: "名字",
+              value: "",
+              show: true,
+              use: false,
+            },
+          },
+          useEle: false,
+        });
+      }
+    }
+    return temp;
   },
 };
 
