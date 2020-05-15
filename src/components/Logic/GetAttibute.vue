@@ -2,12 +2,29 @@
   <div class="c-GetAttibute">
     <!-- 显示参数 -->
 
-    <el-select v-model="item.key" @change="change()">
+    <el-select v-if="mode != 'return'" v-model="item.key" @change="change()">
       <!-- 从这里开始，弄选择更改 -->
 
       <!-- 从这里开始，弄选择更改 -->
       <el-option
         v-for="(v, k) in item.value"
+        :key="k"
+        :label="v.name"
+        :value="k"
+        class="c-GetAttibute-name"
+      ></el-option>
+    </el-select>
+    <!-- 对返回使用的特判 -->
+    <el-select
+      v-else-if="mode == 'return'"
+      v-model="item.key"
+      @change="change()"
+    >
+      <!-- 从这里开始，弄选择更改 -->
+
+      <!-- 从这里开始，弄选择更改 -->
+      <el-option
+        v-for="(v, k) in returnValue()"
         :key="k"
         :label="v.name"
         :value="k"
@@ -74,6 +91,13 @@ export default {
     change: function () {
       console.log("mode is :", this.mode);
       console.log("changing key");
+    },
+    returnValue: function () {
+      let temp = this.item;
+      if (this.item.value.returns.value.length > 1) {
+        delete temp.value.use;
+      }
+      return temp.value;
     },
   },
 };

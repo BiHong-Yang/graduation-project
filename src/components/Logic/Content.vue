@@ -341,7 +341,7 @@
         </div>
 
         <div v-else-if="keyWord == 'param'" class="l-contents-item">
-          <Parameter :params="item.value"></Parameter>
+          <Parameter :mode="'param'" :params="item.value"></Parameter>
         </div>
 
         <div v-else-if="keyWord == 'returns'" class="l-contents-item">

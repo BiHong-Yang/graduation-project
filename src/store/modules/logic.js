@@ -505,6 +505,10 @@ function createVar(item) {
 
     // 递归寻找内容物
     for (let i = 0; i < father.elements.length; i++) {
+      // 对装饰器特判
+      if (father.elements[i].type == "modifier") {
+        continue;
+      }
       // 这个是对构造函数的特判
       console.log("element name:", father.elements[i]);
       if (father.elements[i].contents.name != undefined) {
@@ -609,6 +613,18 @@ function codeModifiers(modifiers) {
   }
 }
 
+// 处理表达式
+function codeExpression(item) {
+  if (item.useEle == false) {
+    if (item.value != null) {
+      return JSON.stringify(item.value);
+    } else {
+      return null;
+    }
+  }
+  return codeElements(item.elements[0], "");
+}
+
 // 快捷找参数（好看点）
 function getValue(item, key) {
   return typeof item.contents[key].value == "string" &&
@@ -617,8 +633,16 @@ function getValue(item, key) {
     : item.contents[key].value;
 }
 
+// 直接获得传递的参数
+function getParams(value) {
+  return `(${Object.keys(value)
+    .map((x) => value[x])
+    .map((x) => codeExpression(x))
+    .join(",")})`;
+}
+
 // 处理元素
-function codeElements(item, space) {
+function codeElements(item, space, addition = "") {
   let temp;
   switch (item.type) {
     case "contract_creator": {
@@ -676,9 +700,121 @@ function codeElements(item, space) {
       break;
     }
     case "function": {
+      if (item.contents.value.key == "returns") {
+        // 这句真的太长了。。先取param 的 key 然后用 key 找到元素数组，在对元素数组的每个元素用 codeExpression 再join
+        temp = `${space}(${getValue(item, "value")
+          .returns.value.map((x) => codeExpression(x))
+          .join(",")}) = ${addition}${item.name}${getParams(
+          getValue(item, "param")
+        )};\n`;
+      } else if (item.contents.value.key == "use") {
+        temp = `${addition}${item.name}${getParams(getValue(item, "param"))}`;
+      }
+      break;
+    }
+    case ("contract", "struct"): {
+      let type = `${addition}${item.name.split(" ")[1]}`;
+      if (Object.keys(getValue(item, "value")).length > 0) {
+        temp = `${space}${type} ${getValue(item, "name")} = new type${getParams(
+          getValue(item, "value")
+        )};\n`;
+      } else {
+        temp = `${space}${type} ${getValue(item, "name")};\n`;
+      }
+      break;
+    }
+    case "modifier_var": {
+      if (Object.keys(getValue(item, "value")).length > 0) {
+        temp = `${item.name}${getParams(getValue(item, "param"))} `;
+      } else {
+        temp = `${item.name} `;
+      }
+      break;
+    }
+    case ("contract_var", "struct_var"): {
+      if (item.contents.value.key == "self") {
+        temp = `${addition}${item.name}`;
+      } else {
+        temp = codeElements(
+          getValue(item, "value")[item.contents.value.key],
+          space,
+          `${addition}${item.name}.`
+        );
+      }
+      break;
+    }
+    case ("uint", "int", "bool", "address", "byteArray"): {
+      let type = item.type;
+      if (item.contents.categories != undefined) {
+        type = getValue(item, "categories");
+      }
+
+      temp = `${space}${type} ${getValue(item, "name")}`;
+      if (
+        getValue(item, "value").value != null ||
+        item.contents.elements.length > 0
+      ) {
+        temp += ` = ${codeExpression(item.content.value)}`;
+      }
+      temp += `;\n`;
+      break;
+    }
+    // **口子** 之后再弄
+    case "mapping": {
+      temp = `${space}mapping()`;
+      break;
+    }
+    case "array": {
+      break;
+    }
+    case (" + ",
+    " - ",
+    " * ",
+    " / ",
+    " % ",
+    " ** ",
+    " < ",
+    " > ",
+    " <= ",
+    " >= ",
+    " == ",
+    " != ",
+    " && ",
+    " || ",
+    " ! ",
+    " -",
+    " << ",
+    " >> "): {
+      temp = "";
+      if (item.contents.firstOP != undefined) {
+        temp += codeExpression(item.contents.firstOP);
+      }
+      temp += `${item.type}`;
+      temp += codeExpression(item.contents.lastOP);
+      break;
+    }
+    case ("if", "else if", "else"): {
+      temp = `${space} `;
+      if (item.contents.condition != undefined) {
+        temp += `(${codeExpression(item.contents.condition)}) `;
+      }
+      temp += `{\n`;
+      for (let i = 0; i < item.elements.length; i++) {
+        temp += codeElements(item.elements[i], space.concat(`\t`));
+      }
+      temp += `}\n`;
+      break;
+    }
+    case ("break", "continue"): {
+      temp = `${space}${item.type};\n`;
+      break;
+    }
+    // **口子** 明天弄吧
+    case "return": {
       break;
     }
   }
+
   return temp;
 }
 
@@ -2406,6 +2542,28 @@ const getters = {
         temp.push({
           type: getName(state.elements[i]),
           name: `合约 ${getName(state.elements[i])}`,
+          elements: [],
+          contents: {
+            name: {
+              name: "名字",
+              value: "",
+              show: true,
+              use: false,
+            },
+          },
+          useEle: false,
+        });
+      }
+    }
+    return temp;
+  },
+  GetStructs: () => {
+    let temp = [];
+    for (let i = 0; i < state.elements[0].elements.length; i++) {
+      if (state.elements[0].elements[i].type == "struct_creator") {
+        temp.push({
+          type: getName(state.elements[0].elements[i]),
+          name: `结构 ${getName(state.elements[0].elements[i])}`,
           elements: [],
           contents: {
             name: {
