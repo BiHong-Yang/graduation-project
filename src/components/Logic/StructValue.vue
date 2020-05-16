@@ -33,10 +33,11 @@ export default {
   },
   methods: {
     valueFilter: function () {
+      console.log("struct value:", this.value);
       let temp = {};
       for (let x in this.value) {
-        console.log("value : ", this.value);
-        console.log("x:", x);
+        // console.log("value : ", this.value);
+        // console.log("x:", x);
         if (this.value[x].type != "mapping") {
           temp[x] = this.value[x];
         }

@@ -142,10 +142,7 @@
     <template v-else-if="type == 'mapping'">
       <!-- 初值 -->
       <div v-if="keyWord == 'from'" class="l-contents-item">
-        <SelectType
-          :item="item.value"
-          :typeExcept="{ mapping: 'mapping' }"
-        ></SelectType>
+        <SelectType :item="item.value" :mode="'from'"></SelectType>
       </div>
 
       <div v-else-if="keyWord == 'to'" class="l-contents-item">
@@ -640,6 +637,11 @@
           placeholder="请输入一串英文字符"
         ></el-input>
       </div>
+      <GetAttibute
+        v-else-if="keyWord == 'value'"
+        class="l-contents-item"
+        :item="item"
+      ></GetAttibute>
     </template>
   </div>
 </template>
@@ -681,7 +683,9 @@ export default {
     checkShow: function (el) {
       return el.show;
     },
-    doNothing: function () {},
+    doNothing: function () {
+      console.log("here");
+    },
     refreshVars: function () {
       this.$store.dispatch("logic/refreshVars");
     },

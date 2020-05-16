@@ -218,7 +218,7 @@ export default {
       return temp;
     },
     nameFilter: function (contents) {
-      console.log("in name");
+      // console.log("in name");
       let temp = {};
       if (contents.categories != undefined) {
         temp.categories = contents.categories;
@@ -229,7 +229,7 @@ export default {
       return temp;
     },
     returnsFilter: function (contents) {
-      console.log("in name");
+      // console.log("in name");
       let temp = {};
       if (contents.categories != undefined) {
         temp.categories = contents.categories;

@@ -61,7 +61,7 @@ function VarLogin() {
     i++
   ) {
     if (
-      getAttributes(state.location.slice(0, i + 1).id != state.locationId[i])
+      getAttributes(state.location.slice(0, i + 1)).id != state.locationId[i]
     ) {
       state.location.splice(i + 1);
       break;
@@ -201,7 +201,7 @@ function varSimplify(item) {
 // 从记录在案的变量如何变成实际纸上的变量
 function createVar(item) {
   let attrs = getAttributes(item.location);
-  console.log("item.type:", item.type);
+  // console.log("item.type:", item.type);
 
   // 如果是结构体构建器
 
@@ -2550,35 +2550,97 @@ const getters = {
               show: true,
               use: false,
             },
-          },
-          useEle: false,
-        });
-      }
-    }
-    return temp;
-  },
-  GetStructs: () => {
-    let temp = [];
-    for (let i = 0; i < state.elements[0].elements.length; i++) {
-      if (state.elements[0].elements[i].type == "struct_creator") {
-        temp.push({
-          type: getName(state.elements[0].elements[i]),
-          name: `结构 ${getName(state.elements[0].elements[i])}`,
-          elements: [],
-          contents: {
-            name: {
-              name: "名字",
-              value: "",
+
+            value: {
+              name: "选取属性",
+              value: {
+                self: {
+                  name: "本身",
+                  contents: {},
+                },
+              },
+              key: "self",
               show: true,
-              use: false,
             },
           },
           useEle: false,
         });
+        for (let j = 0; j < state.elements[i].elements.length; j++) {
+          const element = state.elements[i].elements[j];
+          if (element.type == "struct_creator") {
+            temp[i].contents.value.value[getName(element)] = {
+              type: getName(element),
+              name: `结构 ${getName(element)}`,
+              elements: [],
+              contents: {
+                name: {
+                  name: "名字",
+                  value: "",
+                  show: true,
+                  use: false,
+                },
+              },
+              useEle: false,
+            };
+          }
+        }
       }
     }
     return temp;
   },
+  //   GetStructs: () => {
+  //     let temp = [];
+  //     // 对already的处理
+  //     for (let i = 0; i < state.varAlready.length; i++) {
+  //       for (let j = 0; j < state.varAlready[i].length; j++) {
+  //         const element = state.varAlready[i][j];
+  //         if (element.type == "struct_creator") {
+  //           const item = getAttributes(element.location);
+  //           temp.push({
+  //             type: getName(item),
+  //             name: `结构 ${getName(item)}`,
+  //             elements: [],
+  //             contents: {
+  //               name: {
+  //                 name: "名字",
+  //                 value: "",
+  //                 show: true,
+  //                 use: false,
+  //               },
+  //             },
+  //             useEle: false,
+  //           });
+  //         }
+  //       }
+  //     }
+
+  //     // 对potential的处理
+  //     if (state.location.length < 2) {
+  //       for (let i = 0; i < state.varPotential.length; i++) {
+  //         for (let j = 0; j < state.varPotential[i].vars.length; j++) {
+  //           const element = state.varPotential[i].vars[j];
+  //           if (element.type == "struct_creator") {
+  //             const item = getAttributes(element.location);
+  //             temp.push({
+  //               type: getName(item),
+  //               name: `结构 ${getName(item)}`,
+  //               elements: [],
+  //               contents: {
+  //                 name: {
+  //                   name: "名字",
+  //                   value: "",
+  //                   show: true,
+  //                   use: false,
+  //                 },
+  //               },
+  //               useEle: false,
+  //             });
+  //           }
+  //         }
+  //       }
+  //     }
+  //     return temp;
+  //   },
 };
 
 const mutations = {
