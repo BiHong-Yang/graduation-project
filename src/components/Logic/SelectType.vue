@@ -99,9 +99,13 @@ export default {
     },
 
     giveItem: function (item) {
+      console.log("give item:", item);
       let temp = item;
-      if (!this.ParamTypes.map((x) => x.type).includes(item.type)) {
-        temp.temp = "contract_var";
+      if (
+        item.type != undefined &&
+        !this.ParamTypes.map((x) => x.type).includes(item.type)
+      ) {
+        temp.type = "contract_var";
       }
       return temp;
     },
@@ -123,6 +127,7 @@ export default {
         temp.to = item.contents.to;
       }
       if (item.type == "array") {
+        temp.len = item.contents.len;
         temp.type = item.contents.type;
       }
       return temp;

@@ -562,7 +562,7 @@ function codeParam(params) {
         }
 
         default: {
-          temp.push(`${params[i].categories.value}[] ${getName(params[i])}`);
+          temp.push(`${params[i].categories.value} ${getName(params[i])}`);
           break;
         }
       }
@@ -622,11 +622,14 @@ function codeExpression(item) {
       return null;
     }
   }
-  return codeElements(item.elements[0], "");
+  return codeBody(item.elements[0], "");
 }
 
 // 快捷找参数（好看点）
 function getValue(item, key) {
+  if (key == "name" && item.contents[key].value.length > 0) {
+    return " " + item.contents[key].value;
+  }
   return typeof item.contents[key].value == "string" &&
     item.contents[key].value.length > 0
     ? item.contents[key].value + " "
@@ -641,14 +644,19 @@ function getParams(value) {
     .join(",")})`;
 }
 
+// 删除尾巴
+function codeBody(item, space = "", addition = "") {
+  return codeElements(item, space, addition).split(";\n")[0];
+}
+
 // 处理元素
-function codeElements(item, space, addition = "") {
+function codeElements(item, space = "", addition = "") {
   let temp;
   switch (item.type) {
     case "contract_creator": {
       temp = `contract ${getName(item)} {\n`;
       for (let i = 0; i < item.elements.length; i++) {
-        temp += codeElements(item.elements[i], space.concat("\t"));
+        temp += codeBody(item.elements[i], space.concat("\t"));
       }
       temp += `}\n`;
       break;
@@ -660,7 +668,7 @@ function codeElements(item, space, addition = "") {
         getValue(item, "modifiers").value
       )}${codeReturns(getValue(item, "returns").value)} {\n`;
       for (let i = 0; i < item.elements.length; i++) {
-        temp += codeElements(item.elements[i], space.concat("\t"));
+        temp += codeBody(item.elements[i], space.concat("\t"));
       }
       temp += `${space}}\n`;
       break;
@@ -672,7 +680,7 @@ function codeElements(item, space, addition = "") {
         getValue(item, "modifiers").value
       )}${codeReturns(getValue(item, "returns").value)} {\n`;
       for (let i = 0; i < item.elements.length; i++) {
-        temp += codeElements(item.elements[i], space.concat("\t"));
+        temp += codeBody(item.elements[i], space.concat("\t"));
       }
       temp += `${space}}\n`;
       break;
@@ -680,7 +688,7 @@ function codeElements(item, space, addition = "") {
     case "struct_creator": {
       temp = `${space}struct ${getName(item)} {\n`;
       for (let i = 0; i < item.elements.length; i++) {
-        temp += codeElements(item.elements[i], space.concat("\t"));
+        temp += codeBody(item.elements[i], space.concat("\t"));
       }
       temp += `${space}}\n`;
       break;
@@ -690,7 +698,7 @@ function codeElements(item, space, addition = "") {
         getValue(item, "param")
       )}) {\n`;
       for (let i = 0; i < item.elements.length; i++) {
-        temp += codeElements(item.elements[i], space.concat("\t"));
+        temp += codeBody(item.elements[i], space.concat("\t"));
       }
       temp += `${space}}\n`;
       break;
@@ -715,11 +723,11 @@ function codeElements(item, space, addition = "") {
     case ("contract", "struct"): {
       let type = `${addition}${item.name.split(" ")[1]}`;
       if (Object.keys(getValue(item, "value")).length > 0) {
-        temp = `${space}${type} ${getValue(item, "name")} = new type${getParams(
+        temp = `${space}${type}${getValue(item, "name")} = new type${getParams(
           getValue(item, "value")
         )};\n`;
       } else {
-        temp = `${space}${type} ${getValue(item, "name")};\n`;
+        temp = `${space}${type}${getValue(item, "name")};\n`;
       }
       break;
     }
@@ -731,11 +739,12 @@ function codeElements(item, space, addition = "") {
       }
       break;
     }
+    default:
     case ("contract_var", "struct_var"): {
       if (item.contents.value.key == "self") {
         temp = `${addition}${item.name}`;
       } else {
-        temp = codeElements(
+        temp = codeBody(
           getValue(item, "value")[item.contents.value.key],
           space,
           `${addition}${item.name}.`
@@ -749,7 +758,7 @@ function codeElements(item, space, addition = "") {
         type = getValue(item, "categories");
       }
 
-      temp = `${space}${type} ${getValue(item, "name")}`;
+      temp = `${space}${type}${getValue(item, "name")}`;
       if (
         getValue(item, "value").value != null ||
         item.contents.elements.length > 0
@@ -761,10 +770,17 @@ function codeElements(item, space, addition = "") {
     }
     // **口子** 之后再弄
     case "mapping": {
-      temp = `${space}mapping()`;
+      // 后半部分
+      temp = `${space}mapping(${codeBody(getValue(item, "from"))} => ${codeBody(
+        getValue(item, "to")
+      )})${getValue(item, "name")};\n`;
       break;
     }
     case "array": {
+      temp = `${space}${codeBody(getValue(item, "type"))}[${getValue(
+        item,
+        "len"
+      )}]${getValue(item, "name")};\n`;
       break;
     }
     case (" + ",
@@ -793,6 +809,12 @@ function codeElements(item, space, addition = "") {
       temp += codeExpression(item.contents.lastOP);
       break;
     }
+    case " = ": {
+      temp = `${space}${codeBody(getValue(item, "firstOP"))} = ${codeBody(
+        getValue(item, "lastOP")
+      )};\n`;
+      break;
+    }
     case ("if", "else if", "else"): {
       temp = `${space} `;
       if (item.contents.condition != undefined) {
@@ -800,7 +822,7 @@ function codeElements(item, space, addition = "") {
       }
       temp += `{\n`;
       for (let i = 0; i < item.elements.length; i++) {
-        temp += codeElements(item.elements[i], space.concat(`\t`));
+        temp += codeBody(item.elements[i], space.concat(`\t`));
       }
       temp += `}\n`;
       break;
@@ -811,6 +833,24 @@ function codeElements(item, space, addition = "") {
     }
     // **口子** 明天弄吧
     case "return": {
+      temp = `${space}return (${getValue(item, "value")
+        .map((x) => codeExpression(x))
+        .join(",")})`;
+      break;
+    }
+    case ("block.coinbase",
+    "block.gaslimit",
+    "block.number",
+    "block.timestamp",
+    "gasleft()",
+    "msg.data",
+    "msg.sender",
+    "msg.sig",
+    "msg.value",
+    "tx.gasprice",
+    "tx.origin",
+    "this"): {
+      temp = `${space}${item.type};\n`;
       break;
     }
   }
@@ -1125,8 +1165,8 @@ const state = {
             len: {
               name: "最大长度",
               value: null,
-              show: false,
-              use: false,
+              show: true,
+              use: true,
             },
           },
         },
@@ -1346,6 +1386,29 @@ const state = {
       name: "运算",
       group: { name: "logic", pull: "clone", put: false, revertClone: true },
       elements: [
+        // 等于
+        {
+          type: " = ",
+          name: "等于 = ",
+          elements: [],
+
+          contents: {
+            firstOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            lastOP: {
+              name: "",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+          },
+        },
         // 加法
         {
           type: " + ",
@@ -2115,7 +2178,7 @@ const state = {
         // Ethereum-SHA-3 （Keccak-256）哈希
         {
           type: "keccak256",
-          name: "区块哈希(Keccak-256)",
+          name: "哈希(Keccak-256)",
           elements: [],
 
           contents: {
@@ -2137,7 +2200,7 @@ const state = {
         // sha256 哈希
         {
           type: "sha256",
-          name: "区块哈希(Keccak-256)",
+          name: "哈希(sha256)",
           elements: [],
 
           contents: {
@@ -2158,7 +2221,7 @@ const state = {
         //  RIPEMD-160 哈希
         {
           type: "ripemd160",
-          name: "区块哈希(RIPEMD-160)",
+          name: "哈希(RIPEMD-160)",
           elements: [],
 
           contents: {
@@ -2178,7 +2241,7 @@ const state = {
         //  椭圆曲线哈希
         {
           type: "ecrecover",
-          name: "区块哈希(椭圆曲线)",
+          name: "哈希(椭圆曲线)",
           elements: [],
 
           contents: {
@@ -2242,7 +2305,7 @@ const state = {
         // 转账 transfer
         {
           type: "transfer",
-          name: "账户余额",
+          name: "发送以太币(transfer)",
           elements: [],
 
           contents: {
@@ -2272,7 +2335,7 @@ const state = {
         // 转账 send
         {
           type: "send",
-          name: "账户余额",
+          name: "发送以太币(send)",
           elements: [],
 
           contents: {
@@ -2572,14 +2635,7 @@ const getters = {
               type: getName(element),
               name: `结构 ${getName(element)}`,
               elements: [],
-              contents: {
-                name: {
-                  name: "名字",
-                  value: "",
-                  show: true,
-                  use: false,
-                },
-              },
+              contents: {},
               useEle: false,
             };
           }

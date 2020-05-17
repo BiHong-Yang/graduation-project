@@ -222,7 +222,10 @@
       </div>
       <!-- 长度 -->
       <div v-else-if="keyWord == 'len'" class="l-contents-item">
-        <el-input v-model="item.value" placeholder="请输入一个数字"></el-input>
+        <el-input
+          v-model="item.value"
+          placeholder="不填写默认为变长数组"
+        ></el-input>
       </div>
     </template>
 
@@ -415,6 +418,7 @@
     <template
       v-else-if="
         [
+          ' = ',
           ' + ',
           ' - ',
           ' * ',
