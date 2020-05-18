@@ -8,7 +8,8 @@
     </div>
 
     <div id="main">
-      <NestedWithVmodel></NestedWithVmodel>
+      <div class="main__nested"><NestedWithVmodel></NestedWithVmodel></div>
+      <div class="main__ShowCode" v-show="showCode"><ShowCode></ShowCode></div>
     </div>
   </div>
 </template>
@@ -19,6 +20,7 @@ import Location from "./Location";
 import Vars from "./Vars";
 import { mapState } from "vuex";
 import NestedWithVmodel from "./nested-with-vmodel";
+import ShowCode from "./ShowCode";
 
 export default {
   data() {
@@ -37,10 +39,12 @@ export default {
     Location,
     NestedWithVmodel,
     Vars,
+    ShowCode,
   },
   computed: {
     ...mapState({
       toggle: (status) => status.logic.SubcodeToggle,
+      showCode: (status) => status.logic.showCode,
     }),
   },
 };
@@ -67,9 +71,19 @@ export default {
 
 #main {
   flex: 1 1 auto;
-  display: inline-block;
-  overflow: auto;
+  display: flex;
   height: 0px;
+  .main__nested {
+    flex: 1 1 auto;
+    display: inline-block;
+    overflow: auto;
+  }
+  .main__ShowCode {
+    flex: 0 0 auto;
+    height: 100%;
+    width: 35%;
+    overflow: auto;
+  }
 }
 
 .header {

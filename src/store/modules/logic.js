@@ -148,6 +148,9 @@ function VarLogin() {
       state.varPotential[i].vars
     );
   }
+  // 最后再转换一下
+  state.code = "";
+  state.code = codeInit();
   console.log("after");
 }
 
@@ -391,7 +394,7 @@ function createVar(item) {
   }
 
   // 可以选取元素
-  else if (["byteArray", "array"].includes(item.type)) {
+  else if (["byteArray"].includes(item.type)) {
     let temp = {
       type: item.type + "_var",
       name: item.name,
@@ -432,9 +435,14 @@ function createVar(item) {
 
     return JSON.parse(JSON.stringify(temp));
   }
-
+  // 对数组的处理
+  else if (["array"].includes(item.type)) {
+    let temp = {};
+    return JSON.parse(JSON.stringify(temp));
+  }
   // 映射
   else if (["mapping"].includes(item.type)) {
+    console.log("mapping item:", item);
     let temp = {
       type: item.type + "_var",
       name: item.name,
@@ -463,10 +471,10 @@ function createVar(item) {
       },
       // 后面可能可以删掉
 
-      value: {
-        type: item.type,
-        name: item.name,
-      },
+      // value: {
+      //   type: item.type,
+      //   name: item.name,
+      // },
       // id: this.$store.state.logic.globalId,
       creatorId: item.creatorId,
     };
@@ -534,17 +542,23 @@ function createVar(item) {
 
 // 初始化
 function codeInit() {
-  let temp = "pragma solidity >=0.4.22 <0.7.0;\n\n";
+  let temp = `\npragma solidity >=0.4.22 <0.7.0;\n\n`;
+  console.log("before el");
   for (let i = 0; i < state.elements.length; i++) {
+    console.log("el ", i);
     temp += codeElements(state.elements[i], "");
   }
   return temp;
 }
 
 // 处理参数
-function codeParam(params) {
+function codeParam(params, simple = false) {
   if (params.length == 0) {
-    return "";
+    if (simple == true) {
+      return "";
+    } else {
+      return "()";
+    }
   } else {
     let temp = [];
     for (let i = 0; i < params.length; i++) {
@@ -554,7 +568,8 @@ function codeParam(params) {
       //   temp.push(returns[i].type);
       // }
       switch (params[i].type) {
-        case ("byteArray", "array"): {
+        case "byteArray":
+        case "array": {
           temp.push(
             `${params[i].categories.value}[] memory ${getName(params[i])}`
           );
@@ -627,12 +642,13 @@ function codeExpression(item) {
 
 // 快捷找参数（好看点）
 function getValue(item, key) {
-  if (key == "name" && item.contents[key].value.length > 0) {
-    return " " + item.contents[key].value;
-  }
+  // console.log("item:", item, "key:", key);
+  // if (key == "name" && item.contents[key].value.length > 0) {
+  //   return " " + item.contents[key].value;
+  // }
   return typeof item.contents[key].value == "string" &&
     item.contents[key].value.length > 0
-    ? item.contents[key].value + " "
+    ? item.contents[key].value
     : item.contents[key].value;
 }
 
@@ -646,41 +662,45 @@ function getParams(value) {
 
 // 删除尾巴
 function codeBody(item, space = "", addition = "") {
-  return codeElements(item, space, addition).split(";\n")[0];
+  let temp = codeElements(item, space, addition);
+  // console.log("item is:", item);
+  // console.log("temp is:", temp);
+  return temp.split(";\n")[0];
 }
 
 // 处理元素
 function codeElements(item, space = "", addition = "") {
   let temp;
+  // console.log("type is:", item.type);
   switch (item.type) {
     case "contract_creator": {
       temp = `contract ${getName(item)} {\n`;
       for (let i = 0; i < item.elements.length; i++) {
-        temp += codeBody(item.elements[i], space.concat("\t"));
+        temp += codeElements(item.elements[i], space.concat("  "));
       }
       temp += `}\n`;
       break;
     }
     case "function_creator": {
       temp = `${space}function ${getName(item)}${codeParam(
-        getValue(item, "param").value
+        getValue(item, "param")
       )}${getValue(item, "type")}${getValue(item, "behavior")}${codeModifiers(
-        getValue(item, "modifiers").value
-      )}${codeReturns(getValue(item, "returns").value)} {\n`;
+        getValue(item, "modifiers")
+      )}${codeReturns(getValue(item, "returns"))} {\n`;
       for (let i = 0; i < item.elements.length; i++) {
-        temp += codeBody(item.elements[i], space.concat("\t"));
+        temp += codeElements(item.elements[i], space.concat("  "));
       }
       temp += `${space}}\n`;
       break;
     }
     case "constructor": {
-      temp = `${space}constructor (${codeParam(
-        getValue(item, "param").value
-      )})${getValue(item, "type")}${getValue(item, "behavior")}${codeModifiers(
-        getValue(item, "modifiers").value
-      )}${codeReturns(getValue(item, "returns").value)} {\n`;
+      temp = `${space}constructor${codeParam(
+        getValue(item, "param")
+      )} ${getValue(item, "type")}${getValue(item, "behavior")}${codeModifiers(
+        getValue(item, "modifiers")
+      )}{\n`;
       for (let i = 0; i < item.elements.length; i++) {
-        temp += codeBody(item.elements[i], space.concat("\t"));
+        temp += codeElements(item.elements[i], space.concat("  "));
       }
       temp += `${space}}\n`;
       break;
@@ -688,17 +708,17 @@ function codeElements(item, space = "", addition = "") {
     case "struct_creator": {
       temp = `${space}struct ${getName(item)} {\n`;
       for (let i = 0; i < item.elements.length; i++) {
-        temp += codeBody(item.elements[i], space.concat("\t"));
+        temp += codeElements(item.elements[i], space.concat("  "));
       }
       temp += `${space}}\n`;
       break;
     }
     case "modifier": {
-      temp = `${space}modifier ${getName(item)}(${codeParam(
+      temp = `${space}modifier ${getName(item)}${codeParam(
         getValue(item, "param")
-      )}) {\n`;
+      )} {\n`;
       for (let i = 0; i < item.elements.length; i++) {
-        temp += codeBody(item.elements[i], space.concat("\t"));
+        temp += codeElements(item.elements[i], space.concat("  "));
       }
       temp += `${space}}\n`;
       break;
@@ -720,7 +740,8 @@ function codeElements(item, space = "", addition = "") {
       }
       break;
     }
-    case ("contract", "struct"): {
+    case "contract":
+    case "struct": {
       let type = `${addition}${item.name.split(" ")[1]}`;
       if (Object.keys(getValue(item, "value")).length > 0) {
         temp = `${space}${type}${getValue(item, "name")} = new type${getParams(
@@ -739,8 +760,9 @@ function codeElements(item, space = "", addition = "") {
       }
       break;
     }
-    default:
-    case ("contract_var", "struct_var"): {
+    // default:
+    case "contract_var":
+    case "struct_var": {
       if (item.contents.value.key == "self") {
         temp = `${addition}${item.name}`;
       } else {
@@ -752,7 +774,12 @@ function codeElements(item, space = "", addition = "") {
       }
       break;
     }
-    case ("uint", "int", "bool", "address", "byteArray"): {
+    case "uint":
+    case "int":
+    case "bool":
+    case "address":
+    case "byteArray": {
+      // console.log("here in uint");
       let type = item.type;
       if (item.contents.categories != undefined) {
         type = getValue(item, "categories");
@@ -760,8 +787,8 @@ function codeElements(item, space = "", addition = "") {
 
       temp = `${space}${type}${getValue(item, "name")}`;
       if (
-        getValue(item, "value").value != null ||
-        item.contents.elements.length > 0
+        getValue(item, "value") != null ||
+        item.contents.value.elements.length > 0
       ) {
         temp += ` = ${codeExpression(item.content.value)}`;
       }
@@ -777,30 +804,29 @@ function codeElements(item, space = "", addition = "") {
       break;
     }
     case "array": {
-      temp = `${space}${codeBody(getValue(item, "type"))}[${getValue(
-        item,
-        "len"
-      )}]${getValue(item, "name")};\n`;
+      temp = `${space}${codeBody(getValue(item, "type"))}[${
+        getValue(item, "len") != null ? getValue(item, "len") : ""
+      }]${getValue(item, "name")};\n`;
       break;
     }
-    case (" + ",
-    " - ",
-    " * ",
-    " / ",
-    " % ",
-    " ** ",
-    " < ",
-    " > ",
-    " <= ",
-    " >= ",
-    " == ",
-    " != ",
-    " && ",
-    " || ",
-    " ! ",
-    " -",
-    " << ",
-    " >> "): {
+    case " + ":
+    case " - ":
+    case " * ":
+    case " / ":
+    case " % ":
+    case " ** ":
+    case " < ":
+    case " > ":
+    case " <= ":
+    case " >= ":
+    case " == ":
+    case " != ":
+    case " && ":
+    case " || ":
+    case " ! ":
+    case " -":
+    case " << ":
+    case " >> ": {
       temp = "";
       if (item.contents.firstOP != undefined) {
         temp += codeExpression(item.contents.firstOP);
@@ -815,19 +841,22 @@ function codeElements(item, space = "", addition = "") {
       )};\n`;
       break;
     }
-    case ("if", "else if", "else"): {
+    case "if":
+    case "else":
+    case "else if": {
       temp = `${space} `;
       if (item.contents.condition != undefined) {
         temp += `(${codeExpression(item.contents.condition)}) `;
       }
       temp += `{\n`;
       for (let i = 0; i < item.elements.length; i++) {
-        temp += codeBody(item.elements[i], space.concat(`\t`));
+        temp += codeBody(item.elements[i], space.concat(`  `));
       }
       temp += `}\n`;
       break;
     }
-    case ("break", "continue"): {
+    case "break":
+    case "continue": {
       temp = `${space}${item.type};\n`;
       break;
     }
@@ -838,23 +867,117 @@ function codeElements(item, space = "", addition = "") {
         .join(",")})`;
       break;
     }
-    case ("block.coinbase",
-    "block.gaslimit",
-    "block.number",
-    "block.timestamp",
-    "gasleft()",
-    "msg.data",
-    "msg.sender",
-    "msg.sig",
-    "msg.value",
-    "tx.gasprice",
-    "tx.origin",
-    "this"): {
+    case "block.coinbase":
+    case "block.gaslimit":
+    case "block.number":
+    case "block.timestamp":
+    case "gasleft()":
+    case "msg.data":
+    case "msg.sender":
+    case "msg.sig":
+    case "msg.value":
+    case "tx.gasprice":
+    case "tx.origin":
+    case "this": {
       temp = `${space}${item.type};\n`;
       break;
     }
+    case "conversion": {
+      temp = `${
+        getValue(item, "target").contents.categories != undefined
+          ? getValue(getValue(item, "target"), "categories")
+          : getValue(item, "target").type
+      }(${codeExpression(item.contents.value)})`;
+      break;
+    }
+    case "blockhash": {
+      temp = `blockhash(${codeExpression(item.contents.index)})`;
+      break;
+    }
+    case "addmod":
+    case "mulmod": {
+      temp = `${item.type}(${codeExpression(
+        item.contents.firstOP
+      )},${codeExpression(item.contents.secondOP)},${codeExpression(
+        item.contents.lastOP
+      )})`;
+      break;
+    }
+    case "keccak256":
+    case "sha256":
+    case "ripemd160": {
+      temp = `${item.type}(abi.encodePacked(${getValue(item, "param")
+        .map((x) => codeExpression(x))
+        .join(",")})`;
+      break;
+    }
+    case "ecrecover": {
+      temp = `ecrecover(${codeExpression(item.contents.hash)},${codeExpression(
+        item.contents.v
+      )},${codeExpression(item.contents.r)},${codeExpression(
+        item.contents.s
+      )})`;
+      break;
+    }
+    case "balance": {
+      temp = `${codeExpression(item.contents.address)}.balance`;
+      break;
+    }
+    case "transfer":
+    case "send": {
+      temp = `${space}${codeExpression(item.contents.address)}.${
+        item.type
+      }${codeExpression(item.contents.amount)}`;
+      break;
+    }
+    case "call":
+    case "delegatecall": {
+      temp = `${space}${codeExpression(item.contents.address)}.${item.type}${
+        item.contents.amount != undefined &&
+        (getValue(item, "amount") != null || item.contents.amount.useEle)
+          ? `.value(${codeExpression(item.contents.amount)})`
+          : ``
+      }${
+        getValue(item, "gas") != null || item.contents.amount.useEle
+          ? `.gas(${codeExpression(item.contents.gas)})`
+          : ``
+      }(abi.encodeWithSignature(${[item.contents.function]
+        .concat(getValue(item, "param"))
+        .map((x) => codeExpression(x))
+        .join(",")}));\n`;
+      break;
+    }
+    case "selfdestruct": {
+      temp = `${space}selfdestruct(${codeExpression(
+        item.contents.address
+      )});\n`;
+      break;
+    }
+    case "require":
+    case "revert": {
+      temp = `${space}${item.type}(${[item.contents.condition]
+        .concat([item.contents.message])
+        .map((x) => codeExpression(x))
+        .join(",")});\n`;
+      break;
+    }
+    case "assert": {
+      temp = `${space}assert(${codeExpression(item.contents.condition)});\n`;
+      break;
+    }
+    case "none": {
+      temp = "";
+      break;
+    }
+    case "uint_var":
+    case "int_var":
+    case "bool_var":
+    case "address_var":
+    case "bytes_var": {
+      temp = `${item.name}`;
+      break;
+    }
   }
-
   return temp;
 }
 
@@ -923,6 +1046,11 @@ const state = {
 
   // 测试用数据
   elements: [],
+
+  // 用于存放转换后的代码
+  code: "",
+
+  showCode: false,
 
   // 注册所有变量
   varMap: map,
@@ -2100,7 +2228,10 @@ const state = {
               show: true,
             },
           },
-          hint: `只可以指定最近的256个区块`,
+          hint: `只可以指定最近的256个区块 <br>
+          返回：bytes32 <br>
+          代码：blockhash(uint8) <br>
+          样例：blockhash(3)`,
         },
 
         // 加模
@@ -2405,9 +2536,9 @@ const state = {
           },
           hint: `使用指定参数调用指定地址的合约的指定函数<br>
           参数顺序与个数应与目标函数相同<br>
-          代码：&ltaddress&gt.call(bytes4(keccak256(#函数样式#)),参数1，参数2，...)<br>
-          样例：addr.call(bytes4(keccak256("increaseAge(string,uint256)")),"jack", 1)<br>
-          样例中 目标地址：addr ，函数样式：increaseAge(string,uint256) ， 参数："jack" 和 1<br>
+          代码：&ltaddress&gt.call(abi.encodeWithSignature((#函数样式#),参数1，参数2，...))<br>
+          样例：addr.call(abi.encodeWithSignature("register(string)", "MyName"));<br>
+          样例中 目标地址：addr ，函数样式："register(string)" ， 参数："MyName"<br>
           <a style="color:#4089ff" href="https://www.jianshu.com/p/a5c97d0d7cae">具体用法单击此处</a><br>
           <span style="color:yellow">调用函数做出的存储区改变发生在拥有该函数的合约的存储空间</span><br>
           <span style="color:red">底层函数！请充分了解后再使用！</span>
@@ -2440,13 +2571,6 @@ const state = {
               value: [],
               show: true,
             },
-            amount: {
-              name: "附带金额",
-              value: null,
-              elements: [],
-              useEle: false,
-              show: false,
-            },
             gas: {
               name: "gas上限",
               value: null,
@@ -2457,9 +2581,9 @@ const state = {
           },
           hint: `使用指定参数调用指定地址的合约的指定函数<br>
           参数顺序与个数应与目标函数相同<br>
-          代码：&ltaddress&gt.delegatecall(bytes4(keccak256(#函数样式#)),参数1，参数2，...)<br>
-          样例：addr.delegatecall(bytes4(keccak256("increaseAge(string,uint256)")),"jack", 1)<br>
-          样例中 目标地址：addr ，函数样式：increaseAge(string,uint256) ， 参数："jack" 和 1<br>
+           代码：&ltaddress&gt.delegatecall(abi.encodeWithSignature((#函数样式#),参数1，参数2，...))<br>
+          样例：addr.delegatecall(abi.encodeWithSignature("register(string)", "MyName"));<br>
+          样例中 目标地址：addr ，函数样式："register(string)" ， 参数："MyName"<br>
           <a style="color:#4089ff" href="https://www.jianshu.com/p/fd5075ff0ab9">具体用法单击此处</a><br>
           <span style="color:yellow">调用函数做出的存储区改变发生在调用该函数的合约的存储空间</span><br>
           <span style="color:red">底层函数！请充分了解后再使用！</span>
@@ -2584,8 +2708,8 @@ const getters = {
   },
   ValueTypes: (state) => {
     return Array.from(state.transformer[4].elements, (x) => x.type).concat(
-      Array.from(state.transformer[5].elements, (x) => x.type).concat(
-        Array.from(state.transformer[0].elements, (x) => x.type + "_var")
+      Array.from(state.transformer[0].elements, (x) => x.type).map(
+        (x) => x + "_var"
       )
     );
   },

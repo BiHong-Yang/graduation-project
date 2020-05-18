@@ -99,7 +99,7 @@ export default {
     },
 
     giveItem: function (item) {
-      console.log("give item:", item);
+      // console.log("give item:", item);
       let temp = item;
       if (
         item.type != undefined &&
@@ -112,7 +112,7 @@ export default {
 
     itemFilter: function (item) {
       let temp = {};
-      console.log("item is:", item);
+      // console.log("item is:", item);
       if (this.mode == "normal") {
         if (!this.ParamTypes.map((x) => x.type).includes(item.type)) {
           console.log("item.type:", item.type);

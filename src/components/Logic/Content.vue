@@ -456,7 +456,7 @@
         </div>
 
         <div v-else-if="keyWord == 'target'" class="l-contents-item">
-          <SelectType :item="item.value"></SelectType>
+          <SelectType :item="item.value" :mode="'from'"></SelectType>
         </div>
       </div>
     </template>

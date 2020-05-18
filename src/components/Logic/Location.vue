@@ -12,11 +12,22 @@
       </div>
     </div>
     <button class="togglebox" @click="changeHint">关闭tips</button>
+    <!-- 
+      展示代码
+     -->
+    <div class="togglebox">
+      <el-switch
+        @change="changeShowCode()"
+        v-model="showCode"
+        active-text="代码展示"
+      ></el-switch>
+    </div>
+    <!-- 开关变量抽屉 -->
     <div class="togglebox">
       <el-switch
         @change="subtoggle"
         v-model="toggle"
-        active-text="副代码区开关"
+        active-text="变量抽屉"
       ></el-switch>
     </div>
   </div>
@@ -28,10 +39,13 @@ export default {
   data() {
     return {
       toggle: this.$store.state.logic.SubcodeToggle,
+      showCode: this.$store.state.logic.showCode,
     };
   },
   methods: {
     subtoggle: function () {
+      console.log("this toggle:", this.toggle);
+      console.log("store toggle:", this.$store.state.logic.SubcodeToggle);
       this.$store.dispatch("logic/ChangeToggle", this.toggle);
     },
     changeHint: function () {
@@ -40,6 +54,9 @@ export default {
     changeLocation: function (index) {
       this.location.splice(index + 1);
       this.$store.dispatch("logic/refreshVars");
+    },
+    changeShowCode: function () {
+      this.$store.state.logic.showCode = this.showCode;
     },
   },
   computed: {
