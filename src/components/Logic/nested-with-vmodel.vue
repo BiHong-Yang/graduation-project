@@ -58,8 +58,8 @@ export default {
 <style lang="scss" scoped>
 .nested {
   margin: 0;
-  padding: 0 0 10rem;
-  border: 1px solid black;
+  padding: 0.25rem 0.2rem 10rem 0.25rem;
+  // border: 1px solid black;
   min-height: 100%;
   min-width: 80%;
   display: inline-block;

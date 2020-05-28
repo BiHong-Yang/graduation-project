@@ -8,7 +8,7 @@
       <div @click.stop>
         <el-input
           v-show="!item.useEle && item.elements.length == 0"
-          v-model="item.value"
+          v-model="item[type]"
           :placeholder="placeholder"
           class="l-header__input"
         ></el-input>
@@ -52,11 +52,25 @@
 
 <script>
 export default {
-  props: ["item", "placeholder"],
+  props: {
+    item: {
+      type: Object,
+      required: false,
+    },
+    placeholder: {
+      type: String,
+      required: false,
+    },
+    type: {
+      type: String,
+      required: false,
+      default: "value",
+    },
+  },
   components: {},
   computed: {
     ExpChange() {
-      return String(0.7 * (this.item.value.length + 3)) + "em";
+      return String(0.7 * (this.item[this.type].length + 3)) + "em";
     },
   },
 };

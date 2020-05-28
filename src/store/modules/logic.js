@@ -169,8 +169,8 @@ function getAttributes(location) {
 // 对constructor的特判函数
 function getName(item) {
   return item.contents.name != undefined
-    ? item.contents.name.value
-    : item.contents.discribe.value;
+    ? " " + item.contents.name.value
+    : " " + item.contents.discribe.value;
 }
 
 // 浓缩元素的函数（标准化一下）
@@ -202,8 +202,10 @@ function varSimplify(item) {
   return temp;
 }
 // 从记录在案的变量如何变成实际纸上的变量
-function createVar(item) {
-  let attrs = getAttributes(item.location);
+function createVar(item, attrs = null) {
+  if (attrs == null) {
+    attrs = getAttributes(item.location);
+  }
   // console.log("item.type:", item.type);
 
   // 如果是结构体构建器
@@ -224,7 +226,7 @@ function createVar(item) {
           name: "初值",
           value: {},
           elements: [],
-          show: true,
+          show: false,
         },
       },
       creatorId: item.creatorId,
@@ -406,17 +408,29 @@ function createVar(item) {
             self: {
               name: "本身",
               contents: {},
+              elements: [],
             },
             // 数组第几个元素
             number: {
               name: "选取元素",
               value: null,
+              contents: {},
               elements: [],
               useEle: false,
               show: true,
             },
             length: {
               name: "数组长度",
+              contents: {},
+              elements: [],
+            },
+            push: {
+              name: "添加元素",
+              value: null,
+              contents: {},
+              elements: [],
+              useEle: false,
+              show: true,
             },
           },
           key: "self",
@@ -437,7 +451,61 @@ function createVar(item) {
   }
   // 对数组的处理
   else if (["array"].includes(item.type)) {
-    let temp = {};
+    let temp = {
+      type: "array_var",
+      name: item.name,
+      elements: [],
+      contents: {
+        value: {
+          name: "选取属性",
+          value: {
+            self: {
+              name: "本身",
+              contents: {},
+              elements: [],
+            },
+            pointer: {
+              name: "映射键对应元素",
+              value: null,
+              type: {},
+              elements: [],
+              contents: {},
+              useEle: false,
+              show: true,
+            },
+          },
+          key: "self",
+          show: true,
+        },
+      },
+      creatorId: item.creatorId,
+    };
+
+    temp.contents.value.value.pointer.type = createVar(
+      {
+        type: attrs.contents.type.value.type,
+        name: attrs.contents.name.value,
+      },
+      getValue(attrs, "type")
+    );
+
+    // if (attrs.contents.type.value.type == "array") {
+    //   temp.contents.value.value.pointer.contents.type = createVar(
+    //     {
+    //       type: attrs.contents.type.value.type,
+    //       name: attrs.contents.name.value,
+    //     },
+    //     attrs.contents.type.value
+    //   );
+    // } else if (attrs.contents.type.value.type == "mapping") {
+    //   temp.contents.value.value.pointer.contents.type = createVar(
+    //     {
+    //       type: attrs.contents.type.value.type,
+    //       name: attrs.contents.name.value,
+    //     },
+    //     attrs.contents.type.value
+    //   );
+    // }
     return JSON.parse(JSON.stringify(temp));
   }
   // 映射
@@ -455,10 +523,12 @@ function createVar(item) {
             self: {
               name: "本身",
               contents: {},
+              elements: [],
             },
-            from: {
+            pointer: {
               name: "映射键对应元素",
               value: null,
+              type: {},
               elements: [],
               contents: {},
               useEle: false,
@@ -469,16 +539,33 @@ function createVar(item) {
           show: true,
         },
       },
-      // 后面可能可以删掉
-
-      // value: {
-      //   type: item.type,
-      //   name: item.name,
-      // },
-      // id: this.$store.state.logic.globalId,
-      creatorId: item.creatorId,
     };
 
+    temp.contents.value.value.pointer.type = createVar(
+      {
+        type: attrs.contents.type.value.type,
+        name: attrs.contents.name.value,
+      },
+      getValue(attrs, "to")
+    );
+
+    // if (attrs.contents.to.value.type == "array") {
+    //   temp.contents.value.value.pointer.contents.type = createVar(
+    //     {
+    //       type: attrs.contents.to.value.type,
+    //       name: attrs.contents.name.value,
+    //     },
+    //     attrs.contents.to.value
+    //   );
+    // } else if (attrs.contents.to.value.type == "mapping") {
+    //   temp.contents.value.value.pointer.contents.type = createVar(
+    //     {
+    //       type: attrs.contents.to.value.type,
+    //       name: attrs.contents.name.value,
+    //     },
+    //     attrs.contents.to.value
+    //   );
+    // }
     return JSON.parse(JSON.stringify(temp));
   }
 
@@ -497,6 +584,7 @@ function createVar(item) {
             self: {
               name: "本身",
               contents: {},
+              elements: {},
             },
           },
           elements: [],
@@ -632,7 +720,7 @@ function codeModifiers(modifiers) {
 function codeExpression(item) {
   if (item.useEle == false) {
     if (item.value != null) {
-      return JSON.stringify(item.value);
+      return item.value;
     } else {
       return null;
     }
@@ -643,12 +731,12 @@ function codeExpression(item) {
 // 快捷找参数（好看点）
 function getValue(item, key) {
   // console.log("item:", item, "key:", key);
-  // if (key == "name" && item.contents[key].value.length > 0) {
-  //   return " " + item.contents[key].value;
-  // }
+  if (key == "name" && item.contents[key].value.length > 0) {
+    return " " + item.contents[key].value;
+  }
   return typeof item.contents[key].value == "string" &&
     item.contents[key].value.length > 0
-    ? item.contents[key].value
+    ? " " + item.contents[key].value
     : item.contents[key].value;
 }
 
@@ -674,7 +762,7 @@ function codeElements(item, space = "", addition = "") {
   // console.log("type is:", item.type);
   switch (item.type) {
     case "contract_creator": {
-      temp = `contract ${getName(item)} {\n`;
+      temp = `contract${getName(item)} {\n`;
       for (let i = 0; i < item.elements.length; i++) {
         temp += codeElements(item.elements[i], space.concat("  "));
       }
@@ -682,7 +770,7 @@ function codeElements(item, space = "", addition = "") {
       break;
     }
     case "function_creator": {
-      temp = `${space}function ${getName(item)}${codeParam(
+      temp = `${space}function${getName(item)}${codeParam(
         getValue(item, "param")
       )}${getValue(item, "type")}${getValue(item, "behavior")}${codeModifiers(
         getValue(item, "modifiers")
@@ -706,7 +794,7 @@ function codeElements(item, space = "", addition = "") {
       break;
     }
     case "struct_creator": {
-      temp = `${space}struct ${getName(item)} {\n`;
+      temp = `${space}struct${getName(item)} {\n`;
       for (let i = 0; i < item.elements.length; i++) {
         temp += codeElements(item.elements[i], space.concat("  "));
       }
@@ -780,6 +868,7 @@ function codeElements(item, space = "", addition = "") {
     case "address":
     case "byteArray": {
       // console.log("here in uint");
+      console.log("item is", item);
       let type = item.type;
       if (item.contents.categories != undefined) {
         type = getValue(item, "categories");
@@ -790,12 +879,22 @@ function codeElements(item, space = "", addition = "") {
         getValue(item, "value") != null ||
         item.contents.value.elements.length > 0
       ) {
-        temp += ` = ${codeExpression(item.content.value)}`;
+        temp += ` = ${codeExpression(item.contents.value)}`;
       }
       temp += `;\n`;
       break;
     }
-    // **口子** 之后再弄
+    // **口子**
+    case "uint_var":
+    case "int_var":
+    case "bool_var":
+    case "address_var": {
+      temp = `${item.name}`;
+      break;
+    }
+    case "byteArray_var": {
+      break;
+    }
     case "mapping": {
       // 后半部分
       temp = `${space}mapping(${codeBody(getValue(item, "from"))} => ${codeBody(
@@ -804,11 +903,36 @@ function codeElements(item, space = "", addition = "") {
       break;
     }
     case "array": {
-      temp = `${space}${codeBody(getValue(item, "type"))}[${
-        getValue(item, "len") != null ? getValue(item, "len") : ""
-      }]${getValue(item, "name")};\n`;
+      console.log("i'm array");
+      console.log("additon is ", addition);
+      if (getValue(item, "type").type != "array") {
+        temp = `${space}${codeBody(getValue(item, "type"))}${addition}[${
+          getValue(item, "len") != null
+            ? getValue(item, "len").split(" ")[1]
+            : ""
+        }]${getValue(item, "name")};\n`;
+      } else {
+        temp = `${space}${codeBody(
+          getValue(item, "type"),
+          "",
+          addition +
+            "[" +
+            (getValue(item, "len") != null
+              ? getValue(item, "len").split(" ")[1]
+              : "") +
+            "]"
+        )}${getValue(item, "name")};\n`;
+      }
+      console.log("temp is ", temp);
       break;
     }
+    case "mapping_var": {
+      break;
+    }
+    case "array_var": {
+      break;
+    }
+    // **口子**
     case " + ":
     case " - ":
     case " * ":
@@ -843,7 +967,8 @@ function codeElements(item, space = "", addition = "") {
     }
     case "if":
     case "else":
-    case "else if": {
+    case "else if":
+    case "while(true)": {
       temp = `${space} `;
       if (item.contents.condition != undefined) {
         temp += `(${codeExpression(item.contents.condition)}) `;
@@ -860,7 +985,6 @@ function codeElements(item, space = "", addition = "") {
       temp = `${space}${item.type};\n`;
       break;
     }
-    // **口子** 明天弄吧
     case "return": {
       temp = `${space}return (${getValue(item, "value")
         .map((x) => codeExpression(x))
@@ -967,14 +1091,6 @@ function codeElements(item, space = "", addition = "") {
     }
     case "none": {
       temp = "";
-      break;
-    }
-    case "uint_var":
-    case "int_var":
-    case "bool_var":
-    case "address_var":
-    case "bytes_var": {
-      temp = `${item.name}`;
       break;
     }
   }
@@ -1109,7 +1225,7 @@ const state = {
               value: null,
               elements: [],
               useEle: false,
-              show: true,
+              show: false,
             },
             categories: {
               name: "上限",
@@ -1139,7 +1255,7 @@ const state = {
               value: null,
               elements: [],
               useEle: false,
-              show: true,
+              show: false,
             },
             categories: {
               name: "上限",
@@ -1168,7 +1284,7 @@ const state = {
               value: null,
               elements: [],
               useEle: false,
-              show: true,
+              show: false,
             },
           },
         },
@@ -1191,7 +1307,7 @@ const state = {
               value: 0x0,
               elements: [],
               useEle: false,
-              show: true,
+              show: false,
             },
           },
         },
@@ -1214,7 +1330,7 @@ const state = {
               value: "",
               elements: [],
               useEle: false,
-              show: true,
+              show: false,
             },
             categories: {
               name: "上限",
@@ -1342,7 +1458,7 @@ const state = {
 
             // 外部可见性 internal 还是 external
             type: {
-              name: "函数类型",
+              name: "函数可见性",
               value: "internal",
               show: false,
             },
@@ -1400,7 +1516,7 @@ const state = {
           elements: [
             {
               type: "modifier__inner",
-              name: "函数位置",
+              name: "装饰器函数位置",
               contents: {},
               elements: [],
             },
@@ -1430,6 +1546,14 @@ const state = {
           show: true,
         },
 
+        // 装饰器函数位置
+        {
+          type: "modifier__inner",
+          name: "函数位置",
+          contents: {},
+          elements: [],
+        },
+
         // 创建合约
         {
           type: "contract_creator",
@@ -1452,7 +1576,7 @@ const state = {
                 },
                 // 外部可见性
                 type: {
-                  name: "函数类型",
+                  name: "函数可见性",
                   value: "public",
                   show: false,
                 },
@@ -1480,6 +1604,42 @@ const state = {
             },
           },
 
+          show: true,
+        },
+
+        // 合约构造函数 配套
+        {
+          type: "constructor",
+          name: "合约构造函数",
+          elements: [],
+          contents: {
+            discribe: {
+              value: "构造函数",
+              show: false,
+            },
+            param: {
+              name: "参数",
+              value: [],
+              show: false,
+            },
+            // 外部可见性
+            type: {
+              name: "函数可见性",
+              value: "public",
+              show: false,
+            },
+
+            behavior: {
+              name: "调用行为",
+              value: "",
+              show: false,
+            },
+            modifiers: {
+              name: "装饰器",
+              value: [],
+              show: false,
+            },
+          },
           show: true,
         },
 
@@ -1988,6 +2148,13 @@ const state = {
           show: true,
         },
         {
+          type: "while(true)",
+          name: "循环",
+          elements: [],
+
+          contents: {},
+        },
+        {
           type: "break",
           name: "终止循环",
           elements: [],
@@ -2044,7 +2211,7 @@ const state = {
 
           contents: {},
           hint: `返回当前区块的 gas 限额<br>
-          类型： 256字节的非负整数(uint)<br>
+          类型： 256位的非负整数(uint)<br>
           代码： block.gaslimit`,
         },
 
@@ -2056,7 +2223,7 @@ const state = {
 
           contents: {},
           hint: `返回当前区块的区块号<br>
-          类型： 256字节的非负整数(uint)<br>
+          类型： 256位的非负整数(uint)<br>
           代码： block.number`,
         },
 
@@ -2068,7 +2235,7 @@ const state = {
 
           contents: {},
           hint: `自 unix epoch 起始到当前区块创建以秒计的时间戳<br>
-          类型： 256字节的非负整数(uint)<br>
+          类型： 256位的非负整数(uint)<br>
           代码： block.timestamp`,
         },
 
@@ -2080,7 +2247,7 @@ const state = {
 
           contents: {},
           hint: `代码进行到当前步骤剩余的gas<br>
-          类型： 256字节的非负整数(uint)<br>
+          类型： 256位的非负整数(uint)<br>
           代码： gasleft()`,
         },
 
@@ -2130,7 +2297,7 @@ const state = {
           hint: `调用消息附带的以太币的价值<br>
           单位： wei（1 wei = 10^-18 ether, 1 ether 约等于 1500￥ ） <br>
           <span style="color:green">基于 合约自带方法：”xx调用(call/delegatecall)“</span><br>
-          类型： 256字节的非负整数（uint）<br>
+          类型： 256位的非负整数（uint）<br>
           代码： msg.value`,
         },
 
@@ -2146,7 +2313,7 @@ const state = {
           更高的gas价格可让交易更快上链<br>
           单位： wei（1 wei = 10^-18 ether, 1 ether 约等于 1500￥ ） <br>
           <span style="color:green">基于 合约自带方法：”xx调用(call/delegatecall)“</span><br>
-          类型： 256字节的非负整数（uint）<br>
+          类型： 256位的非负整数（uint）<br>
           代码： tx.gasprice`,
         },
 
@@ -2264,8 +2431,8 @@ const state = {
             },
           },
           hint: `计算 (x + y) % k 的值<br>
-          三个参数均为 256字节的整数<br>
-          返回： 256字节的整数（uint）<br>
+          三个参数均为 256位的整数<br>
+          返回： 256位的整数（uint）<br>
           代码： addmod(uint x, uint y, uint k) returns (uint)<br>
           样例：addmod(1,10,5) 该样例返回 1`,
         },
@@ -2300,8 +2467,8 @@ const state = {
             },
           },
           hint: `计算 (x + y) % k 的值<br>
-          三个参数均为 256字节的整数<br>
-          返回： 256字节的整数（uint）<br>
+          三个参数均为 256位的整数<br>
+          返回： 256位的整数（uint）<br>
           代码： mul(uint x, uint y, uint k) returns (uint)<br>
           样例：mulmod(2,3,5) 该样例返回 1`,
         },
@@ -2428,7 +2595,7 @@ const state = {
             },
           },
           hint: `获取目标地址的账户余额<br>
-          返回：256字节非负整数<br>
+          返回：256位非负整数<br>
           代码：&ltaddress&gt.balance (uint256)<br>
           `,
         },

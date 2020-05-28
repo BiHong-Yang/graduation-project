@@ -9,6 +9,7 @@
 }
 
 .c-nested__item {
+  margin: 0 0 0.5rem 0;
   padding: 0.5rem;
   flex: 0 0 auto;
   border: solid black 1px;
@@ -22,13 +23,14 @@
   // overflow: visible;
 }
 .c-nested__item-sub {
-  margin: 0 0 1rem 1rem;
+  margin: -0.5rem 0 1rem 1rem;
   border: 1px solid black;
   display: flex;
   flex-direction: column;
   min-height: 10rem;
   box-sizing: border-box;
   padding: 0.5rem;
+  border-radius: 0 0 5px 5px;
 }
 .c-nested__item-group {
   display: flex;

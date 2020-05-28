@@ -26,8 +26,8 @@
         >
           <el-menu-item
             class="list-group-item"
-            v-for="element in item.elements"
-            :key="element.type"
+            v-for="(element, k) in item.elements"
+            :key="k"
           >
             <span class="o-item__name">
               {{ element.name }}

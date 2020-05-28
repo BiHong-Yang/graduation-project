@@ -3,9 +3,6 @@
     <!-- 显示参数 -->
 
     <el-select v-if="mode != 'return'" v-model="item.key" @change="change()">
-      <!-- 从这里开始，弄选择更改 -->
-
-      <!-- 从这里开始，弄选择更改 -->
       <el-option
         v-for="(v, k) in item.value"
         :key="k"
@@ -15,14 +12,12 @@
       ></el-option>
     </el-select>
     <!-- 对返回使用的特判 -->
+
     <el-select
       v-else-if="mode == 'return'"
       v-model="item.key"
       @change="change()"
     >
-      <!-- 从这里开始，弄选择更改 -->
-
-      <!-- 从这里开始，弄选择更改 -->
       <el-option
         v-for="(v, k) in returnValue()"
         :key="k"
@@ -32,7 +27,7 @@
       ></el-option>
     </el-select>
 
-    <template v-if="mode == 'value'">
+    <template v-if="mode == 'value' && item.key != 'self'">
       <Content
         v-for="(it, k) in item.value[item.key].contents"
         :key="k"
@@ -43,7 +38,7 @@
       ></Content>
     </template>
     <!-- 对返回值类型特判 -->
-    <template v-else-if="mode == 'return'">
+    <template v-else-if="mode == 'return' && item.key != 'self'">
       <Expression
         v-for="(it, id) in item.value[item.key].value"
         :key="id"
@@ -51,20 +46,22 @@
         :placeholder="'请放入一个可被赋值的变量'"
       ></Expression>
     </template>
-    <!-- 对映射类型特判 -->
-    <template v-else-if="mode == 'from'">
-      <Expression
-        v-if="item.key == 'from'"
-        :item="doNothing(item.value[item.key])"
-        :placeholder="'请输入待选元素键'"
-      ></Expression>
-    </template>
-    <!-- 对数组类型特判 -->
-    <template v-else-if="mode == 'key'">
+    <!-- 对数组和数组类型特判 -->
+    <template v-else-if="mode == 'key' && item.key != 'self'">
       <Expression
         :item="doNothing(item.value[item.key])"
         :placeholder="'请输入待选元素数字坐标'"
       ></Expression>
+      <template v-if="['pointer'].includes(item.key)">
+        <Content
+          v-for="(it, k) in item.value[item.key].type.contents"
+          :key="k"
+          :item="it"
+          :keyWord="k"
+          :type="item.value[item.key].type.type"
+          :mode="'soloMode'"
+        ></Content>
+      </template>
     </template>
   </div>
 </template>
