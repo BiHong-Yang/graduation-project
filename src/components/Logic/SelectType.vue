@@ -2,7 +2,13 @@
   <div class="c-SelectType">
     <!-- 显示参数 -->
 
-    <el-select v-model="item.type" @change="ChangeType">
+    <el-select
+      v-model="item.type"
+      @change="
+        ChangeType();
+        refreshVars();
+      "
+    >
       <!-- 从这里开始，弄选择更改 -->
 
       <!-- 从这里开始，弄选择更改 -->
@@ -132,7 +138,9 @@ export default {
       }
       return temp;
     },
-
+    refreshVars: function () {
+      this.$store.dispatch("logic/refreshVars");
+    },
     // 筛选一下到底可以选那些类别
     // typeFilter: function () {
     //   let temp = {};

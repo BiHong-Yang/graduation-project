@@ -1,6 +1,7 @@
 <template>
   <div @click="changeKill()">
     <draggable
+      @add="refreshVars"
       class="list-group el-icon-delete"
       :class="kill ? 'dragArea--killer' : 'dragArea'"
       :group="{ name: 'logic', put: true }"
@@ -27,6 +28,9 @@ export default {
   methods: {
     changeKill: function () {
       this.$store.state.logic.kill = !this.$store.state.logic.kill;
+    },
+    refreshVars: function () {
+      this.$store.dispatch("logic/refreshVars");
     },
   },
 };

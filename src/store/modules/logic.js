@@ -484,7 +484,7 @@ function createVar(item, attrs = null) {
     temp.contents.value.value.pointer.type = createVar(
       {
         type: attrs.contents.type.value.type,
-        name: attrs.contents.name.value,
+        name: "",
       },
       getValue(attrs, "type")
     );
@@ -716,6 +716,20 @@ function codeModifiers(modifiers) {
   }
 }
 
+function emptyExpression(item) {
+  console.log("testing empty", item);
+  if (
+    item.elements.length == 0 &&
+    (item.value == null || item.value.length == 0)
+  ) {
+    console.log("get true");
+    return true;
+  } else {
+    console.log("get false");
+    return false;
+  }
+}
+
 // 处理表达式
 function codeExpression(item) {
   if (item.useEle == false) {
@@ -741,11 +755,16 @@ function getValue(item, key) {
 }
 
 // 直接获得传递的参数
-function getParams(value) {
-  return `(${Object.keys(value)
-    .map((x) => value[x])
-    .map((x) => codeExpression(x))
-    .join(",")})`;
+function getParams(value, mode = "normal") {
+  let arr = Object.keys(value).map((x) => value[x]);
+  if (mode == "normal") {
+    return `(${arr.map((x) => codeExpression(x)).join(",")})`;
+  } else if (mode == "struct") {
+    return `({${arr
+      .filter((x) => !emptyExpression(x))
+      .map((x) => x.name + " : " + codeExpression(x) + " ")
+      .join(",")}})`;
+  }
 }
 
 // 删除尾巴
@@ -764,7 +783,7 @@ function codeElements(item, space = "", addition = "") {
     case "contract_creator": {
       temp = `contract${getName(item)} {\n`;
       for (let i = 0; i < item.elements.length; i++) {
-        temp += codeElements(item.elements[i], space.concat("  "));
+        temp += codeElements(item.elements[i], space.concat("    "));
       }
       temp += `}\n`;
       break;
@@ -776,7 +795,7 @@ function codeElements(item, space = "", addition = "") {
         getValue(item, "modifiers")
       )}${codeReturns(getValue(item, "returns"))} {\n`;
       for (let i = 0; i < item.elements.length; i++) {
-        temp += codeElements(item.elements[i], space.concat("  "));
+        temp += codeElements(item.elements[i], space.concat("    "));
       }
       temp += `${space}}\n`;
       break;
@@ -788,7 +807,7 @@ function codeElements(item, space = "", addition = "") {
         getValue(item, "modifiers")
       )}{\n`;
       for (let i = 0; i < item.elements.length; i++) {
-        temp += codeElements(item.elements[i], space.concat("  "));
+        temp += codeElements(item.elements[i], space.concat("    "));
       }
       temp += `${space}}\n`;
       break;
@@ -796,7 +815,7 @@ function codeElements(item, space = "", addition = "") {
     case "struct_creator": {
       temp = `${space}struct${getName(item)} {\n`;
       for (let i = 0; i < item.elements.length; i++) {
-        temp += codeElements(item.elements[i], space.concat("  "));
+        temp += codeElements(item.elements[i], space.concat("    "));
       }
       temp += `${space}}\n`;
       break;
@@ -806,7 +825,7 @@ function codeElements(item, space = "", addition = "") {
         getValue(item, "param")
       )} {\n`;
       for (let i = 0; i < item.elements.length; i++) {
-        temp += codeElements(item.elements[i], space.concat("  "));
+        temp += codeElements(item.elements[i], space.concat("    "));
       }
       temp += `${space}}\n`;
       break;
@@ -831,10 +850,15 @@ function codeElements(item, space = "", addition = "") {
     case "contract":
     case "struct": {
       let type = `${addition}${item.name.split(" ")[1]}`;
-      if (Object.keys(getValue(item, "value")).length > 0) {
-        temp = `${space}${type}${getValue(item, "name")} = new type${getParams(
-          getValue(item, "value")
-        )};\n`;
+      if (
+        Object.keys(getValue(item, "value")).length > 0 &&
+        Object.keys(getValue(item, "value"))
+          .map((x) => getValue(item, "value")[x])
+          .some((x) => !emptyExpression(x))
+      ) {
+        temp = `${space}${type}${getValue(item, "name")} = ${
+          item.type == "contract" ? "new " : ""
+        }${type}${getParams(getValue(item, "value"), "struct")};\n`;
       } else {
         temp = `${space}${type}${getValue(item, "name")};\n`;
       }
@@ -868,10 +892,10 @@ function codeElements(item, space = "", addition = "") {
     case "address":
     case "byteArray": {
       // console.log("here in uint");
-      console.log("item is", item);
+      // console.log("item is", item);
       let type = item.type;
       if (item.contents.categories != undefined) {
-        type = getValue(item, "categories");
+        type = getValue(item, "categories").split(" ").join("");
       }
 
       temp = `${space}${type}${getValue(item, "name")}`;
@@ -889,22 +913,43 @@ function codeElements(item, space = "", addition = "") {
     case "int_var":
     case "bool_var":
     case "address_var": {
-      temp = `${item.name}`;
+      temp = `${space}${item.name}`;
       break;
     }
     case "byteArray_var": {
+      temp = `${space}${item.name}`;
+      switch (item.contents.value.key) {
+        case "self": {
+          break;
+        }
+        case "number": {
+          temp += `[${codeExpression(getValue(item, "value").number)}]`;
+          break;
+        }
+        case "length": {
+          temp += `.length`;
+          break;
+        }
+        case "push": {
+          temp += `.push(${codeExpression(getValue(item, "value").push)})`;
+        }
+      }
+      temp += `;\n`;
       break;
     }
     case "mapping": {
       // 后半部分
-      temp = `${space}mapping(${codeBody(getValue(item, "from"))} => ${codeBody(
-        getValue(item, "to")
-      )})${getValue(item, "name")};\n`;
+      temp = `${space}mapping(${codeBody(getValue(item, "from"))
+        .split(" ")
+        .join("")} => ${codeBody(getValue(item, "to"))})${getValue(
+        item,
+        "name"
+      )};\n`;
       break;
     }
     case "array": {
-      console.log("i'm array");
-      console.log("additon is ", addition);
+      // console.log("i'm array");
+      // console.log("additon is ", addition);
       if (getValue(item, "type").type != "array") {
         temp = `${space}${codeBody(getValue(item, "type"))}${addition}[${
           getValue(item, "len") != null
@@ -923,15 +968,26 @@ function codeElements(item, space = "", addition = "") {
             "]"
         )}${getValue(item, "name")};\n`;
       }
-      console.log("temp is ", temp);
+      // console.log("temp is ", temp);
       break;
     }
+    case "array_var":
     case "mapping_var": {
+      temp = `${space}${item.name}`;
+
+      switch (item.contents.value.key) {
+        case "self": {
+          break;
+        }
+        case "pointer": {
+          temp += `[${codeExpression(getValue(item, "value").pointer)}]`;
+          temp += `${codeBody(getValue(item, "value").pointer.type)}`;
+        }
+      }
+      temp += ";\n";
       break;
     }
-    case "array_var": {
-      break;
-    }
+
     // **口子**
     case " + ":
     case " - ":
@@ -951,7 +1007,7 @@ function codeElements(item, space = "", addition = "") {
     case " -":
     case " << ":
     case " >> ": {
-      temp = "";
+      temp = `${space}`;
       if (item.contents.firstOP != undefined) {
         temp += codeExpression(item.contents.firstOP);
       }
@@ -1355,6 +1411,13 @@ const state = {
               show: true,
               use: false,
             },
+            value: {
+              name: "初值",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: false,
+            },
             from: {
               name: "映射自",
               value: {
@@ -1393,6 +1456,13 @@ const state = {
               value: "",
               show: true,
               use: false,
+            },
+            value: {
+              name: "初值",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: false,
             },
             type: {
               name: "基本元素",

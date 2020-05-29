@@ -2,7 +2,14 @@
   <div class="c-GetAttibute">
     <!-- 显示参数 -->
 
-    <el-select v-if="mode != 'return'" v-model="item.key" @change="change()">
+    <el-select
+      v-if="mode != 'return'"
+      v-model="item.key"
+      @change="
+        change();
+        refreshVars();
+      "
+    >
       <el-option
         v-for="(v, k) in item.value"
         :key="k"
@@ -16,7 +23,10 @@
     <el-select
       v-else-if="mode == 'return'"
       v-model="item.key"
-      @change="change()"
+      @change="
+        change();
+        refreshVars();
+      "
     >
       <el-option
         v-for="(v, k) in returnValue()"
@@ -95,6 +105,9 @@ export default {
         delete temp.value.use;
       }
       return temp.value;
+    },
+    refreshVars: function () {
+      this.$store.dispatch("logic/refreshVars");
     },
   },
 };

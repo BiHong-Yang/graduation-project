@@ -1,9 +1,10 @@
 <template>
   <div class="c-ShowCode">
-    <pre class="c-ShowCode__inner">
+    <pre v-highlightjs="code" class="c-ShowCode__inner"><code class="solidity">
+
     {{ code }}
-  </pre
-    >
+
+    </code></pre>
   </div>
 </template>
 
@@ -24,8 +25,22 @@ export default {
   white-space: unset;
   width: 100%;
   height: 100%;
+  font-family: sans-serif;
   .c-ShowCode__inner {
+    width: 100%;
+    height: 100%;
+    margin: 0;
     // background-color: red;
   }
+}
+.hljs {
+  width: 100%;
+  height: 100%;
+  padding: 0 0.5rem;
+  overflow: auto;
+  font-family: sans-serif;
+  font-size: medium;
+  font-weight: 600;
+  box-sizing: border-box;
 }
 </style>

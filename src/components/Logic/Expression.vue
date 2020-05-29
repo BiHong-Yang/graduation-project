@@ -7,6 +7,7 @@
     >
       <div @click.stop>
         <el-input
+          @change="refreshVars()"
           v-show="!item.useEle && item.elements.length == 0"
           v-model="item[type]"
           :placeholder="placeholder"
@@ -71,6 +72,11 @@ export default {
   computed: {
     ExpChange() {
       return String(0.7 * (this.item[this.type].length + 3)) + "em";
+    },
+  },
+  methods: {
+    refreshVars: function () {
+      this.$store.dispatch("logic/refreshVars");
     },
   },
 };

@@ -11,7 +11,11 @@
     <template v-if="type == 'uint'">
       <!-- 类别，即大小上限 -->
       <div v-if="keyWord == 'categories'" class="l-contents-item">
-        <el-select v-model="item.value" placeholder="256位">
+        <el-select
+          v-model="item.value"
+          placeholder="256位"
+          @change="refreshVars()"
+        >
           <el-option
             v-for="id in 32"
             :key="id"
@@ -41,7 +45,11 @@
     <template v-else-if="type == 'int'">
       <!-- 类别，即大小上限 -->
       <div v-if="keyWord == 'categories'" class="l-contents-item">
-        <el-select v-model="item.value" placeholder="256位">
+        <el-select
+          v-model="item.value"
+          placeholder="256位"
+          @change="refreshVars()"
+        >
           <el-option
             v-for="id in 32"
             :key="id"
@@ -115,7 +123,11 @@
       ></Expression>
       <!-- 类型，即长度 -->
       <div v-else-if="keyWord == 'categories'" class="l-contents-item">
-        <el-select v-model="item.value" placeholder="最长 32 字节的字节数组">
+        <el-select
+          @change="refreshVars()"
+          v-model="item.value"
+          placeholder="最长 32 字节的字节数组"
+        >
           <el-option :label="`变长字节数组`" :value="`bytes`"></el-option>
 
           <el-option
@@ -223,6 +235,7 @@
       <!-- 长度 -->
       <div v-else-if="keyWord == 'len'" class="l-contents-item">
         <el-input
+          @change="refreshVars()"
           v-model="item.value"
           placeholder="不填写默认为变长数组"
         ></el-input>
@@ -247,7 +260,11 @@
       </div>
       <!-- 长度 -->
       <div v-else-if="keyWord == 'len'" class="l-contents-item">
-        <el-input v-model="item.value" placeholder="请输入一个数字"></el-input>
+        <el-input
+          @change="refreshVars()"
+          v-model="item.value"
+          placeholder="请输入一个数字"
+        ></el-input>
       </div>
     </template>
 
@@ -277,7 +294,11 @@
       </div>
 
       <div v-else-if="keyWord == 'type'" class="l-contents-item">
-        <el-select v-model="item.value" placeholder="内部函数">
+        <el-select
+          @change="refreshVars()"
+          v-model="item.value"
+          placeholder="内部函数"
+        >
           <el-option :label="'内部函数'" :value="`internal`">
             <span class="l-option-label">内部函数</span>
             <Hint content="只可以该合约或该合约的子合约内部调用"> </Hint>
@@ -301,7 +322,11 @@
       </div>
 
       <div v-else-if="keyWord == 'behavior'" class="l-contents-item">
-        <el-select v-model="item.value" placeholder="默认模式">
+        <el-select
+          @change="refreshVars()"
+          v-model="item.value"
+          placeholder="默认模式"
+        >
           <el-option :label="'默认模式'" :value="``">
             <span class="l-option-label">默认模式</span>
             <Hint content="不可支付，但可读取/修改合约存储"> </Hint>
@@ -384,7 +409,11 @@
       </div>
 
       <div v-else-if="keyWord == 'type'" class="l-contents-item">
-        <el-select v-model="item.value" placeholder="公共函数">
+        <el-select
+          @change="refreshVars()"
+          v-model="item.value"
+          placeholder="公共函数"
+        >
           <el-option :label="'内部函数'" :value="`internal`">
             <span class="l-option-label">内部函数</span>
             <Hint content="只可以该合约或该合约的子合约内部调用"> </Hint>
@@ -397,7 +426,11 @@
       </div>
 
       <div v-else-if="keyWord == 'behavior'" class="l-contents-item">
-        <el-select v-model="item.value" placeholder="默认模式">
+        <el-select
+          @change="refreshVars()"
+          v-model="item.value"
+          placeholder="默认模式"
+        >
           <el-option :label="'默认模式'" :value="``">
             <span class="l-option-label">默认模式</span>
             <Hint content="不可支付，但可读取/修改合约存储"> </Hint>

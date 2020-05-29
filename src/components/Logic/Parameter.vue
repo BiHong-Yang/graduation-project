@@ -12,7 +12,10 @@
           class="c-header__select"
           v-model="item.type"
           :placeholder="placeHolder(item)"
-          @change="ChangeType(index)"
+          @change="
+            ChangeType(index);
+            refreshVars();
+          "
         >
           <el-option
             v-for="(types, id) in ParamTypes"
@@ -29,7 +32,10 @@
           v-if="['returns', 'param'].includes(mode)"
           class="c-header__select"
           v-model="item.type"
-          @change="returnsChangeType(index)"
+          @change="
+            returnsChangeType(index);
+            refreshVars();
+          "
         >
           <el-option
             v-for="(types, id) in returnsParams()"
@@ -185,6 +191,9 @@ export default {
     },
   },
   methods: {
+    refreshVars: function () {
+      this.$store.dispatch("logic/refreshVars");
+    },
     deleteItem: function (index) {
       this.params.splice(index, 1);
     },
