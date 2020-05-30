@@ -186,9 +186,12 @@ function varSimplify(item) {
   };
   // 如果是结构体那加一层
 
+  if (item.categories != undefined) {
+    temp.categories = item.categories;
+  }
   if (item.type == "struct") {
     temp.value = {};
-    temp.value[getName(item)].value = item.contents.value.value;
+    temp.value = item.contents.value.value;
   }
   if (item.type == "contract") {
     temp.value = {};

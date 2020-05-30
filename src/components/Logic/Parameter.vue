@@ -315,6 +315,4 @@ export default {
   align-items: center;
   padding: 0 0.2rem 0 0.3rem;
 }
-.l-item__contents {
-}
 </style>

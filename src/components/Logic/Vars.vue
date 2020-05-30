@@ -109,7 +109,7 @@ export default {
         display: flex;
         align-items: center;
         box-sizing: border-box;
-
+        flex: 0 0 auto;
         .o-location__name {
           box-sizing: border-box;
         }

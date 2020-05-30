@@ -139,6 +139,12 @@
         </el-select>
       </div>
 
+      <Expression
+        v-else-if="keyWord == 'value'"
+        :item="item"
+        :placeholder="'请输入一个字符串'"
+      ></Expression>
+
       <!-- 名字 -->
       <div v-else-if="keyWord == 'name'" class="l-contents-item">
         <el-input
@@ -160,6 +166,12 @@
       <div v-else-if="keyWord == 'to'" class="l-contents-item">
         <SelectType :item="item.value"></SelectType>
       </div>
+
+      <Expression
+        v-else-if="keyWord == 'value'"
+        :item="item"
+        :placeholder="'请输入一个映射'"
+      ></Expression>
 
       <!-- 名字 -->
       <div v-else-if="keyWord == 'name'" class="l-contents-item">
@@ -232,6 +244,12 @@
           placeholder="请输入一串英文字符"
         ></el-input>
       </div>
+
+      <Expression
+        v-else-if="keyWord == 'value'"
+        :item="item"
+        :placeholder="'请输入一个字符串'"
+      ></Expression>
       <!-- 长度 -->
       <div v-else-if="keyWord == 'len'" class="l-contents-item">
         <el-input

@@ -32,7 +32,7 @@
             <span class="o-item__name">
               {{ element.name }}
             </span>
-            <Hint :content="element.hint"></Hint>
+            <Hint :mode="'logic'" :content="element.hint"></Hint>
           </el-menu-item>
         </draggable>
       </div>

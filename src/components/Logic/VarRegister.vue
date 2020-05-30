@@ -56,7 +56,7 @@ export default {
   box-sizing: border-box;
   border: 1px solid black;
   display: flex;
-  flex: 1 1 auto;
+  flex: 0 0 auto;
   align-items: center;
 
   .c-VarRegister__name {

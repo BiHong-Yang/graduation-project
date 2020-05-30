@@ -4,7 +4,7 @@
     effect="dark"
     placement="top-start"
     :open-delay="0"
-    v-if="!useHint"
+    v-if="!useHint || mode != 'code'"
   >
     <div slot="content" v-html="content"></div>
     <i class="c-hint-icon" :class="icon"></i>
@@ -27,6 +27,11 @@ export default {
     icon: {
       type: String,
       default: "el-icon-question",
+      required: false,
+    },
+    mode: {
+      type: String,
+      default: "code",
       required: false,
     },
   },
