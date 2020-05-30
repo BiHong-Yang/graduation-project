@@ -138,7 +138,11 @@
         >
           <div
             class="o-item__name"
-            :class="{ 'l-item__name--common': !ValueTypes.includes(el.type) }"
+            :class="{
+              'l-item__name--common':
+                !ValueTypes.includes(el.type) ||
+                Object.keys(el.contents).length > 0,
+            }"
           >
             {{ el.name }}
           </div>
@@ -162,7 +166,7 @@
       </div>
 
       <!-- 对运算另外处理 -->
-      <div v-else class="c-nested__item">
+      <div v-else class="c-nested__item" :style="{ color: useColor(el.type) }">
         <Content
           v-if="el.contents.firstOP != undefined"
           :contents="el.contents"
@@ -261,6 +265,10 @@ export default {
       // 错误处理用粉红
       else if (this.TypeGroups(6).includes(type)) {
         return "#FF5842";
+      }
+      // 对变量
+      else {
+        return;
       }
     },
   },

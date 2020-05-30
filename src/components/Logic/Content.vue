@@ -10,21 +10,13 @@
     </div>
     <template v-if="type == 'uint'">
       <!-- 类别，即大小上限 -->
-      <div v-if="keyWord == 'categories'" class="l-contents-item">
-        <el-select
-          v-model="item.value"
-          placeholder="256位"
-          @change="refreshVars()"
-        >
-          <el-option
-            v-for="id in 32"
-            :key="id"
-            :label="`${8 * (33 - id)}位`"
-            :value="`uint${8 * (33 - id)}`"
-          ></el-option>
-        </el-select>
-      </div>
 
+      <Selector
+        v-if="keyWord == 'categories'"
+        class="l-contents-item"
+        :mode="'uint'"
+        :item="item"
+      ></Selector>
       <!-- 初值 -->
       <Expression
         v-if="keyWord == 'value'"
@@ -44,20 +36,12 @@
     <!-- int类型 -->
     <template v-else-if="type == 'int'">
       <!-- 类别，即大小上限 -->
-      <div v-if="keyWord == 'categories'" class="l-contents-item">
-        <el-select
-          v-model="item.value"
-          placeholder="256位"
-          @change="refreshVars()"
-        >
-          <el-option
-            v-for="id in 32"
-            :key="id"
-            :label="`${8 * (33 - id)}位`"
-            :value="`int${8 * (33 - id)}`"
-          ></el-option>
-        </el-select>
-      </div>
+      <Selector
+        v-if="keyWord == 'categories'"
+        class="l-contents-item"
+        :mode="'int'"
+        :item="item"
+      ></Selector>
 
       <!-- 初值 -->
       <Expression
@@ -74,6 +58,14 @@
           placeholder="请输入一串英文字符"
         ></el-input>
       </div>
+
+      <!-- 存储位置 -->
+      <Selector
+        v-else-if="keyWord == 'store'"
+        class="l-contents-item"
+        :mode="'store'"
+        :item="item"
+      ></Selector>
     </template>
 
     <!-- bool类型 -->
@@ -94,6 +86,14 @@
           placeholder="请输入一串英文字符"
         ></el-input>
       </div>
+
+      <!-- 存储位置 -->
+      <Selector
+        v-else-if="keyWord == 'store'"
+        class="l-contents-item"
+        :mode="'store'"
+        :item="item"
+      ></Selector>
     </template>
 
     <!-- 地址类型 -->
@@ -111,6 +111,14 @@
           placeholder="请输入一串英文字符"
         ></el-input>
       </div>
+
+      <!-- 存储位置 -->
+      <Selector
+        v-else-if="keyWord == 'store'"
+        class="l-contents-item"
+        :mode="'store'"
+        :item="item"
+      ></Selector>
     </template>
 
     <!-- 字符数组类型，包括定长变长 -->
@@ -122,28 +130,12 @@
         :placeholder="'请输入一个字符串'"
       ></Expression>
       <!-- 类型，即长度 -->
-      <div v-else-if="keyWord == 'categories'" class="l-contents-item">
-        <el-select
-          @change="refreshVars()"
-          v-model="item.value"
-          placeholder="最长 32 字节的字节数组"
-        >
-          <el-option :label="`变长字节数组`" :value="`bytes`"></el-option>
-
-          <el-option
-            v-for="id in 32"
-            :key="id"
-            :label="`最长 ${33 - id} 字节的字节数组`"
-            :value="`byte${33 - id}`"
-          ></el-option>
-        </el-select>
-      </div>
-
-      <Expression
-        v-else-if="keyWord == 'value'"
+      <Selector
+        v-if="keyWord == 'categories'"
+        class="l-contents-item"
+        :mode="'byteArray'"
         :item="item"
-        :placeholder="'请输入一个字符串'"
-      ></Expression>
+      ></Selector>
 
       <!-- 名字 -->
       <div v-else-if="keyWord == 'name'" class="l-contents-item">
@@ -153,6 +145,14 @@
           placeholder="请输入一串英文字符"
         ></el-input>
       </div>
+
+      <!-- 存储位置 -->
+      <Selector
+        v-else-if="keyWord == 'store'"
+        class="l-contents-item"
+        :mode="'store'"
+        :item="item"
+      ></Selector>
     </template>
 
     <!-- 映射类型 -->
@@ -205,6 +205,14 @@
         class="l-contents-item"
         :value="item.value"
       ></StructValue>
+
+      <!-- 存储位置 -->
+      <Selector
+        v-else-if="keyWord == 'store'"
+        class="l-contents-item"
+        :mode="'store'"
+        :item="item"
+      ></Selector>
     </template>
 
     <!-- 合约 与结构体类似 -->
@@ -230,6 +238,7 @@
       ></StructValue>
     </template>
 
+    <!-- 数组 -->
     <template v-else-if="type == 'array'">
       <!-- 初值 -->
       <div v-if="keyWord == 'type'" class="l-contents-item">
@@ -258,32 +267,14 @@
           placeholder="不填写默认为变长数组"
         ></el-input>
       </div>
-    </template>
 
-    <!-- 对变量的处理 -->
-
-    <template v-else-if="type == 'array'">
-      <!-- 初值 -->
-      <div v-if="keyWord == 'type'" class="l-contents-item">
-        <SelectType :item="item.value"></SelectType>
-      </div>
-
-      <!-- 名字 -->
-      <div v-else-if="keyWord == 'name'" class="l-contents-item">
-        <el-input
-          @change="refreshVars()"
-          v-model="item.value"
-          placeholder="请输入一串英文字符"
-        ></el-input>
-      </div>
-      <!-- 长度 -->
-      <div v-else-if="keyWord == 'len'" class="l-contents-item">
-        <el-input
-          @change="refreshVars()"
-          v-model="item.value"
-          placeholder="请输入一个数字"
-        ></el-input>
-      </div>
+      <!-- 存储位置 -->
+      <Selector
+        v-else-if="keyWord == 'store'"
+        class="l-contents-item"
+        :mode="'store'"
+        :item="item"
+      ></Selector>
     </template>
 
     <!-- 函数部分 -->
@@ -311,64 +302,21 @@
         <Parameter :mode="'returns'" :params="item.value"></Parameter>
       </div>
 
-      <div v-else-if="keyWord == 'type'" class="l-contents-item">
-        <el-select
-          @change="refreshVars()"
-          v-model="item.value"
-          placeholder="内部函数"
-        >
-          <el-option :label="'内部函数'" :value="`internal`">
-            <span class="l-option-label">内部函数</span>
-            <Hint content="只可以该合约或该合约的子合约内部调用"> </Hint>
-          </el-option>
-          <el-option :label="`外部函数`" :value="`external`">
-            <span class="l-option-label">外部函数</span>
-            <Hint content="用于在该合约外调用"> </Hint>
-          </el-option>
-          <el-option :label="`公共函数`" :value="`public`">
-            <span class="l-option-label">公共函数</span>
-            <Hint content="任何用户或者合约都能调用和访问"> </Hint>
-          </el-option>
-          <el-option :label="`私有函数`" :value="`privite`">
-            <span class="l-option-label">私有函数</span>
-            <Hint
-              content="只能在其所在的合约中调用和访问，即使是其子合约也没有权限访问"
-            >
-            </Hint>
-          </el-option>
-        </el-select>
-      </div>
+      <!-- 可见性 -->
+      <Selector
+        v-if="keyWord == 'type'"
+        class="l-contents-item"
+        :mode="'visibility'"
+        :item="item"
+      ></Selector>
 
-      <div v-else-if="keyWord == 'behavior'" class="l-contents-item">
-        <el-select
-          @change="refreshVars()"
-          v-model="item.value"
-          placeholder="默认模式"
-        >
-          <el-option :label="'默认模式'" :value="``">
-            <span class="l-option-label">默认模式</span>
-            <Hint content="不可支付，但可读取/修改合约存储"> </Hint>
-          </el-option>
-          <el-option :label="`可支付`" :value="`payable`">
-            <span class="l-option-label">可支付</span>
-            <Hint content="可支付、读取/修改合约存储"> </Hint>
-          </el-option>
-          <el-option :label="`仅查看`" :value="`view`">
-            <span class="l-option-label">仅查看</span>
-            <Hint
-              content="不可支付、修改合约存储，可读取合约存储（调用开销小于默认模式）"
-            >
-            </Hint>
-          </el-option>
-          <el-option :label="`纯调用`" :value="`pure`">
-            <span class="l-option-label">纯调用</span>
-            <Hint
-              content="不可支付、不可读取/修改合约存储（调用开销小于查看模式）"
-            >
-            </Hint>
-          </el-option>
-        </el-select>
-      </div>
+      <!-- 调用行为 -->
+      <Selector
+        v-if="keyWord == 'behavior'"
+        class="l-contents-item"
+        :mode="'behavior'"
+        :item="item"
+      ></Selector>
     </template>
 
     <!-- 创建装饰器 -->
@@ -426,39 +374,20 @@
         <Parameter :mode="'param'" :params="item.value"></Parameter>
       </div>
 
-      <div v-else-if="keyWord == 'type'" class="l-contents-item">
-        <el-select
-          @change="refreshVars()"
-          v-model="item.value"
-          placeholder="公共函数"
-        >
-          <el-option :label="'内部函数'" :value="`internal`">
-            <span class="l-option-label">内部函数</span>
-            <Hint content="只可以该合约或该合约的子合约内部调用"> </Hint>
-          </el-option>
-          <el-option :label="`公共函数`" :value="`public`">
-            <span class="l-option-label">公共函数</span>
-            <Hint content="任何用户或者合约都能调用和访问"> </Hint>
-          </el-option>
-        </el-select>
-      </div>
+      <Selector
+        v-if="keyWord == 'type'"
+        class="l-contents-item"
+        :mode="'visibility-simple'"
+        :item="item"
+      ></Selector>
 
-      <div v-else-if="keyWord == 'behavior'" class="l-contents-item">
-        <el-select
-          @change="refreshVars()"
-          v-model="item.value"
-          placeholder="默认模式"
-        >
-          <el-option :label="'默认模式'" :value="``">
-            <span class="l-option-label">默认模式</span>
-            <Hint content="不可支付，但可读取/修改合约存储"> </Hint>
-          </el-option>
-          <el-option :label="`可支付`" :value="`payable`">
-            <span class="l-option-label">可支付</span>
-            <Hint content="可支付、读取/修改合约存储"> </Hint>
-          </el-option>
-        </el-select>
-      </div>
+      <!-- 调用行为 -->
+      <Selector
+        v-if="keyWord == 'behavior'"
+        class="l-contents-item"
+        :mode="'behavior-simple'"
+        :item="item"
+      ></Selector>
 
       <div v-else-if="keyWord == 'modifiers'" class="l-contents-item">
         <Parameter :mode="'modifiers'" :params="item.value"></Parameter>
@@ -706,9 +635,9 @@
 import SelectType from "./SelectType";
 import Expression from "./Expression";
 import Parameter from "./Parameter";
-import Hint from "./Hint";
 import StructValue from "./StructValue";
 import GetAttibute from "./GetAttibute";
+import Selector from "./Selector";
 export default {
   props: {
     contents: {
@@ -761,9 +690,9 @@ export default {
     Expression,
     Parameter,
     SelectType,
-    Hint,
     StructValue,
     GetAttibute,
+    Selector,
   },
 };
 </script>

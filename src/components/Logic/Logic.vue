@@ -11,6 +11,7 @@
           <span>{{ item.name }}</span>
         </el-menu-item>
       </el-menu>
+      <ControlBar></ControlBar>
     </div>
 
     <div class="c-logic-panel__items">
@@ -102,6 +103,7 @@
 
 <script>
 import draggable from "vuedraggable";
+import ControlBar from "./ControlBar";
 import Hint from "./Hint";
 export default {
   name: "clone",
@@ -110,6 +112,7 @@ export default {
   components: {
     draggable,
     Hint,
+    ControlBar,
   },
   data() {
     return {

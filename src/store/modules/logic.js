@@ -594,6 +594,12 @@ function createVar(item, attrs = null) {
           key: "self",
           show: true,
         },
+        store: {
+          name: "存储方式",
+          value: "",
+          show: false,
+          use: false,
+        },
       },
 
       // id: this.$store.state.logic.globalId,
@@ -720,17 +726,18 @@ function codeModifiers(modifiers) {
 }
 
 function emptyExpression(item) {
-  console.log("testing empty", item);
-  if (
-    item.elements.length == 0 &&
-    (item.value == null || item.value.length == 0)
-  ) {
-    console.log("get true");
-    return true;
+  let temp = true;
+  if (["struct", "contract"].includes(item.type)) {
+    for (let x in item.value) {
+      temp = temp && emptyExpression(item.value[x], "struct");
+    }
   } else {
-    console.log("get false");
-    return false;
+    temp =
+      item.elements.length == 0 &&
+      (item.value == null || item.value.length == 0);
   }
+  return temp;
+  // return false;
 }
 
 // 处理表达式
@@ -739,7 +746,7 @@ function codeExpression(item) {
     if (item.value != null) {
       return item.value;
     } else {
-      return null;
+      return "";
     }
   }
   return codeBody(item.elements[0], "");
@@ -760,13 +767,20 @@ function getValue(item, key) {
 // 直接获得传递的参数
 function getParams(value, mode = "normal") {
   let arr = Object.keys(value).map((x) => value[x]);
+  console.log("value is", value);
+  console.log("mode is ", mode);
   if (mode == "normal") {
-    return `(${arr.map((x) => codeExpression(x)).join(",")})`;
+    return `${arr.map((x) => codeExpression(x)).join(",")}`;
   } else if (mode == "struct") {
-    return `({${arr
+    return `{${arr
       .filter((x) => !emptyExpression(x))
-      .map((x) => x.name + " : " + codeExpression(x) + " ")
-      .join(",")}})`;
+      .map((x) => {
+        if (["struct", "contract"].includes(x.type)) {
+          return x.name + " : " + getParams(x.value, "struct") + " ";
+        }
+        return x.name + " : " + codeExpression(x) + " ";
+      })
+      .join(",")}}`;
   }
 }
 
@@ -861,7 +875,7 @@ function codeElements(item, space = "", addition = "") {
       ) {
         temp = `${space}${type}${getValue(item, "name")} = ${
           item.type == "contract" ? "new " : ""
-        }${type}${getParams(getValue(item, "value"), "struct")};\n`;
+        }${type}(${getParams(getValue(item, "value"), "struct")});\n`;
       } else {
         temp = `${space}${type}${getValue(item, "name")};\n`;
       }
@@ -902,10 +916,7 @@ function codeElements(item, space = "", addition = "") {
       }
 
       temp = `${space}${type}${getValue(item, "name")}`;
-      if (
-        getValue(item, "value") != null ||
-        item.contents.value.elements.length > 0
-      ) {
+      if (!emptyExpression(item.contents.value)) {
         temp += ` = ${codeExpression(item.contents.value)}`;
       }
       temp += `;\n`;
@@ -944,10 +955,15 @@ function codeElements(item, space = "", addition = "") {
       // 后半部分
       temp = `${space}mapping(${codeBody(getValue(item, "from"))
         .split(" ")
-        .join("")} => ${codeBody(getValue(item, "to"))})${getValue(
-        item,
-        "name"
-      )};\n`;
+        .join("")} => ${codeBody(getValue(item, "to"))})`;
+      if (!emptyExpression(item.contents.value)) {
+        temp += ` storage`;
+      }
+      temp += `${getValue(item, "name")}`;
+      if (!emptyExpression(item.contents.value)) {
+        temp += ` = ${codeExpression(item.contents.value)}`;
+      }
+      temp += `;\n`;
       break;
     }
     case "array": {
@@ -969,8 +985,13 @@ function codeElements(item, space = "", addition = "") {
               ? getValue(item, "len").split(" ")[1]
               : "") +
             "]"
-        )}${getValue(item, "name")};\n`;
+        )}${getValue(item, "name")}`;
       }
+      if (!emptyExpression(item.contents.value)) {
+        temp += ` = ${codeExpression(item.contents.value)}`;
+      }
+      temp += `;\n`;
+
       // console.log("temp is ", temp);
       break;
     }
@@ -1091,7 +1112,7 @@ function codeElements(item, space = "", addition = "") {
     case "ripemd160": {
       temp = `${item.type}(abi.encodePacked(${getValue(item, "param")
         .map((x) => codeExpression(x))
-        .join(",")})`;
+        .join(",")}))`;
       break;
     }
     case "ecrecover": {
@@ -1292,6 +1313,12 @@ const state = {
               show: false,
               use: true,
             },
+            store: {
+              name: "存储方式",
+              value: "",
+              show: false,
+              use: false,
+            },
           },
         },
 
@@ -1322,6 +1349,12 @@ const state = {
               show: false,
               use: true,
             },
+            store: {
+              name: "存储方式",
+              value: "",
+              show: false,
+              use: false,
+            },
           },
         },
 
@@ -1345,6 +1378,12 @@ const state = {
               useEle: false,
               show: false,
             },
+            store: {
+              name: "存储方式",
+              value: "",
+              show: false,
+              use: false,
+            },
           },
         },
 
@@ -1367,6 +1406,12 @@ const state = {
               elements: [],
               useEle: false,
               show: false,
+            },
+            store: {
+              name: "存储方式",
+              value: "",
+              show: false,
+              use: false,
             },
           },
         },
@@ -1396,6 +1441,12 @@ const state = {
               value: "byte32",
               show: false,
               use: true,
+            },
+            store: {
+              name: "存储方式",
+              value: "",
+              show: false,
+              use: false,
             },
           },
         },
@@ -1485,6 +1536,12 @@ const state = {
               show: true,
               use: true,
             },
+            store: {
+              name: "存储方式",
+              value: "",
+              show: false,
+              use: false,
+            },
           },
         },
       ],
@@ -1532,7 +1589,7 @@ const state = {
             // 外部可见性 internal 还是 external
             type: {
               name: "函数可见性",
-              value: "internal",
+              value: "",
               show: false,
             },
 

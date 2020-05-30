@@ -6,7 +6,7 @@
     <div class="raw">
       <raw-displayer :title="'Vuex Store'" :value="elements" />
     </div>
-    <div class="raw">
+    <!-- <div class="raw">
       <raw-displayer :title="'varAlready'" :value="varAlready" />
     </div>
     <div class="raw">
@@ -14,7 +14,7 @@
     </div>
     <div class="raw">
       <raw-displayer :title="'location'" :value="location" />
-    </div>
+    </div> -->
   </div>
 </template>
 
