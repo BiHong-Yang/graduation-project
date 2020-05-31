@@ -31,6 +31,13 @@
           placeholder="请输入一串英文字符"
         ></el-input>
       </div>
+
+      <Selector
+        v-else-if="keyWord == 'store'"
+        class="l-contents-item"
+        :mode="'store'"
+        :item="item"
+      ></Selector>
     </template>
 
     <!-- int类型 -->
