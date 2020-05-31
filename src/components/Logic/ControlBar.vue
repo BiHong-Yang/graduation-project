@@ -84,6 +84,7 @@ export default {
   font-size: 130%;
   align-content: center;
   justify-content: center;
+  position: absolute;
 }
 .o-TrashBin {
   display: flex;

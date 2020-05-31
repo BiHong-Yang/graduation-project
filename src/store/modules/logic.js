@@ -239,6 +239,12 @@ function createVar(item, attrs = null) {
           show: false,
           use: false,
         },
+        // 外部可见性
+        visibility: {
+          name: "可见性",
+          value: "",
+          show: false,
+        },
       },
       creatorId: item.creatorId,
     };
@@ -275,6 +281,12 @@ function createVar(item, attrs = null) {
           value: "",
           show: false,
           use: false,
+        },
+        // 外部可见性
+        visibility: {
+          name: "可见性",
+          value: "",
+          show: false,
         },
       },
 
@@ -560,7 +572,7 @@ function createVar(item, attrs = null) {
 
     temp.contents.value.value.pointer.type = createVar(
       {
-        type: attrs.contents.type.value.type,
+        type: attrs.contents.to.value.type,
         name: attrs.contents.name.value,
       },
       getValue(attrs, "to")
@@ -673,11 +685,14 @@ function codeParam(params, simple = false) {
       //   temp.push(returns[i].type);
       // }
       switch (params[i].type) {
-        case "byteArray":
-        case "array": {
+        case "byteArray": {
           temp.push(
             `${params[i].categories.value}[] memory ${getName(params[i])}`
           );
+          break;
+        }
+        case "array": {
+          temp.push(`${params[i].type.value}[] memory ${getName(params[i])}`);
           break;
         }
 
@@ -797,6 +812,7 @@ function codeBody(item, space = "", addition = "") {
   let temp = codeElements(item, space, addition);
   // console.log("item is:", item);
   // console.log("temp is:", temp);
+  console.log("temp in body", temp);
   return temp.split(";\n")[0];
 }
 
@@ -883,11 +899,10 @@ function codeElements(item, space = "", addition = "") {
       ) {
         temp = `${space}${type}${getValue(item, "store")}${getValue(
           item,
-          "name"
-        )} = ${item.type == "contract" ? "new " : ""}${type}(${getParams(
-          getValue(item, "value"),
-          "struct"
-        )});\n`;
+          "visibility"
+        )}${getValue(item, "name")} = ${
+          item.type == "contract" ? "new " : ""
+        }${type}(${getParams(getValue(item, "value"), "struct")});\n`;
       } else {
         temp = `${space}${type}${getValue(item, "name")};\n`;
       }
@@ -929,8 +944,8 @@ function codeElements(item, space = "", addition = "") {
 
       temp = `${space}${type}${getValue(item, "store")}${getValue(
         item,
-        "name"
-      )}`;
+        "visibility"
+      )}${getValue(item, "name")}`;
       if (!emptyExpression(item.contents.value)) {
         temp += ` = ${codeExpression(item.contents.value)}`;
       }
@@ -974,7 +989,7 @@ function codeElements(item, space = "", addition = "") {
       if (!emptyExpression(item.contents.value)) {
         temp += ` storage`;
       }
-      temp += `${getValue(item, "name")}`;
+      temp += `${getValue(item, "visibility")}${getValue(item, "name")}`;
       if (!emptyExpression(item.contents.value)) {
         temp += ` = ${codeExpression(item.contents.value)}`;
       }
@@ -989,7 +1004,10 @@ function codeElements(item, space = "", addition = "") {
           getValue(item, "len") != null
             ? getValue(item, "len").split(" ")[1]
             : ""
-        }]${getValue(item, "store")}${getValue(item, "name")};\n`;
+        }]${getValue(item, "store")}${getValue(item, "visibility")}${getValue(
+          item,
+          "name"
+        )};\n`;
       } else {
         temp = `${space}${codeBody(
           getValue(item, "type"),
@@ -1188,6 +1206,10 @@ function codeElements(item, space = "", addition = "") {
       temp = "";
       break;
     }
+    default: {
+      temp = item.type;
+      break;
+    }
   }
   return temp;
 }
@@ -1264,8 +1286,8 @@ const state = {
     bool: 3,
     address: 4,
     byteArray: 5,
-    mapping: 6,
-    array: 7,
+    array: 6,
+    mapping: 7,
   },
 
   // 统计颜色
@@ -1359,6 +1381,12 @@ const state = {
               show: false,
               use: false,
             },
+            // 外部可见性
+            visibility: {
+              name: "可见性",
+              value: "",
+              show: false,
+            },
           },
         },
 
@@ -1395,6 +1423,12 @@ const state = {
               show: false,
               use: false,
             },
+            // 外部可见性
+            visibility: {
+              name: "可见性",
+              value: "",
+              show: false,
+            },
           },
         },
 
@@ -1424,6 +1458,12 @@ const state = {
               show: false,
               use: false,
             },
+            // 外部可见性
+            visibility: {
+              name: "可见性",
+              value: "",
+              show: false,
+            },
           },
         },
 
@@ -1442,7 +1482,7 @@ const state = {
             },
             value: {
               name: "初值",
-              value: 0x0,
+              value: null,
               elements: [],
               useEle: false,
               show: false,
@@ -1452,6 +1492,12 @@ const state = {
               value: "",
               show: false,
               use: false,
+            },
+            // 外部可见性
+            visibility: {
+              name: "可见性",
+              value: "",
+              show: false,
             },
           },
         },
@@ -1487,6 +1533,12 @@ const state = {
               value: "",
               show: false,
               use: false,
+            },
+            // 外部可见性
+            visibility: {
+              name: "可见性",
+              value: "",
+              show: false,
             },
           },
         },
@@ -1535,6 +1587,11 @@ const state = {
               elements: [],
               show: true,
               use: true,
+            }, // 外部可见性
+            visibility: {
+              name: "可见性",
+              value: "",
+              show: false,
             },
           },
         },
@@ -1581,6 +1638,12 @@ const state = {
               value: "",
               show: false,
               use: false,
+            },
+            // 外部可见性
+            visibility: {
+              name: "可见性",
+              value: "",
+              show: false,
             },
           },
         },
@@ -3092,13 +3155,12 @@ const getters = {
         for (let j = 0; j < state.elements[i].elements.length; j++) {
           const element = state.elements[i].elements[j];
           if (element.type == "struct_creator") {
-            temp[i].contents.value.value[getName(element)] = {
-              type: getName(element),
-              name: `结构 ${getName(element)}`,
-              elements: [],
-              contents: {},
-              useEle: false,
-            };
+            let tt = createVar(
+              { type: element.type, name: getValue(element, "name") },
+              element
+            );
+            tt.type = getValue(element, "name").split(" ").join("");
+            temp.push(tt);
           }
         }
       }

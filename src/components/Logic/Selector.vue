@@ -50,7 +50,7 @@
     v-model="item.value"
   >
     <el-option :label="'默认'" :value="``">
-      <span class="l-option-label">内部函数</span>
+      <span class="l-option-label">默认</span>
       <Hint content="只可以该合约或该合约的子合约内部调用"> </Hint>
     </el-option>
     <el-option :label="'内部函数'" :value="`internal`">
@@ -80,12 +80,36 @@
     @change="refreshVars()"
     v-model="item.value"
   >
+    <el-option :label="'默认模式'" :value="``">
+      <span class="l-option-label">默认模式</span>
+      <Hint content="只可以该合约或该合约的子合约内部调用"> </Hint>
+    </el-option>
     <el-option :label="'内部函数'" :value="`internal`">
       <span class="l-option-label">内部函数</span>
       <Hint content="只可以该合约或该合约的子合约内部调用"> </Hint>
     </el-option>
     <el-option :label="`公共函数`" :value="`public`">
       <span class="l-option-label">公共函数</span>
+      <Hint content="任何用户或者合约都能调用和访问"> </Hint>
+    </el-option>
+  </el-select>
+
+  <!-- 外部可见性简化版 变量 -->
+  <el-select
+    v-else-if="mode == 'visibility-var' && donothing()"
+    @change="refreshVars()"
+    v-model="item.value"
+  >
+    <el-option :label="'默认'" :value="``">
+      <span class="l-option-label">默认</span>
+      <Hint content="只可以该合约或该合约的子合约内部调用"> </Hint>
+    </el-option>
+    <el-option :label="'内部'" :value="`internal`">
+      <span class="l-option-label">内部</span>
+      <Hint content="只可以该合约或该合约的子合约内部调用"> </Hint>
+    </el-option>
+    <el-option :label="`公共`" :value="`public`">
+      <span class="l-option-label">公开</span>
       <Hint content="任何用户或者合约都能调用和访问"> </Hint>
     </el-option>
   </el-select>
@@ -152,7 +176,7 @@
       </Hint>
     </el-option>
     <el-option :label="`存储数值`" :value="`memory`">
-      <span class="l-option-label">存储引用</span>
+      <span class="l-option-label">存储数值</span>
       <Hint
         content="新开辟一块内存区域存储该值 <br>修改该变量给该变量赋值的变量不会修改）"
       >

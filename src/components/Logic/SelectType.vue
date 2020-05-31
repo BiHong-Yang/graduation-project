@@ -119,12 +119,12 @@ export default {
     itemFilter: function (item) {
       let temp = {};
       // console.log("item is:", item);
-      if (this.mode == "normal") {
-        if (!this.ParamTypes.map((x) => x.type).includes(item.type)) {
-          console.log("item.type:", item.type);
-          temp.value = item.contents.value;
-        }
-      }
+      // if (this.mode == "normal") {
+      //   if (!this.ParamTypes.map((x) => x.type).includes(item.type)) {
+      //     console.log("item.type:", item.type);
+      //     temp.value = item.contents.value;
+      //   }
+      // }
       if (item.contents.categories != undefined) {
         temp.categories = item.contents.categories;
       }
@@ -136,6 +136,7 @@ export default {
         temp.len = item.contents.len;
         temp.type = item.contents.type;
       }
+      console.log("after filter", temp);
       return temp;
     },
     refreshVars: function () {

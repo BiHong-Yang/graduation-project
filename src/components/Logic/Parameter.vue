@@ -99,9 +99,9 @@
       <!-- 函数的参数，只记名字 -->
       <template v-else-if="mode == 'param'">
         <Content
-          v-for="(it, key) in nameFilter(item.contents)"
+          v-for="(it, key) in nameFilter(item)"
           :key="key"
-          :contents="nameFilter(item.contents)"
+          :contents="nameFilter(item)"
           :item="it"
           :keyWord="key"
           :type="item.type"
@@ -226,14 +226,17 @@ export default {
       }
       return temp;
     },
-    nameFilter: function (contents) {
+    nameFilter: function (item) {
       // console.log("in name");
       let temp = {};
-      if (contents.categories != undefined) {
-        temp.categories = contents.categories;
+      if (item.type == "array") {
+        temp.type = item.contents.type;
       }
-      if (contents.name != undefined) {
-        temp.name = contents.name;
+      if (item.contents.categories != undefined) {
+        temp.categories = item.contents.categories;
+      }
+      if (item.contents.name != undefined) {
+        temp.name = item.contents.name;
       }
       return temp;
     },
@@ -248,16 +251,17 @@ export default {
     // **口子** 完成合约的注册和
     returnsParams: function () {
       return this.ParamTypes.filter((item) => {
-        return !["mapping", "array"].includes(item.type);
+        return !["mapping"].includes(item.type);
       }).concat(this.GetContracts);
     },
     returnsChangeType: function (index) {
       let rev = Object.assign({}, this.RevMap);
       delete rev.mapping;
-      delete rev.array;
       let contracts = this.GetContracts;
+      console.log("rev", rev);
+      console.log("contracts", contracts);
       for (let i = 0; i < contracts.length; i++) {
-        rev[contracts[i].type] = 6 + i;
+        rev[contracts[i].type] = 7 + i;
       }
       this.params.splice(
         index,

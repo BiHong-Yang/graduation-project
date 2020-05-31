@@ -38,6 +38,13 @@
         :mode="'store'"
         :item="item"
       ></Selector>
+
+      <Selector
+        v-else-if="keyWord == 'visibility'"
+        class="l-contents-item"
+        :mode="'visibility-var'"
+        :item="item"
+      ></Selector>
     </template>
 
     <!-- int类型 -->
@@ -73,6 +80,13 @@
         :mode="'store'"
         :item="item"
       ></Selector>
+
+      <Selector
+        v-else-if="keyWord == 'visibility'"
+        class="l-contents-item"
+        :mode="'visibility-var'"
+        :item="item"
+      ></Selector>
     </template>
 
     <!-- bool类型 -->
@@ -101,6 +115,13 @@
         :mode="'store'"
         :item="item"
       ></Selector>
+
+      <Selector
+        v-else-if="keyWord == 'visibility'"
+        class="l-contents-item"
+        :mode="'visibility-var'"
+        :item="item"
+      ></Selector>
     </template>
 
     <!-- 地址类型 -->
@@ -124,6 +145,13 @@
         v-else-if="keyWord == 'store'"
         class="l-contents-item"
         :mode="'store'"
+        :item="item"
+      ></Selector>
+
+      <Selector
+        v-else-if="keyWord == 'visibility'"
+        class="l-contents-item"
+        :mode="'visibility-var'"
         :item="item"
       ></Selector>
     </template>
@@ -160,6 +188,13 @@
         :mode="'store'"
         :item="item"
       ></Selector>
+
+      <Selector
+        v-else-if="keyWord == 'visibility'"
+        class="l-contents-item"
+        :mode="'visibility-var'"
+        :item="item"
+      ></Selector>
     </template>
 
     <!-- 映射类型 -->
@@ -188,6 +223,13 @@
           placeholder="请输入一串英文字符"
         ></el-input>
       </div>
+
+      <Selector
+        v-else-if="keyWord == 'visibility'"
+        class="l-contents-item"
+        :mode="'visibility-var'"
+        :item="item"
+      ></Selector>
     </template>
 
     <!-- 结构体 -->
@@ -243,6 +285,13 @@
         class="l-contents-item"
         :value="item.value"
       ></StructValue>
+
+      <Selector
+        v-else-if="keyWord == 'visibility'"
+        class="l-contents-item"
+        :mode="'visibility-var'"
+        :item="item"
+      ></Selector>
     </template>
 
     <!-- 数组 -->
