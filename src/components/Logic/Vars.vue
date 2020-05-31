@@ -2,6 +2,11 @@
   <div class="c-Vars">
     <!-- 左半边，必然可以使用的变量 -->
     <div class="c-Vars__block">
+      <div class="o-block__title">
+        <span class="o-title">
+          可选变量
+        </span>
+      </div>
       <div class="c-item" v-for="(item, index) in varAlready" :key="index">
         <!-- 位置 -->
         <div class="c-item__location" @click="changeLocation(index)">
@@ -23,6 +28,12 @@
 
     <!-- 右半边，潜在变量 -->
     <div class="c-Vars__block">
+      <div class="o-block__title">
+        <span class="o-title">
+          潜在变量
+        </span>
+      </div>
+
       <div class="c-item" v-for="(item, index) in varPotential" :key="index">
         <!-- 位置 -->
         <div class="c-item__location" @click="addLocation(index)">
@@ -76,28 +87,46 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+$color: black;
 @mixin test {
-  border: 1px black solid;
+  border: 1px $color solid;
 }
 .c-Vars {
   height: 100%;
   width: 100%;
-  background-color: #333333;
+  // background-color: #333333;
   display: flex;
   box-sizing: border-box;
 
   .c-Vars__block {
     width: 50%;
     height: 100%;
-    background-color: aqua;
+    // background-color: aqua;
     @include test;
     display: flex;
     flex-direction: column;
+    align-items: stretch;
     overflow: auto;
     box-sizing: border-box;
 
+    .o-block__title {
+      height: 3rem;
+      background-color: #c0c4cc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      .o-title {
+        font-weight: 600;
+        font-size: x-large;
+        font-family: fantasy;
+        color: #409eff;
+        user-select: none;
+      }
+    }
+
     .c-item {
-      @include test;
+      border-top: 1px solid $color;
+      border-bottom: 1px solid $color;
       min-height: 2.5rem;
       display: flex;
       align-items: stretch;
@@ -112,6 +141,11 @@ export default {
         flex: 0 0 auto;
         .o-location__name {
           box-sizing: border-box;
+          font-weight: 100;
+          font-size: larger;
+          font-family: fantasy;
+          color: #409eff;
+          user-select: none;
         }
         &:hover {
           cursor: pointer;
@@ -119,9 +153,10 @@ export default {
       }
 
       .c-item__vars {
-        @include test;
-        box-sizing: border-box;
-
+        border-left: 1px solid $color;
+        box-sizing: content-box;
+        height: 100%;
+        width: 100%;
         display: flex;
         flex-wrap: wrap;
       }

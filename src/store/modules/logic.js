@@ -51,20 +51,22 @@ function allElements(els, location) {
 }
 
 // 变量
-function VarLogin() {
+function VarLogin(mode = "normal") {
   state.varMap.clear();
   allElements(state.elements, [0]);
   // 保证不会乱指
-  for (
-    let i = 1;
-    i < Math.min(state.locationId.length, state.location.length);
-    i++
-  ) {
-    if (
-      getAttributes(state.location.slice(0, i + 1)).id != state.locationId[i]
+  if (mode == "normal") {
+    for (
+      let i = 1;
+      i < Math.min(state.locationId.length, state.location.length);
+      i++
     ) {
-      state.location.splice(i + 1);
-      break;
+      if (
+        getAttributes(state.location.slice(0, i + 1)).id != state.locationId[i]
+      ) {
+        state.location.splice(i + 1);
+        break;
+      }
     }
   }
   state.varAlready.length = 0;
@@ -231,6 +233,12 @@ function createVar(item, attrs = null) {
           elements: [],
           show: false,
         },
+        store: {
+          name: "存储方式",
+          value: "",
+          show: false,
+          use: false,
+        },
       },
       creatorId: item.creatorId,
     };
@@ -261,6 +269,12 @@ function createVar(item, attrs = null) {
           name: "参数值",
           value: {},
           show: true,
+        },
+        store: {
+          name: "存储方式",
+          value: "",
+          show: false,
+          use: false,
         },
       },
 
@@ -594,12 +608,6 @@ function createVar(item, attrs = null) {
           key: "self",
           show: true,
         },
-        store: {
-          name: "存储方式",
-          value: "",
-          show: false,
-          use: false,
-        },
       },
 
       // id: this.$store.state.logic.globalId,
@@ -873,9 +881,13 @@ function codeElements(item, space = "", addition = "") {
           .map((x) => getValue(item, "value")[x])
           .some((x) => !emptyExpression(x))
       ) {
-        temp = `${space}${type}${getValue(item, "name")} = ${
-          item.type == "contract" ? "new " : ""
-        }${type}(${getParams(getValue(item, "value"), "struct")});\n`;
+        temp = `${space}${type}${getValue(item, "store")}${getValue(
+          item,
+          "name"
+        )} = ${item.type == "contract" ? "new " : ""}${type}(${getParams(
+          getValue(item, "value"),
+          "struct"
+        )});\n`;
       } else {
         temp = `${space}${type}${getValue(item, "name")};\n`;
       }
@@ -915,7 +927,10 @@ function codeElements(item, space = "", addition = "") {
         type = getValue(item, "categories").split(" ").join("");
       }
 
-      temp = `${space}${type}${getValue(item, "name")}`;
+      temp = `${space}${type}${getValue(item, "store")}${getValue(
+        item,
+        "name"
+      )}`;
       if (!emptyExpression(item.contents.value)) {
         temp += ` = ${codeExpression(item.contents.value)}`;
       }
@@ -974,7 +989,7 @@ function codeElements(item, space = "", addition = "") {
           getValue(item, "len") != null
             ? getValue(item, "len").split(" ")[1]
             : ""
-        }]${getValue(item, "name")};\n`;
+        }]${getValue(item, "store")}${getValue(item, "name")};\n`;
       } else {
         temp = `${space}${codeBody(
           getValue(item, "type"),
@@ -1205,6 +1220,31 @@ const state = {
     elements: [],
     contents: {},
     useEle: false,
+  },
+
+  typeRev: {
+    int: "整数",
+    bool: "真假值",
+    address: "地址",
+    byteArray: "字符数组",
+    mapping: "映射",
+    array: "数组",
+    int_var: "整数变量",
+    bool_var: "真假值变量",
+    address_var: "地址变量",
+    byteArray_var: "字符数组变量",
+    mapping_var: "映射变量",
+    array_var: "数组变量",
+    function_creator: "创建函数",
+    function: "函数",
+    modifier: "创建装饰器",
+    modifier__inner: "函数位置",
+    contract_creator: "创建合约",
+    contract: "合约",
+    contract_var: "合约变量",
+    struct_creator: "定义新类型",
+    struct: "自定义类型",
+    struct_var: "自定义类型变量",
   },
 
   // 空表达式
@@ -3005,9 +3045,9 @@ const getters = {
   },
   ValueTypes: (state) => {
     return Array.from(state.transformer[4].elements, (x) => x.type).concat(
-      Array.from(state.transformer[0].elements, (x) => x.type).map(
-        (x) => x + "_var"
-      )
+      Array.from(state.transformer[0].elements, (x) => x.type)
+        .map((x) => x + "_var")
+        .concat(["struct_var", "contract_var"])
     );
   },
   TypeGroups: (state) => (groupId) => {
@@ -3120,6 +3160,20 @@ const getters = {
   //   },
 };
 
+// function getss() {
+//   let temp = [];
+//   for (let x in state.transformer) {
+//     console.log("x is ", x);
+//     for (let y in state.transformer[x].elements) {
+//       temp.push(
+//         `"${state.transformer[x].elements[y].type}":"${state.transformer[x].elements[y].name}"`
+//       );
+//     }
+//   }
+//   console.log("in ss!");
+//   console.log("temp is", temp);
+//   return temp.join(",\n");
+// }
 const mutations = {
   // 副代码区开关
   ChangeToggle(state, value) {
@@ -3139,6 +3193,7 @@ const mutations = {
   // 开始移动
   // 将所有附带元素全部设为不可见，减小移动的组件的体积
   nestedStart: (state, item) => {
+    // console.log("OK!", getss());
     state.started = true;
     if (item.show != undefined) {
       state.ShowsOnMove.push(item.show);
@@ -3229,6 +3284,12 @@ const mutations = {
   refreshVars: () => {
     VarLogin();
   },
+
+  // 一键
+  toLocation: (state, id) => {
+    state.location = state.varMap.get(id);
+    VarLogin("to");
+  },
 };
 
 const actions = {
@@ -3270,6 +3331,11 @@ const actions = {
   // 更新变量
   refreshVars: ({ commit }) => {
     commit("refreshVars");
+  },
+
+  // 一键到目的
+  toLocation: ({ commit }, id) => {
+    commit("toLocation", id);
   },
 };
 

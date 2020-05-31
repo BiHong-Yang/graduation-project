@@ -143,6 +143,7 @@
                 !ValueTypes.includes(el.type) ||
                 Object.keys(el.contents).length > 0,
             }"
+            @dblclick="toLocation(el)"
           >
             {{ el.name }}
           </div>
@@ -239,7 +240,7 @@ export default {
     },
     useColor: function (type) {
       // 变量用浅绿 创建和使用
-      if (this.TypeGroups(0).concat(["var", "struct"]).includes(type)) {
+      if (this.TypeGroups(0).concat(["contract", "struct"]).includes(type)) {
         return "#4EC9B0";
       }
       // 合约 函数用黄
@@ -271,6 +272,10 @@ export default {
         return;
       }
     },
+    toLocation: function (item) {
+      console.log("in to ", item);
+      this.$store.dispatch("logic/toLocation", item.id);
+    },
   },
   components: {
     draggable,
@@ -299,6 +304,7 @@ export default {
       TypeGroups: "logic/TypeGroups",
     }),
   },
+
   props: {
     value: {
       required: false,
