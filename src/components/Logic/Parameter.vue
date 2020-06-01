@@ -203,13 +203,12 @@ export default {
       );
     },
     ChangeType: function (index) {
-      this.params.splice(
-        index,
-        1,
-        JSON.parse(
-          JSON.stringify(this.ParamTypes[this.RevMap[this.params[index].type]])
-        )
+      let temp = JSON.parse(
+        JSON.stringify(this.ParamTypes[this.RevMap[this.params[index].type]])
       );
+      this.$store.dispatch("logic/incGlobalId", 1);
+      temp.id = this.$store.state.logic.globalId;
+      this.params.splice(index, 1, temp);
     },
     placeHolder: function (item) {
       return JSON.parse(
@@ -263,13 +262,13 @@ export default {
       for (let i = 0; i < contracts.length; i++) {
         rev[contracts[i].type] = 7 + i;
       }
-      this.params.splice(
-        index,
-        1,
-        JSON.parse(
-          JSON.stringify(this.returnsParams()[rev[this.params[index].type]])
-        )
+      let temp = JSON.parse(
+        JSON.stringify(this.returnsParams()[rev[this.params[index].type]])
       );
+      this.$store.dispatch("logic/incGlobalId", 1);
+      temp.id = this.$store.state.logic.globalId;
+
+      this.params.splice(index, 1, temp);
     },
   },
   // mounted: function() {

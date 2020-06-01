@@ -64,7 +64,7 @@
   box-sizing: content-box;
   padding: 0 0.5rem;
   width: 1rem;
-  height: 1rem;
+  height: 2.5rem;
 }
 .line-num {
   min-width: 30px;
@@ -100,6 +100,7 @@
     @end="nestedEnd"
     @unchoose="nestDelete"
     @change="nestChange"
+    :clone="CloneItem"
     :move="nestedMove"
   >
     <div
@@ -168,6 +169,24 @@
 
       <!-- 对运算另外处理 -->
       <div v-else class="c-nested__item" :style="{ color: useColor(el.type) }">
+        <div
+          v-if="el.type == ' = '"
+          class="line-num"
+          @click="el.show = !el.show"
+          :class="{ 'hight-light': el.elements.length > 0 }"
+        >
+          <el-tooltip
+            :disabled="useHint"
+            effect="dark"
+            content="单击展开收起内容"
+            placement="top"
+          >
+            <div>
+              <span>{{ index + 1 }}</span>
+            </div>
+          </el-tooltip>
+        </div>
+
         <Content
           v-if="el.contents.firstOP != undefined"
           :contents="el.contents"
@@ -269,26 +288,68 @@ export default {
       }
       // 对变量
       else {
-        return;
+        return "#555555";
       }
     },
     toLocation: function (item) {
       console.log("in to ", item);
       this.$store.dispatch("logic/toLocation", item.id);
     },
+    CloneItem: function (item) {
+      console.log("cloneing");
+      this.$store.dispatch("logic/incGlobalId", 1);
+      let temp = JSON.parse(JSON.stringify(item));
+      temp.id = this.$store.state.logic.globalId;
+      return temp;
+    },
   },
   components: {
     draggable,
     Options,
   },
+
+  data() {
+    return {
+      clone: this.$store.state.logic.clone,
+    };
+  },
   computed: {
     dragOptions() {
-      return {
-        animation: 0,
+      // console.log("options");
+      // let temp = this.clone
+      //   ? {
+      //       group: {
+      //         name: "logic",
+      //         pull: "clone",
+      //         revertClone: true,
+      //       },
+      //       disabled: false,
+      //       ghostClass: "ghost",
+      //       swapThreshold: 0.29,
+      //       invertSwap: true,
+      //       animation: 150,
+      //       direction: "vertical",
+      //     }
+      //   : {
+      //       group: this.group,
+      //       disabled: false,
+      //       ghostClass: "ghost",
+      //       swapThreshold: 0.29,
+      //       invertSwap: true,
+      //       animation: 150,
+      //       direction: "vertical",
+      //     };
+      let temp = {
         group: this.group,
         disabled: false,
         ghostClass: "ghost",
+        swapThreshold: 0.29,
+        invertSwap: true,
+        animation: 150,
+        direction: "vertical",
       };
+      // console.log("temp is", temp);
+      return temp;
     },
     // this.value when input = v-model
     // this.list  when input != v-model

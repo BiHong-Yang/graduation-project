@@ -208,8 +208,8 @@ export default {
       this.$store.dispatch("logic/refreshVars");
     },
     donothing: function () {
-      console.log("do nothing");
-      console.log("item is", this.item);
+      // console.log("do nothing");
+      // console.log("item is", this.item);
       return true;
     },
   },

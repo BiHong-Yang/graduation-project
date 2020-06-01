@@ -81,7 +81,7 @@ export default {
   .main__ShowCode {
     flex: 0 0 auto;
     height: 100%;
-    width: 35%;
+    width: 55%;
     overflow: auto;
   }
 }

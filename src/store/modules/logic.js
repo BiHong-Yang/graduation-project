@@ -573,7 +573,7 @@ function createVar(item, attrs = null) {
     temp.contents.value.value.pointer.type = createVar(
       {
         type: attrs.contents.to.value.type,
-        name: attrs.contents.name.value,
+        name: "",
       },
       getValue(attrs, "to")
     );
@@ -687,17 +687,21 @@ function codeParam(params, simple = false) {
       switch (params[i].type) {
         case "byteArray": {
           temp.push(
-            `${params[i].categories.value}[] memory ${getName(params[i])}`
+            `${getValue(params[i], "categories")
+              .split(" ")
+              .join("")}[] ${getName(params[i])}`
           );
           break;
         }
         case "array": {
-          temp.push(`${params[i].type.value}[] memory ${getName(params[i])}`);
+          temp.push(
+            `${codeBody(getValue(params[i], "type"))}[] ${getName(params[i])}`
+          );
           break;
         }
 
         default: {
-          temp.push(`${params[i].categories.value} ${getName(params[i])}`);
+          temp.push(`${codeBody(params[i])}`);
           break;
         }
       }
@@ -718,7 +722,7 @@ function codeReturns(returns) {
         temp.push(returns[i].type);
       }
     }
-    return `returns (${temp.join(", ")}) `;
+    return ` returns(${temp.join(", ")}) `;
   }
   // 处理函数返回值
 }
@@ -771,6 +775,8 @@ function codeExpression(item) {
     } else {
       return "";
     }
+  } else if (item.elements.length == 0) {
+    return "";
   }
   return codeBody(item.elements[0], "");
 }
@@ -812,7 +818,7 @@ function codeBody(item, space = "", addition = "") {
   let temp = codeElements(item, space, addition);
   // console.log("item is:", item);
   // console.log("temp is:", temp);
-  console.log("temp in body", temp);
+  // console.log("temp in body", temp);
   return temp.split(";\n")[0];
 }
 
@@ -1073,24 +1079,38 @@ function codeElements(item, space = "", addition = "") {
       break;
     }
     case " = ": {
-      temp = `${space}${codeBody(getValue(item, "firstOP"))} = ${codeBody(
-        getValue(item, "lastOP")
-      )};\n`;
+      temp = `${space}`;
+      temp += codeExpression(item.contents.firstOP);
+      temp += `${item.type}`;
+      temp += codeExpression(item.contents.lastOP);
+      temp += `;\n`;
       break;
     }
     case "if":
     case "else":
-    case "else if":
-    case "while(true)": {
-      temp = `${space} `;
+    case "else if": {
+      // case "while(true)":
+      temp = `${space}${item.type} `;
       if (item.contents.condition != undefined) {
         temp += `(${codeExpression(item.contents.condition)}) `;
       }
       temp += `{\n`;
       for (let i = 0; i < item.elements.length; i++) {
-        temp += codeBody(item.elements[i], space.concat(`  `));
+        temp += codeElements(item.elements[i], space.concat(`    `));
       }
-      temp += `}\n`;
+      temp += `${space}}\n`;
+      break;
+    }
+    case "for": {
+      temp = `${space}for`;
+      temp += `(${codeExpression(item.contents.init)},${codeExpression(
+        item.contents.end
+      )},${codeExpression(item.contents.increase)})`;
+      temp += `{\n`;
+      for (let i = 0; i < item.elements.length; i++) {
+        temp += codeElements(item.elements[i], space.concat(`    `));
+      }
+      temp += `${space}}\n`;
       break;
     }
     case "break":
@@ -1102,6 +1122,7 @@ function codeElements(item, space = "", addition = "") {
       temp = `${space}return (${getValue(item, "value")
         .map((x) => codeExpression(x))
         .join(",")})`;
+      temp += ";\n";
       break;
     }
     case "block.coinbase":
@@ -1164,7 +1185,10 @@ function codeElements(item, space = "", addition = "") {
     case "send": {
       temp = `${space}${codeExpression(item.contents.address)}.${
         item.type
-      }${codeExpression(item.contents.amount)}`;
+      }(${codeExpression(item.contents.amount)})`;
+      if (space != "") {
+        temp += ";\n";
+      }
       break;
     }
     case "call":
@@ -1222,6 +1246,8 @@ const state = {
 
   // 批量删除开关
   kill: false,
+
+  clone: false,
 
   // 判断是否开始了
   started: false,
@@ -2380,12 +2406,43 @@ const state = {
           contents: {},
           show: true,
         },
+        // {
+        //   type: "while(true)",
+        //   name: "循环",
+        //   elements: [],
+
+        //   contents: {},
+        //   show: true,
+        // },
         {
-          type: "while(true)",
+          type: "for",
           name: "循环",
           elements: [],
 
-          contents: {},
+          contents: {
+            init: {
+              name: "初始化",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            end: {
+              name: "结束条件",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+            increase: {
+              name: "循环递增",
+              value: null,
+              elements: [],
+              useEle: false,
+              show: true,
+            },
+          },
+          show: true,
         },
         {
           type: "break",

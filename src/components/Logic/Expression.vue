@@ -125,7 +125,7 @@ export default {
       position: relative;
       .o-block__mask {
         margin: 0;
-        min-height: 5rem;
+        min-height: 3.3rem;
         border-radius: 3px;
         box-sizing: border-box;
         display: inline-block;
@@ -142,7 +142,7 @@ export default {
       }
 
       .nested {
-        min-height: 5rem;
+        min-height: 3rem;
         margin: 3px 0 0 3px;
         border: 1px solid #dcdfe6;
         border-radius: 3px;

@@ -15,6 +15,16 @@
      -->
     <div class="togglebox">
       <el-switch
+        @change="changeClone()"
+        v-model="clone"
+        active-text="复制模式"
+      ></el-switch>
+    </div>
+    <!-- 
+      展示代码
+     -->
+    <div class="togglebox">
+      <el-switch
         @change="changeShowCode()"
         v-model="showCode"
         active-text="代码展示"
@@ -40,6 +50,7 @@ export default {
     return {
       showCode: this.$store.state.logic.showCode,
       hint: this.$store.state.control.hint,
+      clone: this.$store.state.control.clone,
     };
   },
   components: {
@@ -62,6 +73,10 @@ export default {
     },
     changeHint: function () {
       this.$store.state.control.hint = !this.$store.state.control.hint;
+    },
+    changeClone: function () {
+      console.log("clone is ", this.$store.state.logic.clone);
+      this.$store.state.logic.clone = !this.$store.state.logic.clone;
     },
   },
 };

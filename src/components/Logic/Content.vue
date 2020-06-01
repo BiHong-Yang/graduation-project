@@ -521,6 +521,15 @@
       </div>
     </template>
 
+    <!-- else if 判断 -->
+    <template v-else-if="type == 'for'">
+      <div>
+        <div class="l-contents-item">
+          <Expression :item="item" :placeholder="'请输入表达式'"></Expression>
+        </div>
+      </div>
+    </template>
+
     <!-- 区块哈希 -->
     <template v-else-if="type == 'blockhash'">
       <Expression :item="item" :placeholder="'请输入区块id 0~255'"></Expression>

@@ -92,7 +92,7 @@ export default {
   },
   methods: {
     doNothing: function (item) {
-      console.log("do nothing");
+      // console.log("do nothing");
       return item;
     },
     change: function () {

@@ -3,7 +3,7 @@
     <div class="nested">
       <nested :list="elements" />
     </div>
-    <div class="raw">
+    <!-- <div class="raw">
       <raw-displayer :title="'Vuex Store'" :value="elements" />
     </div>
     <div class="raw">
@@ -14,14 +14,14 @@
     </div>
     <div class="raw">
       <raw-displayer :title="'location'" :value="location" />
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script>
 import { mapState } from "vuex";
 import Nested from "./nested/nested.vue";
-import rawDisplayer from "./infra/raw-displayer.vue";
+// import rawDisplayer from "./infra/raw-displayer.vue";
 export default {
   data() {
     return {
@@ -33,7 +33,7 @@ export default {
   order: 16,
   components: {
     Nested,
-    rawDisplayer,
+    // rawDisplayer,
   },
   computed: {
     elements: {
