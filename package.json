@@ -16,7 +16,7 @@
     "highlight.js": "^10.0.3",
     "highlightjs-solidity": "^1.0.15",
     "jquery": "^3.5.1",
-    "jquery-ui": "^1.12.1",
+    "jquery-ui": "^1.13.0",
     "lint-staged": "^10.2.7",
     "minimist": "^1.2.5",
     "node-sass": "^4.14.1",
@@ -38,7 +38,7 @@
     "babel-eslint": "^10.0.3",
     "babel-plugin-component": "^1.1.1",
     "eslint-plugin-vue": "^6.1.2",
-    "jquery-ui": "^1.12.1",
+    "jquery-ui": "^1.13.0",
     "vue-cli-plugin-element": "^1.0.1",
     "vue-template-compiler": "^2.6.11"
   },
